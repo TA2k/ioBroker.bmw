@@ -1,6 +1,6 @@
 {
   "name": "iobroker.bmw",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "description": "Adapter for BMW",
   "author": {
     "name": "TA2k",
