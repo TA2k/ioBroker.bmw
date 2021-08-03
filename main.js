@@ -40,6 +40,8 @@ class Bmw extends utils.Adapter {
         this.cookieJar = new tough.CookieJar();
         this.requestClient = axios.create();
         this.updateInterval = null;
+        this.reLoginTimeout = null;
+        this.refreshTokenTimeout = null;
         this.extractKeys = extractKeys;
         this.vinArray = [];
         this.session = {};
@@ -196,7 +198,19 @@ class Bmw extends utils.Adapter {
                         },
                         native: {},
                     });
-                    const remoteArray = [{ command: "lock-unlock" }];
+
+                    const remoteArray = [
+                        { command: "CHARGE_NOW" },
+                        { command: "CLIMATE_NOW" },
+                        { command: "DOOR_LOCK" },
+                        { command: "DOOR_UNLOCK" },
+                        { command: "GET_VEHICLES" },
+                        { command: "GET_VEHICLE_STATUS" },
+                        { command: "HORN_BLOW" },
+                        { command: "LIGHT_FLASH" },
+                        { command: "VEHICLE_FINDER" },
+                        { command: "CLIMATE_NOW" },
+                    ];
                     remoteArray.forEach((remote) => {
                         this.setObjectNotExists(vehicle.vin + ".remote." + remote.command, {
                             type: "state",
@@ -262,9 +276,19 @@ class Bmw extends utils.Adapter {
                         this.extractKeys(this, vin + "." + element.path, data, preferedArrayName, forceIndex);
                     })
                     .catch((error) => {
+                        if (error.response && error.response.status === 401) {
+                            error.response && this.log.debug(JSON.stringify(error.response.data));
+                            this.log.info(element.path + " receive 401 error. Refresh Token in 30 seconds");
+                            clearTimeout(this.refreshTokenTimeout);
+                            this.refreshTokenTimeout = setTimeout(() => {
+                                this.refreshToken();
+                            }, 1000 * 30);
+
+                            return;
+                        }
                         this.log.error(element.url);
                         this.log.error(error);
-                        error.response && this.log.error(JSON.stringify(error.response.data));
+                        error.response && this.log.debug(JSON.stringify(error.response.data));
                     });
             });
         });
@@ -309,6 +333,10 @@ class Bmw extends utils.Adapter {
                 this.log.error("refresh token failed");
                 this.log.error(error);
                 error.response && this.log.error(JSON.stringify(error.response.data));
+                this.log.error("Start relogin in 1min");
+                this.reLoginTimeout = setTimeout(() => {
+                    this.login();
+                }, 1000 * 60 * 1);
             });
     }
 
@@ -319,7 +347,8 @@ class Bmw extends utils.Adapter {
     onUnload(callback) {
         try {
             clearTimeout(this.refreshTimeout);
-
+            clearTimeout(this.reLoginTimeout);
+            clearTimeout(this.refreshTokenTimeout);
             clearInterval(this.updateInterval);
             clearInterval(this.refreshTokenInterval);
             callback();
@@ -338,15 +367,45 @@ class Bmw extends utils.Adapter {
             if (!state.ack) {
                 const vin = id.split(".")[2];
                 const command = id.split(".")[4];
+                const headers = {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    Accept: "*/*",
+                    Authorization: "Bearer " + this.session.access_token,
+                };
+                let data = {
+                    serviceType: command,
+                };
+                if (command === "DOOR_UNLOCK") {
+                    data.bmwSkAnswer = this.config.bmwSkAnswer;
+                }
+                await this.requestClient({
+                    method: "post",
+                    url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/" + vin + "/executeService",
+                    headers: headers,
+                    data: qs.stringify(data),
+                })
+                    .then((res) => {
+                        this.log.debug(JSON.stringify(res.data));
+                        return res.data;
+                    })
+                    .catch((error) => {
+                        this.log.error(error);
+                        if (error.response) {
+                            this.log.error(JSON.stringify(error.response.data));
+                        }
+                    });
+                this.refreshTimeout = setTimeout(async () => {
+                    await this.updateVehicles();
+                }, 10 * 1000);
             } else {
-                const resultDict = {};
+                const resultDict = { chargingStatus: "CHARGE_NOW", doorLockState: "DOOR_LOCK" };
                 const idArray = id.split(".");
                 const stateName = idArray[idArray.length - 1];
 
                 if (resultDict[stateName]) {
                     const vin = id.split(".")[2];
                     let value = true;
-                    if (!state.val || state.val === "off" || state.val === "unlocked") {
+                    if (!state.val || state.val === "INVALID" || state.val === "NOT_CHARGING" || state.val === "ERROR" || state.val === "UNLOCKED") {
                         value = false;
                     }
                     await this.setStateAsync(vin + ".remote." + resultDict[stateName], value, true);
