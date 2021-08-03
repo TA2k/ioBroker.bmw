@@ -301,7 +301,7 @@ class Bmw extends utils.Adapter {
                 this.session.access_token = res.data;
                 this.setState("info.connection", true, true);
                 return res.data;
-            })ç
+            })
             .catch((error) => {
                 this.log.error("refresh token failed");
                 this.log.error(error);
