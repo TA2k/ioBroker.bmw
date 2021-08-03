@@ -292,8 +292,9 @@ class Bmw extends utils.Adapter {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
                 Accept: "application/json",
+                Authorization: "Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==",
             },
-            data: "client_id=31c357a0-7a1d-4590-aa99-33b97244d048&grant_type=refresh_token&refresh_token=" + this.session.refresh_token,
+            data: "redirect_uri=com.bmw.connected://oauth&refresh_token=" + this.session.refresh_token + "&grant_type=refresh_token",
         })
             .then((res) => {
                 this.log.debug(JSON.stringify(res.data));
@@ -302,6 +303,7 @@ class Bmw extends utils.Adapter {
                 return res.data;
             })
             .catch((error) => {
+                this.log.error("refresh token failed");
                 this.log.error(error);
             });
     }
