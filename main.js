@@ -10,7 +10,8 @@ const utils = require("@iobroker/adapter-core");
 const axios = require("axios");
 const qs = require("qs");
 const { extractKeys } = require("./lib/extractKeys");
-
+const axiosCookieJarSupport = require("axios-cookiejar-support").default;
+const tough = require("tough-cookie");
 class Bmw extends utils.Adapter {
     /**
      * @param {Partial<utils.AdapterOptions>} [options={}]
@@ -35,6 +36,8 @@ class Bmw extends utils.Adapter {
             this.log.info("Set interval to minimum 0.5");
             this.config.interval = 0.5;
         }
+        axiosCookieJarSupport(axios);
+        this.cookieJar = new tough.CookieJar();
         this.requestClient = axios.create();
         this.updateInterval = null;
         this.extractKeys = extractKeys;
@@ -62,7 +65,7 @@ class Bmw extends utils.Adapter {
             "Accept-Language": "de-de",
             "Content-Type": "application/x-www-form-urlencoded",
         };
-        const data = qs.stringify({
+        const data = {
             client_id: "31c357a0-7a1d-4590-aa99-33b97244d048",
             response_type: "code",
             scope: "openid profile email offline_access smacc vehicle_data perseus dlm svds cesim vsapi remote_services fupo authenticate_user",
@@ -72,12 +75,14 @@ class Bmw extends utils.Adapter {
             username: this.config.username,
             password: this.config.password,
             grant_type: "authorization_code",
-        });
+        };
         const authUrl = await this.requestClient({
             method: "post",
             url: "https://customer.bmwgroup.com/gcdm/oauth/authenticate",
             headers: headers,
-            data: data,
+            data: qs.stringify(data),
+            jar: this.cookieJar,
+            withCredentials: true,
         })
             .then((res) => {
                 this.log.debug(JSON.stringify(res.data));
@@ -90,13 +95,18 @@ class Bmw extends utils.Adapter {
             this.log.error(JSON.stringify(authUrl));
             return;
         }
+
+        delete data.username;
+        delete data.password;
+        delete data.grant_type;
+        data.authorization = qs.parse(authUrl.redirect_to).authorization;
         const code = await this.requestClient({
-            method: "get",
-            url: authUrl.redirect_to,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            },
+            method: "post",
+            url: "https://customer.bmwgroup.com/gcdm/oauth/authenticate",
+            headers: headers,
+            data: qs.stringify(data),
+            jar: this.cookieJar,
+            withCredentials: true,
         })
             .then((res) => {
                 this.log.debug(JSON.stringify(res.data));
@@ -104,26 +114,29 @@ class Bmw extends utils.Adapter {
             })
             .catch((error) => {
                 let code = "";
+                if (error.response && error.response.status === 400) {
+                    this.log.error(JSON.stringify(error.response.data));
+                    return;
+                }
                 if (error.config) {
                     this.log.debug(JSON.stringify(error.config.url));
-                    const qArray = error.config.url.split("?")[1].split("&");
-                    qArray.forEach((element) => {
-                        const elementArray = element.split("=");
-                        if (elementArray[0] === "code") {
-                            code = elementArray[1];
-                        }
-                    });
+                    code = qs.parse(error.config.url.split("?")[1]).code;
                     this.log.debug(code);
+                    return code;
                 }
-                return code;
             });
         await this.requestClient({
             method: "post",
             url: "https://customer.bmwgroup.com/gcdm/oauth/token",
 
+            jar: this.cookieJar,
+            withCredentials: true,
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                "User-Agent": "My%20BMW/8932 CFNetwork/978.0.7 Darwin/18.7.0",
                 Accept: "*/*",
+                "Accept-Language": "de-de",
+                Authorization: "Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==",
             },
             data: "code=" + code + "&code_verifier=7PsmfPS5MpaNt0jEcPpi-B7M7u0gs1Nzw6ex0Y9pa-0&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code",
         })
@@ -135,6 +148,9 @@ class Bmw extends utils.Adapter {
             })
             .catch((error) => {
                 this.log.error(error);
+                if (error.response) {
+                    this.log.error(JSON.stringify(error.response.data));
+                }
             });
     }
     async getVehicles() {
@@ -151,7 +167,7 @@ class Bmw extends utils.Adapter {
         })
             .then(async (res) => {
                 this.log.debug(JSON.stringify(res.data));
-                for (const vehicle of res.data.data) {
+                for (const vehicle of res.data.vehicles) {
                     this.vinArray.push(vehicle.vin);
                     await this.setObjectNotExistsAsync(vehicle.vin, {
                         type: "device",
@@ -165,6 +181,14 @@ class Bmw extends utils.Adapter {
                         type: "channel",
                         common: {
                             name: "Remote Controls",
+                            role: "state",
+                        },
+                        native: {},
+                    });
+                    await this.setObjectNotExistsAsync(vehicle.vin + ".general", {
+                        type: "channel",
+                        common: {
+                            name: "General Car Information",
                             role: "state",
                         },
                         native: {},
@@ -277,13 +301,13 @@ class Bmw extends utils.Adapter {
      * @param {string} id
      * @param {ioBroker.State | null | undefined} state
      */
-    onStateChange(id, state) {
+    async onStateChange(id, state) {
         if (state) {
             if (!state.ack) {
                 const vin = id.split(".")[2];
                 const command = id.split(".")[4];
             } else {
-                const resultDict = {  };
+                const resultDict = {};
                 const idArray = id.split(".");
                 const stateName = idArray[idArray.length - 1];
 
@@ -296,6 +320,7 @@ class Bmw extends utils.Adapter {
                     await this.setStateAsync(vin + ".remote." + resultDict[stateName], value, true);
                 }
             }
+        }
     }
 }
 
