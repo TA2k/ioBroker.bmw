@@ -45,7 +45,8 @@ class Bmw extends utils.Adapter {
         this.extractKeys = extractKeys;
         this.vinArray = [];
         this.session = {};
-        this.canGen = {};
+        this.rangeMapSupport = {};
+
         this.subscribeStates("*");
 
         await this.login();
@@ -210,6 +211,9 @@ class Bmw extends utils.Adapter {
                         { command: "LIGHT_FLASH" },
                         { command: "VEHICLE_FINDER" },
                         { command: "CLIMATE_NOW" },
+                        { command: "START_CHARGING" },
+                        { command: "STOP_CHARGING" },
+                        { command: "START_PRECONDITIONING" },
                     ];
                     remoteArray.forEach((remote) => {
                         this.setObjectNotExists(vehicle.vin + ".remote." + remote.command, {
@@ -225,6 +229,7 @@ class Bmw extends utils.Adapter {
                         });
                     });
                     this.extractKeys(this, vehicle.vin + ".general", vehicle);
+                    this.rangeMapSupport[vehicle.vin] = vehicle.rangeMap === "NOT_SUPPORTED" ? false : true;
                 }
             })
             .catch((error) => {
@@ -239,17 +244,20 @@ class Bmw extends utils.Adapter {
             { path: "chargingprofile", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/chargingprofile" },
             { path: "lastTrip", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/lastTrip" },
             { path: "allTrips", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/allTrips" },
-            { path: "rangemap", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/rangemap?deviceTime=" + date },
             { path: "serviceExecutionHistory", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/serviceExecutionHistory" },
             { path: "apiV2", url: "https://b2vapi.bmwgroup.com/api/vehicle/v2/$vin" },
             // { path: "socnavigation", url: "https://b2vapi.bmwgroup.com/api/vehicle/navigation/v1/$vin" },
         ];
+
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             Accept: "application/json",
             Authorization: "Bearer " + this.session.access_token,
         };
         this.vinArray.forEach((vin) => {
+            if (this.rangeMapSupport[vin]) {
+                statusArray.push({ path: "rangemap", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/rangemap?deviceTime=" + date });
+            }
             statusArray.forEach(async (element) => {
                 const url = element.url.replace("$vin", vin);
                 await this.requestClient({
