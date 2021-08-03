@@ -72,14 +72,17 @@
         ]
     },
     "encryptedNative": [
-        "password"
+        "password",
+        "bmwSkAnswer"
     ],
     "protectedNative": [
-        "password"
+        "password",
+        "bmwSkAnswer"
     ],
     "native": {
         "username": "",
         "password": "",
+        "bmwSkAnswer": "",
         "interval": 5
     },
     "objects": [],
