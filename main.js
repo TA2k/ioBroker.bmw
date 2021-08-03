@@ -215,15 +215,21 @@ class Bmw extends utils.Adapter {
             });
     }
     async updateVehicles() {
-        const date = new Date();
-        let month = date.getMonth() + 1;
-        month = (month > 9 ? "" : "0") + month;
-        const yyyymmm = date.getFullYear() + "" + month;
-        const statusArray = [{ path: "status", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/status" }];
-        const headers = {
-            "Content-Type": "application/vnd.api+json",
-            Accept: "*/*",
+        const date = this.getDate();
 
+        const statusArray = [
+            { path: "status", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/status" },
+            { path: "chargingprofile", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/chargingprofile" },
+            { path: "lastTrip", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/lastTrip" },
+            { path: "allTrips", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/allTrips" },
+            { path: "rangemap", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/rangemap?deviceTime=" + date },
+            { path: "serviceExecutionHistory", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/serviceExecutionHistory" },
+            { path: "apiV2", url: "https://b2vapi.bmwgroup.com/api/vehicle/v2/$vin" },
+            // { path: "socnavigation", url: "https://b2vapi.bmwgroup.com/api/vehicle/navigation/v1/$vin" },
+        ];
+        const headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Accept: "application/json",
             Authorization: "Bearer " + this.session.access_token,
         };
         this.vinArray.forEach((vin) => {
@@ -236,27 +242,47 @@ class Bmw extends utils.Adapter {
                 })
                     .then((res) => {
                         this.log.debug(JSON.stringify(res.data));
+                        if (!res.data) {
+                            return;
+                        }
                         let data = res.data;
-                        if (data.data) {
-                            data = data.data;
+                        const keys = Object.keys(res.data);
+                        if (keys.length === 1) {
+                            data = res.data[keys[0]];
                         }
-                        if (data.attributes) {
-                            data = data.attributes;
-                        }
-                        const forceIndex = null;
+                        let forceIndex = null;
                         const preferedArrayName = null;
+                        if (element.path === "serviceExecutionHistory") {
+                            forceIndex = true;
+                        }
 
                         this.extractKeys(this, vin + "." + element.path, data, preferedArrayName, forceIndex);
                     })
                     .catch((error) => {
-                        if (error.response.status !== 502) {
-                            this.log.error(error);
-                            error.response && this.log.error(JSON.stringify(error.response.data));
-                        }
+                        this.log.error(element.url);
+                        this.log.error(error);
+                        error.response && this.log.error(JSON.stringify(error.response.data));
                     });
             });
         });
     }
+    getDate() {
+        const d = new Date();
+
+        var date_format_str =
+            d.getFullYear().toString() +
+            "-" +
+            ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1).toString()) +
+            "-" +
+            (d.getDate().toString().length == 2 ? d.getDate().toString() : "0" + d.getDate().toString()) +
+            "T" +
+            (d.getHours().toString().length == 2 ? d.getHours().toString() : "0" + d.getHours().toString()) +
+            ":" +
+            (d.getMinutes().toString().length == 2 ? d.getMinutes().toString() : "0" + d.getMinutes().toString()) +
+            ":00";
+        return date_format_str;
+    }
+
     async refreshToken() {
         await this.requestClient({
             method: "post",
