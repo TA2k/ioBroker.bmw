@@ -90,6 +90,9 @@ class Bmw extends utils.Adapter {
             })
             .catch((error) => {
                 this.log.error(error);
+                if (error.response) {
+                    this.log.error(JSON.stringify(error.response.data));
+                }
             });
         if (!authUrl || !authUrl.redirect_to) {
             this.log.error(JSON.stringify(authUrl));
@@ -305,6 +308,7 @@ class Bmw extends utils.Adapter {
             .catch((error) => {
                 this.log.error("refresh token failed");
                 this.log.error(error);
+                error.response && this.log.error(JSON.stringify(error.response.data));
             });
     }
 
