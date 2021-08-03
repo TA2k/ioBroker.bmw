@@ -91,7 +91,7 @@ class Bmw extends utils.Adapter {
             .catch((error) => {
                 this.log.error(error);
             });
-        if (!authUrl.redirect_to) {
+        if (!authUrl || !authUrl.redirect_to) {
             this.log.error(JSON.stringify(authUrl));
             return;
         }
