@@ -179,7 +179,6 @@ class Bmw extends utils.Adapter {
                         type: "device",
                         common: {
                             name: vehicle.model,
-                            role: "state",
                         },
                         native: {},
                     });
@@ -187,7 +186,6 @@ class Bmw extends utils.Adapter {
                         type: "channel",
                         common: {
                             name: "Remote Controls",
-                            role: "state",
                         },
                         native: {},
                     });
@@ -195,7 +193,6 @@ class Bmw extends utils.Adapter {
                         type: "channel",
                         common: {
                             name: "General Car Information",
-                            role: "state",
                         },
                         native: {},
                     });
@@ -240,12 +237,12 @@ class Bmw extends utils.Adapter {
         const date = this.getDate();
 
         const statusArray = [
-            { path: "status", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/status" },
-            { path: "chargingprofile", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/chargingprofile" },
-            { path: "lastTrip", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/lastTrip" },
-            { path: "allTrips", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/allTrips" },
-            { path: "serviceExecutionHistory", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/serviceExecutionHistory" },
-            { path: "apiV2", url: "https://b2vapi.bmwgroup.com/api/vehicle/v2/$vin" },
+            { path: "status", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/status", desc: "Current status of the car" },
+            { path: "chargingprofile", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/chargingprofile", desc: "Charging profile of the car" },
+            { path: "lastTrip", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/lastTrip", desc: "Last trip of the car" },
+            { path: "allTrips", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/allTrips", desc: "All trips of the car" },
+            { path: "serviceExecutionHistory", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/serviceExecutionHistory", desc: "Remote execution history" },
+            { path: "apiV2", url: "https://b2vapi.bmwgroup.com/api/vehicle/v2/$vin", desc: "Limited v2 Api of the car" },
             // { path: "socnavigation", url: "https://b2vapi.bmwgroup.com/api/vehicle/navigation/v1/$vin" },
         ];
 
@@ -281,7 +278,7 @@ class Bmw extends utils.Adapter {
                             forceIndex = true;
                         }
 
-                        this.extractKeys(this, vin + "." + element.path, data, preferedArrayName, forceIndex);
+                        this.extractKeys(this, vin + "." + element.path, data, preferedArrayName, forceIndex, false, element.desc);
                     })
                     .catch((error) => {
                         if (error.response && error.response.status === 401) {
@@ -304,7 +301,7 @@ class Bmw extends utils.Adapter {
     getDate() {
         const d = new Date();
 
-        var date_format_str =
+        const date_format_str =
             d.getFullYear().toString() +
             "-" +
             ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1).toString()) +
@@ -380,7 +377,7 @@ class Bmw extends utils.Adapter {
                     Accept: "*/*",
                     Authorization: "Bearer " + this.session.access_token,
                 };
-                let data = {
+                const data = {
                     serviceType: command,
                 };
                 if (command === "DOOR_UNLOCK") {
