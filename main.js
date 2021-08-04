@@ -322,15 +322,15 @@ class Bmw extends utils.Adapter {
             jar: this.cookieJar,
             withCredentials: true,
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-                Accept: "application/json",
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                Accept: "*/*",
                 Authorization: "Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==",
             },
             data: "redirect_uri=com.bmw.connected://oauth&refresh_token=" + this.session.refresh_token + "&grant_type=refresh_token",
         })
             .then((res) => {
                 this.log.debug(JSON.stringify(res.data));
-                this.session.access_token = res.data;
+                this.session = res.data;
                 this.setState("info.connection", true, true);
                 return res.data;
             })
