@@ -416,6 +416,17 @@ class Bmw extends utils.Adapter {
                 }
 
                 if (id.indexOf(".chargingStatus") && state.val !== "CHARGING") {
+                    await this.setObjectNotExistsAsync(vin + ".status.chargingTimeRemaining", {
+                        type: "state",
+                        common: {
+                            name: "chargingTimeRemaining",
+                            role: "value",
+                            type: "number",
+                            write: false,
+                            read: true,
+                        },
+                        native: {},
+                    });
                     this.setState(vin + ".status.chargingTimeRemaining", 0, true);
                 }
             }
