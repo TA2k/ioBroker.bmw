@@ -415,7 +415,7 @@ class Bmw extends utils.Adapter {
                     await this.setStateAsync(vin + ".remote." + resultDict[stateName], value, true);
                 }
 
-                if (id.indexOf(".chargingStatus") && state.val === "FINISHED_FULLY_CHARGED") {
+                if (id.indexOf(".chargingStatus") && state.val !== "CHARGING") {
                     this.setState(vin + ".status.chargingTimeRemaining", 0, true);
                 }
             }
