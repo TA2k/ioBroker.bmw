@@ -380,9 +380,7 @@ class Bmw extends utils.Adapter {
                 const data = {
                     serviceType: command,
                 };
-                if (command === "DOOR_UNLOCK") {
-                    data.bmwSkAnswer = this.config.bmwSkAnswer;
-                }
+
                 await this.requestClient({
                     method: "post",
                     url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/" + vin + "/executeService",
