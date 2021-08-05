@@ -406,14 +406,17 @@ class Bmw extends utils.Adapter {
                 const resultDict = { chargingStatus: "CHARGE_NOW", doorLockState: "DOOR_LOCK" };
                 const idArray = id.split(".");
                 const stateName = idArray[idArray.length - 1];
-
+                const vin = id.split(".")[2];
                 if (resultDict[stateName]) {
-                    const vin = id.split(".")[2];
                     let value = true;
                     if (!state.val || state.val === "INVALID" || state.val === "NOT_CHARGING" || state.val === "ERROR" || state.val === "UNLOCKED") {
                         value = false;
                     }
                     await this.setStateAsync(vin + ".remote." + resultDict[stateName], value, true);
+                }
+
+                if (id.indexOf(".chargingStatus") && state.val === "FINISHED_FULLY_CHARGED") {
+                    this.setState(vin + ".status.chargingTimeRemaining", 0, true);
                 }
             }
         }
