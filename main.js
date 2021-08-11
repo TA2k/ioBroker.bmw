@@ -490,17 +490,17 @@ class Bmw extends utils.Adapter {
                     await this.getVehiclesv2();
                 }, 10 * 1000);
             } else {
-                const resultDict = { chargingStatus: "CHARGE_NOW", doorLockState: "DOOR_LOCK" };
-                const idArray = id.split(".");
-                const stateName = idArray[idArray.length - 1];
-                const vin = id.split(".")[2];
-                if (resultDict[stateName]) {
-                    let value = true;
-                    if (!state.val || state.val === "INVALID" || state.val === "NOT_CHARGING" || state.val === "ERROR" || state.val === "UNLOCKED") {
-                        value = false;
-                    }
-                    await this.setStateAsync(vin + ".remote." + resultDict[stateName], value, true);
-                }
+                // const resultDict = { chargingStatus: "CHARGE_NOW", doorLockState: "DOOR_LOCK" };
+                // const idArray = id.split(".");
+                // const stateName = idArray[idArray.length - 1];
+                // const vin = id.split(".")[2];
+                // if (resultDict[stateName]) {
+                //     let value = true;
+                //     if (!state.val || state.val === "INVALID" || state.val === "NOT_CHARGING" || state.val === "ERROR" || state.val === "UNLOCKED") {
+                //         value = false;
+                //     }
+                //     await this.setStateAsync(vin + ".remote." + resultDict[stateName], value, true);
+                // }
 
                 if (id.indexOf(".chargingStatus") !== -1 && state.val !== "CHARGING") {
                     await this.setObjectNotExistsAsync(vin + ".status.chargingTimeRemaining", {
