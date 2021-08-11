@@ -52,9 +52,11 @@ class Bmw extends utils.Adapter {
         await this.login();
         if (this.session.access_token) {
             await this.getVehicles();
+            await this.getVehiclesv2();
             await this.updateVehicles();
             this.updateInterval = setInterval(async () => {
                 await this.updateVehicles();
+                await this.getVehiclesv2();
             }, this.config.interval * 60 * 1000);
             this.refreshTokenInterval = setInterval(() => {
                 this.refreshToken();
@@ -185,13 +187,13 @@ class Bmw extends utils.Adapter {
                         },
                         native: {},
                     });
-                    await this.setObjectNotExistsAsync(vehicle.vin + ".remote", {
-                        type: "channel",
-                        common: {
-                            name: "Remote Controls",
-                        },
-                        native: {},
-                    });
+                    // await this.setObjectNotExistsAsync(vehicle.vin + ".remote", {
+                    //     type: "channel",
+                    //     common: {
+                    //         name: "Remote Controls",
+                    //     },
+                    //     native: {},
+                    // });
                     await this.setObjectNotExistsAsync(vehicle.vin + ".general", {
                         type: "channel",
                         common: {
@@ -200,36 +202,107 @@ class Bmw extends utils.Adapter {
                         native: {},
                     });
 
+                    // const remoteArray = [
+                    //     { command: "CHARGE_NOW" },
+                    //     { command: "CLIMATE_NOW" },
+                    //     { command: "DOOR_LOCK" },
+                    //     { command: "DOOR_UNLOCK" },
+                    //     { command: "GET_VEHICLES" },
+                    //     { command: "GET_VEHICLE_STATUS" },
+                    //     { command: "HORN_BLOW" },
+                    //     { command: "LIGHT_FLASH" },
+                    //     { command: "VEHICLE_FINDER" },
+                    //     { command: "CLIMATE_NOW" },
+                    //     { command: "START_CHARGING" },
+                    //     { command: "STOP_CHARGING" },
+                    //     { command: "START_PRECONDITIONING" },
+                    // ];
+                    // remoteArray.forEach((remote) => {
+                    //     this.setObjectNotExists(vehicle.vin + ".remote." + remote.command, {
+                    //         type: "state",
+                    //         common: {
+                    //             name: remote.name || "",
+                    //             type: remote.type || "boolean",
+                    //             role: remote.role || "boolean",
+                    //             write: true,
+                    //             read: true,
+                    //         },
+                    //         native: {},
+                    //     });
+                    // });
+                    this.extractKeys(this, vehicle.vin + ".general", vehicle);
+                    this.rangeMapSupport[vehicle.vin] = vehicle.rangeMap === "NOT_SUPPORTED" ? false : true;
+                }
+            })
+            .catch((error) => {
+                this.log.error(error);
+            });
+    }
+    async getVehiclesv2() {
+        const headers = {
+            "user-agent": "Dart/2.10 (dart:io)",
+            "x-user-agent": "android(v1.07_20200330);bmw;1.5.2(8932)",
+            authorization: "Bearer " + this.session.access_token,
+            "accept-language": "de-DE",
+            host: "cocoapi.bmwgroup.com",
+            "24-hour-format": "true",
+        };
+
+        await this.requestClient({
+            method: "get",
+            url: "https://cocoapi.bmwgroup.com/eadrax-vcs/v1/vehicles?apptimezone=120&appDateTime=" + Date.now() + "&tireGuardMode=ENABLED",
+            headers: headers,
+        })
+            .then(async (res) => {
+                this.log.debug(JSON.stringify(res.data));
+                for (const vehicle of res.data) {
+                    // this.vinArray.push(vehicle.vin);
+                    await this.setObjectNotExistsAsync(vehicle.vin, {
+                        type: "device",
+                        common: {
+                            name: vehicle.model,
+                        },
+                        native: {},
+                    });
+                    await this.setObjectNotExistsAsync(vehicle.vin + ".properties", {
+                        type: "channel",
+                        common: {
+                            name: "Current status of the car v2",
+                        },
+                        native: {},
+                    });
+                    await this.setObjectNotExistsAsync(vehicle.vin + ".remotev2", {
+                        type: "channel",
+                        common: {
+                            name: "Remote Controls",
+                        },
+                        native: {},
+                    });
+
                     const remoteArray = [
-                        { command: "CHARGE_NOW" },
-                        { command: "CLIMATE_NOW" },
-                        { command: "DOOR_LOCK" },
-                        { command: "DOOR_UNLOCK" },
-                        { command: "GET_VEHICLES" },
-                        { command: "GET_VEHICLE_STATUS" },
-                        { command: "HORN_BLOW" },
-                        { command: "LIGHT_FLASH" },
-                        { command: "VEHICLE_FINDER" },
-                        { command: "CLIMATE_NOW" },
-                        { command: "START_CHARGING" },
-                        { command: "STOP_CHARGING" },
-                        { command: "START_PRECONDITIONING" },
+                        { command: "door-lock" },
+                        { command: "door-unlock" },
+                        { command: "horn-blow" },
+                        { command: "light-flash" },
+                        { command: "vehicle-finder" },
+                        { command: "climate-now_START" },
+                        { command: "climate-now_STOP" },
                     ];
                     remoteArray.forEach((remote) => {
-                        this.setObjectNotExists(vehicle.vin + ".remote." + remote.command, {
+                        this.setObjectNotExists(vehicle.vin + ".remotev2." + remote.command, {
                             type: "state",
                             common: {
                                 name: remote.name || "",
                                 type: remote.type || "boolean",
-                                role: remote.role || "boolean",
+                                role: remote.role || "button",
                                 write: true,
                                 read: true,
                             },
                             native: {},
                         });
                     });
-                    this.extractKeys(this, vehicle.vin + ".general", vehicle);
-                    this.rangeMapSupport[vehicle.vin] = vehicle.rangeMap === "NOT_SUPPORTED" ? false : true;
+                    this.extractKeys(this, vehicle.vin, vehicle);
+                    // this.rangeMapSupport[vehicle.vin] = vehicle.rangeMap === "NOT_SUPPORTED" ? false : true;
                 }
             })
             .catch((error) => {
@@ -240,7 +313,7 @@ class Bmw extends utils.Adapter {
         const date = this.getDate();
 
         const statusArray = [
-            { path: "status", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/status", desc: "Current status of the car" },
+            { path: "status", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/status", desc: "Current status of the car v1" },
             { path: "chargingprofile", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/chargingprofile", desc: "Charging profile of the car" },
             { path: "lastTrip", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/lastTrip", desc: "Last trip of the car" },
             { path: "allTrips", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/allTrips", desc: "All trips of the car" },
@@ -374,21 +447,33 @@ class Bmw extends utils.Adapter {
         if (state) {
             if (!state.ack) {
                 const vin = id.split(".")[2];
-                const command = id.split(".")[4];
+                const version = id.split(".")[3];
+
+                let command = id.split(".")[4];
+                const action = command.split("_")[1];
+                command = command.split("_")[0];
+                if (version === "remote") {
+                    this.log.warn("Please use remotev2");
+                    return;
+                }
                 const headers = {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Accept: "*/*",
-                    Authorization: "Bearer " + this.session.access_token,
+                    "user-agent": "Dart/2.10 (dart:io)",
+                    "x-user-agent": "android(v1.07_20200330);bmw;1.5.2(8932)",
+                    authorization: "Bearer " + this.session.access_token,
+                    "accept-language": "de-DE",
+                    host: "cocoapi.bmwgroup.com",
+                    "24-hour-format": "true",
+                    "Content-Type": "text/plain",
                 };
-                const data = {
-                    serviceType: command,
-                };
+                let url = "https://cocoapi.bmwgroup.com/eadrax-vrccs/v2/presentation/remote-commands/" + vin + "/climate-now";
+                if (action) {
+                    url += "?action=" + action;
+                }
 
                 await this.requestClient({
                     method: "post",
-                    url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/" + vin + "/executeService",
+                    url: url,
                     headers: headers,
-                    data: qs.stringify(data),
                 })
                     .then((res) => {
                         this.log.debug(JSON.stringify(res.data));
@@ -402,6 +487,7 @@ class Bmw extends utils.Adapter {
                     });
                 this.refreshTimeout = setTimeout(async () => {
                     await this.updateVehicles();
+                    await this.getVehiclesv2();
                 }, 10 * 1000);
             } else {
                 const resultDict = { chargingStatus: "CHARGE_NOW", doorLockState: "DOOR_LOCK" };
