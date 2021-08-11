@@ -465,7 +465,7 @@ class Bmw extends utils.Adapter {
                     "24-hour-format": "true",
                     "Content-Type": "text/plain",
                 };
-                let url = "https://cocoapi.bmwgroup.com/eadrax-vrccs/v2/presentation/remote-commands/" + vin + "/climate-now";
+                let url = "https://cocoapi.bmwgroup.com/eadrax-vrccs/v2/presentation/remote-commands/" + vin + "/" + command;
                 if (action) {
                     url += "?action=" + action;
                 }
