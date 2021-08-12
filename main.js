@@ -354,7 +354,7 @@ class Bmw extends utils.Adapter {
                             forceIndex = true;
                         }
 
-                        this.extractKeys(this, vin + "." + element.path, data, preferedArrayName, forceIndex, false, element.desc);
+                        this.extractKeys(this, vin + "." + element.path, data, "feature", forceIndex, false, element.desc);
                     })
                     .catch((error) => {
                         if (error.response && error.response.status === 401) {
