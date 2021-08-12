@@ -313,11 +313,11 @@ class Bmw extends utils.Adapter {
         const date = this.getDate();
 
         const statusArray = [
-            { path: "status", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/status", desc: "Current status of the car v1" },
-            { path: "chargingprofile", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/chargingprofile", desc: "Charging profile of the car" },
-            { path: "lastTrip", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/lastTrip", desc: "Last trip of the car" },
-            { path: "allTrips", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/allTrips", desc: "All trips of the car" },
-            { path: "serviceExecutionHistory", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/serviceExecutionHistory", desc: "Remote execution history" },
+            { path: "statusv1", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/status", desc: "Current status of the car v1" },
+            { path: "chargingprofile", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/chargingprofile", desc: "Charging profile of the car v1" },
+            { path: "lastTrip", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/lastTrip", desc: "Last trip of the car v1" },
+            { path: "allTrips", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/allTrips", desc: "All trips of the car v1" },
+            { path: "serviceExecutionHistory", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/serviceExecutionHistory", desc: "Remote execution history v1" },
             { path: "apiV2", url: "https://b2vapi.bmwgroup.com/api/vehicle/v2/$vin", desc: "Limited v2 Api of the car" },
             // { path: "socnavigation", url: "https://b2vapi.bmwgroup.com/api/vehicle/navigation/v1/$vin" },
         ];
