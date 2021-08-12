@@ -295,7 +295,7 @@ class Bmw extends utils.Adapter {
                             common: {
                                 name: remote.name || "",
                                 type: remote.type || "boolean",
-                                role: remote.role || "button",
+                                role: remote.role || "boolean",
                                 write: true,
                                 read: true,
                             },
