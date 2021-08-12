@@ -256,6 +256,7 @@ class Bmw extends utils.Adapter {
         })
             .then(async (res) => {
                 this.log.debug(JSON.stringify(res.data));
+
                 for (const vehicle of res.data) {
                     // this.vinArray.push(vehicle.vin);
                     await this.setObjectNotExistsAsync(vehicle.vin, {
@@ -302,7 +303,7 @@ class Bmw extends utils.Adapter {
                             native: {},
                         });
                     });
-                    this.extractKeys(this, vehicle.vin, vehicle);
+                    this.extractKeys(this, vehicle.vin, vehicle, "infoLabel");
                     // this.rangeMapSupport[vehicle.vin] = vehicle.rangeMap === "NOT_SUPPORTED" ? false : true;
                 }
             })
