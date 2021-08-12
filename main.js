@@ -52,6 +52,7 @@ class Bmw extends utils.Adapter {
         await this.login();
         if (this.session.access_token) {
             await this.getVehicles();
+            await this.cleanObjects();
             await this.getVehiclesv2();
             await this.updateVehicles();
             this.updateInterval = setInterval(async () => {
@@ -373,6 +374,20 @@ class Bmw extends utils.Adapter {
                     });
             });
         });
+    }
+    async cleanObjects() {
+        for (const vin of this.vinArray) {
+            const remoteState = await this.getObjectAsync(vin + ".remote");
+
+            if (remoteState) {
+                this.log.debug("clean " + vin);
+                await this.delObjectAsync(vin + ".status", { recursive: true });
+                await this.delObject(vin + ".remote", { recursive: true });
+                await this.delObject("_DatenNeuLaden");
+                await this.delObject("_LetzterDatenabrufOK");
+                await this.delObject("_LetzerFehler");
+            }
+        }
     }
     getDate() {
         const d = new Date();
