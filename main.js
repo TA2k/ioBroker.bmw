@@ -335,7 +335,7 @@ class Bmw extends utils.Adapter {
             }
             statusArray.forEach(async (element) => {
                 let url = element.url.replace("$vin", vin);
-                if (path === "statusv1") {
+                if (element.path === "statusv1") {
                     url += "?deviceTime=" + date + "&dlat=0&dlon=0";
                 }
                 await this.requestClient({
