@@ -334,7 +334,10 @@ class Bmw extends utils.Adapter {
                 statusArray.push({ path: "rangemap", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/rangemap?deviceTime=" + date });
             }
             statusArray.forEach(async (element) => {
-                const url = element.url.replace("$vin", vin);
+                let url = element.url.replace("$vin", vin);
+                if (path === "statusv1") {
+                    url += "?deviceTime=" + date + "&dlat=0&dlon=0";
+                }
                 await this.requestClient({
                     method: "get",
                     url: url,
