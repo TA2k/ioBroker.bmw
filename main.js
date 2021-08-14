@@ -369,9 +369,9 @@ class Bmw extends utils.Adapter {
 
                             return;
                         }
-                        this.log.error(element.url);
+                        this.log.error(url);
                         this.log.error(error);
-                        error.response && this.log.debug(JSON.stringify(error.response.data));
+                        error.response && this.log.error(JSON.stringify(error.response.data));
                     });
             });
         });
