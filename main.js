@@ -46,6 +46,7 @@ class Bmw extends utils.Adapter {
         this.vinArray = [];
         this.session = {};
         this.rangeMapSupport = {};
+        this.statusBlock = {};
 
         this.subscribeStates("*");
 
@@ -237,6 +238,7 @@ class Bmw extends utils.Adapter {
             })
             .catch((error) => {
                 this.log.error(error);
+                error.response && this.log.error(JSON.stringify(error.response.data));
             });
     }
     async getVehiclesv2() {
@@ -258,7 +260,6 @@ class Bmw extends utils.Adapter {
                 this.log.debug(JSON.stringify(res.data));
 
                 for (const vehicle of res.data) {
-                    // this.vinArray.push(vehicle.vin);
                     await this.setObjectNotExistsAsync(vehicle.vin, {
                         type: "device",
                         common: {
@@ -266,6 +267,7 @@ class Bmw extends utils.Adapter {
                         },
                         native: {},
                     });
+
                     await this.setObjectNotExistsAsync(vehicle.vin + ".properties", {
                         type: "channel",
                         common: {
@@ -304,11 +306,46 @@ class Bmw extends utils.Adapter {
                         });
                     });
                     this.extractKeys(this, vehicle.vin, vehicle, "infoLabel");
+                    this.updateChargingSessionv2(vehicle.vin);
                     // this.rangeMapSupport[vehicle.vin] = vehicle.rangeMap === "NOT_SUPPORTED" ? false : true;
                 }
             })
             .catch((error) => {
                 this.log.error(error);
+            });
+    }
+    async updateChargingSessionv2(vin) {
+        const headers = {
+            "user-agent": "Dart/2.10 (dart:io)",
+            "x-user-agent": "android(v1.07_20200330);bmw;1.5.2(8932)",
+            authorization: "Bearer " + this.session.access_token,
+            "accept-language": "de-DE",
+            "24-hour-format": "true",
+        };
+        const d = new Date();
+        const dateFormatted =
+            d.getFullYear().toString() + "-" + ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1).toString()) + "-01T00%3A00%3A00.000Z";
+        await this.requestClient({
+            method: "get",
+            url: "https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-sessions?vin=" + vin + "&next_token&date=" + dateFormatted + "&maxResults=40&include_date_picker=true",
+            headers: headers,
+        })
+            .then(async (res) => {
+                this.log.debug(JSON.stringify(res.data));
+
+                await this.setObjectNotExistsAsync(vin + ".chargingSessions", {
+                    type: "channel",
+                    common: {
+                        name: "Charging sessions of the car v2",
+                    },
+                    native: {},
+                });
+
+                this.extractKeys(this, vin + ".chargingSessions", res.data.chargingSessions);
+            })
+            .catch((error) => {
+                this.log.error(error);
+                error.response && this.log.error(JSON.stringify(error.response.data));
             });
     }
     async updateVehicles() {
@@ -336,6 +373,9 @@ class Bmw extends utils.Adapter {
             statusArray.forEach(async (element) => {
                 let url = element.url.replace("$vin", vin);
                 if (element.path === "statusv1") {
+                    if (this.statusBlock[vin]) {
+                        return;
+                    }
                     url += "?deviceTime=" + date + "&dlat=0&dlon=0";
                 }
                 await this.requestClient({
@@ -372,6 +412,12 @@ class Bmw extends utils.Adapter {
 
                             return;
                         }
+                        if (error.response && error.response.status === 404) {
+                            if (element.path === "statusv1") {
+                                this.statusBlock[vin] = true;
+                            }
+                        }
+
                         this.log.error(url);
                         this.log.error(error);
                         error.response && this.log.error(JSON.stringify(error.response.data));
