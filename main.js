@@ -323,17 +323,16 @@ class Bmw extends utils.Adapter {
             "24-hour-format": "true",
         };
         const d = new Date();
-        const dateFormatted =
-            d.getFullYear().toString() + "-" + ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1).toString()) + "-01T00%3A00%3A00.000Z";
+        const dateFormatted = d.getFullYear().toString() + "-" + ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1).toString());
         await this.requestClient({
             method: "get",
-            url: "https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-sessions?vin=" + vin + "&next_token&date=" + dateFormatted + "&maxResults=40&include_date_picker=true",
+            url: "https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-sessions?vin=" + vin + "&next_token&date=" + dateFormatted + "-01T00%3A00%3A00.000Z&maxResults=40&include_date_picker=true",
             headers: headers,
         })
             .then(async (res) => {
                 this.log.debug(JSON.stringify(res.data));
 
-                await this.setObjectNotExistsAsync(vin + ".chargingSessions", {
+                await this.setObjectNotExistsAsync(vin + ".chargingSessions.dateFormatted", {
                     type: "channel",
                     common: {
                         name: "Charging sessions of the car v2",
@@ -341,7 +340,7 @@ class Bmw extends utils.Adapter {
                     native: {},
                 });
 
-                this.extractKeys(this, vin + ".chargingSessions", res.data.chargingSessions);
+                this.extractKeys(this, vin + ".chargingSessions.dateFormatted", res.data.chargingSessions);
             })
             .catch((error) => {
                 this.log.error(error);
