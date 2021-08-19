@@ -103,6 +103,9 @@ class Bmw extends utils.Adapter {
                 if (error.response && error.response.status === 401) {
                     this.log.error("Please check username and password");
                 }
+                if (error.response && error.response.status === 400) {
+                    this.log.error("Please check username and password");
+                }
             });
         if (!authUrl || !authUrl.redirect_to) {
             this.log.error(JSON.stringify(authUrl));
