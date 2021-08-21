@@ -327,28 +327,47 @@ class Bmw extends utils.Adapter {
         };
         const d = new Date();
         const dateFormatted = d.getFullYear().toString() + "-" + ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1).toString());
-        await this.requestClient({
-            method: "get",
+        const day = d.getDate().toString().length == 2 ? d.getDate().toString() : "0" + d.getDate().toString();
+
+        const urlArray = [];
+        urlArray.push({
             url: "https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-sessions?vin=" + vin + "&next_token&date=" + dateFormatted + "-01T00%3A00%3A00.000Z&maxResults=40&include_date_picker=true",
-            headers: headers,
-        })
-            .then(async (res) => {
-                this.log.debug(JSON.stringify(res.data));
+            path: ".chargingSessions.",
+            name: "chargingSessions",
+        });
 
-                await this.setObjectNotExistsAsync(vin + ".chargingSessions.dateFormatted", {
-                    type: "channel",
-                    common: {
-                        name: "Charging sessions of the car v2",
-                    },
-                    native: {},
-                });
-
-                this.extractKeys(this, vin + ".chargingSessions.dateFormatted", res.data.chargingSessions);
+        urlArray.push({
+            url: "https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-statistics?vin=" + vin + "&next_token&date=" + dateFormatted + "-" + day + "T00%3A00%3A00.000Z",
+            path: ".charging-statistics.",
+            name: "Charging statistics",
+        });
+        for (const element of urlArray) {
+            await this.requestClient({
+                method: "get",
+                url: element.url,
+                headers: headers,
             })
-            .catch((error) => {
-                this.log.error(error);
-                error.response && this.log.error(JSON.stringify(error.response.data));
-            });
+                .then(async (res) => {
+                    this.log.debug(JSON.stringify(res.data));
+                    let data = res.data;
+                    if (data.chargingSessions) {
+                        data = data.chargingSessions;
+                    }
+                    await this.setObjectNotExistsAsync(vin + element.path + dateFormatted, {
+                        type: "channel",
+                        common: {
+                            name: element.name + " of the car v2",
+                        },
+                        native: {},
+                    });
+
+                    this.extractKeys(this, vin + element.path + dateFormatted, data);
+                })
+                .catch((error) => {
+                    this.log.error(error);
+                    error.response && this.log.error(JSON.stringify(error.response.data));
+                });
+        }
     }
     async updateVehicles() {
         const date = this.getDate();
