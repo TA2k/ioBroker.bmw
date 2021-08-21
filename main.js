@@ -45,7 +45,6 @@ class Bmw extends utils.Adapter {
         this.extractKeys = extractKeys;
         this.vinArray = [];
         this.session = {};
-        this.rangeMapSupport = {};
         this.statusBlock = {};
 
         this.subscribeStates("*");
@@ -236,7 +235,6 @@ class Bmw extends utils.Adapter {
                     //     });
                     // });
                     this.extractKeys(this, vehicle.vin + ".general", vehicle);
-                    this.rangeMapSupport[vehicle.vin] = vehicle.rangeMap === "NOT_SUPPORTED" ? false : true;
                 }
             })
             .catch((error) => {
@@ -310,7 +308,6 @@ class Bmw extends utils.Adapter {
                     });
                     this.extractKeys(this, vehicle.vin, vehicle, "infoLabel");
                     this.updateChargingSessionv2(vehicle.vin);
-                    // this.rangeMapSupport[vehicle.vin] = vehicle.rangeMap === "NOT_SUPPORTED" ? false : true;
                 }
             })
             .catch((error) => {
@@ -388,9 +385,6 @@ class Bmw extends utils.Adapter {
             Authorization: "Bearer " + this.session.access_token,
         };
         this.vinArray.forEach((vin) => {
-            if (this.rangeMapSupport[vin]) {
-                statusArray.push({ path: "rangemap", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/rangemap?deviceTime=" + date });
-            }
             statusArray.forEach(async (element) => {
                 let url = element.url.replace("$vin", vin);
                 if (element.path === "statusv1") {
