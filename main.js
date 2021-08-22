@@ -46,7 +46,7 @@ class Bmw extends utils.Adapter {
         this.vinArray = [];
         this.session = {};
         this.statusBlock = {};
-
+        this.nonChargingHistory = {};
         this.subscribeStates("*");
 
         await this.login();
@@ -315,6 +315,9 @@ class Bmw extends utils.Adapter {
             });
     }
     async updateChargingSessionv2(vin) {
+        if (this.nonChargingHistory[vin]) {
+            return;
+        }
         const headers = {
             "user-agent": "Dart/2.10 (dart:io)",
             "x-user-agent": "android(v1.07_20200330);bmw;1.5.2(8932)",
@@ -362,6 +365,11 @@ class Bmw extends utils.Adapter {
                     this.extractKeys(this, vin + element.path + dateFormatted, data);
                 })
                 .catch((error) => {
+                    if (error.response && error.response.status === 422) {
+                        this.log.info("No charging session available. Ignore " + vin);
+                        this.nonChargingHistory[vin] = true;
+                        return;
+                    }
                     this.log.error(element.url);
                     this.log.error(error);
                     error.response && this.log.error(JSON.stringify(error.response.data));
