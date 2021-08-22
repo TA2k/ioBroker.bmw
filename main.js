@@ -324,7 +324,8 @@ class Bmw extends utils.Adapter {
         };
         const d = new Date();
         const dateFormatted = d.getFullYear().toString() + "-" + ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1).toString());
-        const day = d.getDate().toString().length == 2 ? d.getDate().toString() : "0" + d.getDate().toString();
+        // const day = d.getDate().toString().length == 2 ? d.getDate().toString() : "0" + d.getDate().toString();
+        const fullDate = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().replace("Z", "000");
 
         const urlArray = [];
         urlArray.push({
@@ -334,7 +335,7 @@ class Bmw extends utils.Adapter {
         });
 
         urlArray.push({
-            url: "https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-statistics?vin=" + vin + "&next_token&date=" + dateFormatted + "-" + day + "T00%3A00%3A00.000Z",
+            url: "https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-statistics?vin=" + vin + "&currentDate=" + fullDate,
             path: ".charging-statistics.",
             name: "Charging statistics",
         });
@@ -361,6 +362,7 @@ class Bmw extends utils.Adapter {
                     this.extractKeys(this, vin + element.path + dateFormatted, data);
                 })
                 .catch((error) => {
+                    this.log.error(element.url);
                     this.log.error(error);
                     error.response && this.log.error(JSON.stringify(error.response.data));
                 });
