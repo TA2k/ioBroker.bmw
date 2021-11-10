@@ -1,11 +1,15 @@
 {
     "common": {
         "name": "bmw",
-        "version": "2.1.0",
+        "version": "2.2.0",
         "news": {
-            "2.1.0": {
+            "2.2.0": {
+                "en": "Disable v1 Endpoints",
+                "de": "Deaktivieren v1 Endpunkte wurden entfernt."
+            },
+            "2.1.2": {
                 "en": "Upgrade to statusV2 and remoteV2",
-                "de": "Status und Remote Kontrolle auf v2 geupdated"
+                "de": "Status und Remote Kontrolle auf v2 der neuen BMW App geupdated"
             },
             "2.0.0": {
                 "en": "initial release",
@@ -64,6 +68,11 @@
         "connectionType": "cloud",
         "dataSource": "poll",
         "materialize": true,
+        "plugins": {
+            "sentry": {
+                "dsn": "https://f976d718acc2489fb0e1991d4c8d26a0@sentry.iobroker.net/148"
+            }
+        },
         "dependencies": [
             {
                 "js-controller": ">=3.0.0"

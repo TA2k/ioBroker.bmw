@@ -20,7 +20,11 @@ Under remote you can control your car
 
 ## Changelog
 
-### 2.1.0
+### 2.2.0
+
+-   Disable v1 Endpoints
+  
+### 2.1.1
 
 -   Upgrade to statusV2 and remoteV2
   

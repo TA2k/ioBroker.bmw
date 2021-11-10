@@ -54,9 +54,7 @@ class Bmw extends utils.Adapter {
             await this.getVehicles();
             await this.cleanObjects();
             await this.getVehiclesv2();
-            await this.updateVehicles();
             this.updateInterval = setInterval(async () => {
-                await this.updateVehicles();
                 await this.getVehiclesv2();
             }, this.config.interval * 60 * 1000);
             this.refreshTokenInterval = setInterval(() => {
@@ -376,87 +374,18 @@ class Bmw extends utils.Adapter {
                 });
         }
     }
-    async updateVehicles() {
-        const date = this.getDate();
 
-        const statusArray = [
-            { path: "statusv1", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/status", desc: "Current status of the car v1" },
-            { path: "chargingprofile", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/chargingprofile", desc: "Charging profile of the car v1" },
-            { path: "lastTrip", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/lastTrip", desc: "Last trip of the car v1" },
-            { path: "allTrips", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/statistics/allTrips", desc: "All trips of the car v1" },
-            { path: "serviceExecutionHistory", url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles/$vin/serviceExecutionHistory", desc: "Remote execution history v1" },
-            { path: "apiV2", url: "https://b2vapi.bmwgroup.com/api/vehicle/v2/$vin", desc: "Limited v2 Api of the car" },
-            // { path: "socnavigation", url: "https://b2vapi.bmwgroup.com/api/vehicle/navigation/v1/$vin" },
-        ];
-
-        const headers = {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Accept: "application/json",
-            Authorization: "Bearer " + this.session.access_token,
-        };
-        this.vinArray.forEach((vin) => {
-            statusArray.forEach(async (element) => {
-                let url = element.url.replace("$vin", vin);
-                if (element.path === "statusv1") {
-                    if (this.statusBlock[vin]) {
-                        return;
-                    }
-                    url += "?deviceTime=" + date + "&dlat=0&dlon=0";
-                }
-                await this.requestClient({
-                    method: "get",
-                    url: url,
-                    headers: headers,
-                })
-                    .then((res) => {
-                        this.log.debug(JSON.stringify(res.data));
-                        if (!res.data) {
-                            return;
-                        }
-                        let data = res.data;
-                        const keys = Object.keys(res.data);
-                        if (keys.length === 1) {
-                            data = res.data[keys[0]];
-                        }
-                        let forceIndex = null;
-                        const preferedArrayName = null;
-                        if (element.path === "serviceExecutionHistory") {
-                            forceIndex = true;
-                        }
-
-                        this.extractKeys(this, vin + "." + element.path, data, preferedArrayName, forceIndex, false, element.desc);
-                    })
-                    .catch((error) => {
-                        if (error.response && error.response.status === 401) {
-                            error.response && this.log.debug(JSON.stringify(error.response.data));
-                            this.log.info(element.path + " receive 401 error. Refresh Token in 30 seconds");
-                            clearTimeout(this.refreshTokenTimeout);
-                            this.refreshTokenTimeout = setTimeout(() => {
-                                this.refreshToken();
-                            }, 1000 * 30);
-
-                            return;
-                        }
-                        if (error.response && error.response.status === 404) {
-                            if (element.path === "statusv1") {
-                                this.statusBlock[vin] = true;
-                            }
-                        }
-
-                        this.log.error(url);
-                        this.log.error(error);
-                        error.response && this.log.error(JSON.stringify(error.response.data));
-                    });
-            });
-        });
-    }
     async cleanObjects() {
         for (const vin of this.vinArray) {
-            const remoteState = await this.getObjectAsync(vin + ".remote");
+            const remoteState = await this.getObjectAsync(vin + ".apiV2");
 
             if (remoteState) {
-                this.log.debug("clean " + vin);
+                this.log.debug("clean old states" + vin);
+                await this.delObjectAsync(vin + ".statusv1", { recursive: true });
                 await this.delObjectAsync(vin + ".status", { recursive: true });
+                await this.delObjectAsync(vin + ".chargingprofile", { recursive: true });
+                await this.delObjectAsync(vin + ".serviceExecutionHistory", { recursive: true });
+                await this.delObjectAsync(vin + ".apiV2", { recursive: true });
                 await this.delObject(vin + ".remote", { recursive: true });
                 await this.delObject("_DatenNeuLaden");
                 await this.delObject("_LetzterDatenabrufOK");
@@ -576,7 +505,7 @@ class Bmw extends utils.Adapter {
                         }
                     });
                 this.refreshTimeout = setTimeout(async () => {
-                    await this.updateVehicles();
+
                     await this.getVehiclesv2();
                 }, 10 * 1000);
             } else {
