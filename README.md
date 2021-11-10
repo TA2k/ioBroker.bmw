@@ -16,7 +16,14 @@
 
 Adapter for BMW
 
-Under remote you can control your car
+**Aktueller Status**
+
+bmw.0.VIN.properties
+
+**Remote Befehle sind möglich unter** 
+
+bmw.0.VIN.remotev2
+
 
 ## Changelog
 
