@@ -382,6 +382,8 @@ class Bmw extends utils.Adapter {
             if (remoteState) {
                 this.log.debug("clean old states" + vin);
                 await this.delObjectAsync(vin + ".statusv1", { recursive: true });
+                await this.delObjectAsync(vin + ".lastTrip", { recursive: true });
+                await this.delObjectAsync(vin + ".allTrips", { recursive: true });
                 await this.delObjectAsync(vin + ".status", { recursive: true });
                 await this.delObjectAsync(vin + ".chargingprofile", { recursive: true });
                 await this.delObjectAsync(vin + ".serviceExecutionHistory", { recursive: true });
