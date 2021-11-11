@@ -304,7 +304,7 @@ class Bmw extends utils.Adapter {
                             native: {},
                         });
                     });
-                    this.extractKeys(this, vehicle.vin, vehicle, "infoLabel");
+                    this.extractKeys(this, vehicle.vin, vehicle, null, true);
                     this.updateChargingSessionv2(vehicle.vin);
                 }
             })
