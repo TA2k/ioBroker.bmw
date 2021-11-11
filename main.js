@@ -465,16 +465,16 @@ class Bmw extends utils.Adapter {
     async onStateChange(id, state) {
         if (state) {
             if (!state.ack) {
+                if (id.indexOf(".remotev2.") === -1) {
+                    this.log.warn("Please use remotev2 to control");
+                    return;
+                }
                 const vin = id.split(".")[2];
-                const version = id.split(".")[3];
 
                 let command = id.split(".")[4];
                 const action = command.split("_")[1];
                 command = command.split("_")[0];
-                if (version === "remote") {
-                    this.log.warn("Please use remotev2");
-                    return;
-                }
+
                 const headers = {
                     "user-agent": "Dart/2.10 (dart:io)",
                     "x-user-agent": "android(v1.07_20200330);bmw;1.5.2(8932)",
@@ -505,7 +505,6 @@ class Bmw extends utils.Adapter {
                         }
                     });
                 this.refreshTimeout = setTimeout(async () => {
-
                     await this.getVehiclesv2();
                 }, 10 * 1000);
             } else {
