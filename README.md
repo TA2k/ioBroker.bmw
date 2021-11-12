@@ -27,7 +27,11 @@ bmw.0.VIN.remotev2
 
 ## Changelog
 
-### 2.2.0
+### 2.4.0
+
+-   Add support for MINI and force refresh remote
+  
+### 2.3.0
 
 -   Disable v1 Endpoints
   
