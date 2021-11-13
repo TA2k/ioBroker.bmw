@@ -339,7 +339,7 @@ class Bmw extends utils.Adapter {
                     this.extractKeys(this, vin + element.path + dateFormatted, data);
                 })
                 .catch((error) => {
-                    if (error.response && error.response.status === 422) {
+                    if (error.response && (error.response.status === 422 || error.response.status === 403)) {
                         this.log.info("No charging session available. Ignore " + vin);
                         this.nonChargingHistory[vin] = true;
                         return;

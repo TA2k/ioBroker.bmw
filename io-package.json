@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "bmw",
-        "version": "2.4.0",
+        "version": "2.4.1",
         "news": {
-            "2.4.0": {
+            "2.4.1": {
                 "en": "Add support for MINI and a force refresh remote",
                 "de": "Support für MINI hinzugefügt und ein Update erzwingen remote"
             },
