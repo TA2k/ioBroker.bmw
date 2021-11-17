@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "bmw",
-        "version": "2.4.1",
+        "version": "2.5.0",
         "news": {
+            "2.5.0": {
+                "en": "Fix Login",
+                "de": "Loginproblem behoben"
+            },
             "2.4.1": {
                 "en": "Add support for MINI and a force refresh remote",
                 "de": "Support für MINI hinzugefügt und ein Update erzwingen remote"

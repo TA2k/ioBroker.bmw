@@ -8,6 +8,8 @@
 // you need to create an adapter
 const utils = require("@iobroker/adapter-core");
 const axios = require("axios");
+
+const crypto = require("crypto");
 const qs = require("qs");
 const { extractKeys } = require("./lib/extractKeys");
 const axiosCookieJarSupport = require("axios-cookiejar-support").default;
@@ -69,13 +71,16 @@ class Bmw extends utils.Adapter {
             "Accept-Language": "de-de",
             "Content-Type": "application/x-www-form-urlencoded",
         };
+        const [code_verifier, codeChallenge] = this.getCodeChallenge();
         const data = {
             client_id: "31c357a0-7a1d-4590-aa99-33b97244d048",
             response_type: "code",
             scope: "openid profile email offline_access smacc vehicle_data perseus dlm svds cesim vsapi remote_services fupo authenticate_user",
             redirect_uri: "com.bmw.connected://oauth",
-            state: "cEG9eLAIi6Nv-aaCAniziE_B6FPoobva3qr5gukilYw",
+            state: "cwU-gIE27j67poy2UcL3KQ",
             nonce: "login_nonce",
+            code_challenge_method: "S256",
+            code_challenge: codeChallenge,
             username: this.config.username,
             password: this.config.password,
             grant_type: "authorization_code",
@@ -151,7 +156,7 @@ class Bmw extends utils.Adapter {
                 "Accept-Language": "de-de",
                 Authorization: "Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==",
             },
-            data: "code=" + code + "&code_verifier=7PsmfPS5MpaNt0jEcPpi-B7M7u0gs1Nzw6ex0Y9pa-0&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code",
+            data: "code=" + code + "&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code&code_verifier=" + code_verifier,
         })
             .then((res) => {
                 this.log.debug(JSON.stringify(res.data));
@@ -165,6 +170,17 @@ class Bmw extends utils.Adapter {
                     this.log.error(JSON.stringify(error.response.data));
                 }
             });
+    }
+    getCodeChallenge() {
+        let hash = "";
+        let result = "";
+        const chars = "0123456789abcdef";
+        result = "";
+        for (let i = 64; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+        hash = crypto.createHash("sha256").update(result).digest("base64");
+        hash = hash.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+
+        return [result, hash];
     }
     async getVehicles() {
         const headers = {
