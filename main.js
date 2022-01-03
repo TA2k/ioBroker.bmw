@@ -85,6 +85,7 @@ class Bmw extends utils.Adapter {
             password: this.config.password,
             grant_type: "authorization_code",
         };
+        this.log.debug(qs.stringify(data));
         const authUrl = await this.requestClient({
             method: "post",
             url: "https://customer.bmwgroup.com/gcdm/oauth/authenticate",
