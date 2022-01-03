@@ -50,7 +50,10 @@ class Bmw extends utils.Adapter {
         this.statusBlock = {};
         this.nonChargingHistory = {};
         this.subscribeStates("*");
-
+        if (!this.config.username || !this.config.password) {
+            this.log.error("Please set username and password");
+            return;
+        }
         await this.login();
         if (this.session.access_token) {
             await this.getVehicles();
@@ -85,7 +88,7 @@ class Bmw extends utils.Adapter {
             password: this.config.password,
             grant_type: "authorization_code",
         };
-        this.log.debug(qs.stringify(data));
+
         const authUrl = await this.requestClient({
             method: "post",
             url: "https://customer.bmwgroup.com/gcdm/oauth/authenticate",
@@ -105,6 +108,12 @@ class Bmw extends utils.Adapter {
                 }
                 if (error.response && error.response.status === 401) {
                     this.log.error("Please check username and password");
+                    this.log.error(qs.stringify(data));
+                    this.log.error("Start relogin in 5min");
+                    this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
+                    this.reLoginTimeout = setTimeout(() => {
+                        this.login();
+                    }, 5000 * 60 * 1);
                 }
                 if (error.response && error.response.status === 400) {
                     this.log.error("Please check username and password");
@@ -429,6 +438,7 @@ class Bmw extends utils.Adapter {
                 this.log.error(error);
                 error.response && this.log.error(JSON.stringify(error.response.data));
                 this.log.error("Start relogin in 1min");
+                this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
                 this.reLoginTimeout = setTimeout(() => {
                     this.login();
                 }, 1000 * 60 * 1);
