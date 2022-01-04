@@ -108,7 +108,7 @@ class Bmw extends utils.Adapter {
                 }
                 if (error.response && error.response.status === 401) {
                     this.log.error("Please check username and password or too many logins in 5 minutes");
-                    this.log.error(qs.stringify(data));
+
                     this.log.error("Start relogin in 5min");
                     this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
                     this.reLoginTimeout = setTimeout(() => {
