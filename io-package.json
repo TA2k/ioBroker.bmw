@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "bmw",
-        "version": "2.5.0",
+        "version": "2.5.1",
         "news": {
+            "2.5.1": {
+                "en": "Add login error message",
+                "de": "Loginproblem Nachricht hinzugefügt"
+            },
             "2.5.0": {
                 "en": "Fix Login",
                 "de": "Loginproblem behoben"
