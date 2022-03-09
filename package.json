@@ -1,60 +1,59 @@
 {
-  "name": "iobroker.bmw",
-  "version": "2.5.1",
-  "description": "Adapter for BMW",
-  "author": {
-    "name": "TA2k",
-    "email": "tombox2020@gmail.com"
-  },
-  "homepage": "https://github.com/TA2k/ioBroker.bmw",
-  "license": "MIT",
-  "keywords": [
-    "BMW"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/TA2k/ioBroker.bmw"
-  },
-  "dependencies": {
-    "@iobroker/adapter-core": "^2.5.1",
-    "axios": "^0.24.0",
-    "json-bigint": "^1.0.0",
-    "qs": "^6.10.1",
-    "axios-cookiejar-support": "^1.0.1",
-    "tough-cookie": "^4.0.0"
-  },
-  "devDependencies": {
-    "@iobroker/testing": "^2.5.2",
-    "@types/chai": "^4.2.22",
-    "@types/chai-as-promised": "^7.1.4",
-    "@types/gulp": "^4.0.9",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^14.17.32",
-    "@types/proxyquire": "^1.3.28",
-    "@types/sinon": "^10.0.6",
-    "@types/sinon-chai": "^3.2.5",
-    "chai": "^4.3.4",
-    "chai-as-promised": "^7.1.1",
-    "eslint": "^8.1.0",
-    "gulp": "^4.0.2",
-    "mocha": "^9.1.3",
-    "proxyquire": "^2.1.3",
-    "sinon": "^12.0.0",
-    "sinon-chai": "^3.7.0",
-    "typescript": "~4.4.4"
-  },
-  "main": "main.js",
-  "scripts": {
-    "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
-    "test:package": "mocha test/package --exit",
-    "test:unit": "mocha test/unit --exit",
-    "test:integration": "mocha test/integration --exit",
-    "test": "npm run test:js && npm run test:package",
-    "check": "tsc --noEmit -p tsconfig.check.json",
-    "lint": "eslint"
-  },
-  "bugs": {
-    "url": "https://github.com/TA2k/ioBroker.bmw/issues"
-  },
-  "readmeFilename": "README.md"
+    "name": "iobroker.bmw",
+    "version": "2.5.2",
+    "description": "Adapter for BMW",
+    "author": {
+        "name": "TA2k",
+        "email": "tombox2020@gmail.com"
+    },
+    "homepage": "https://github.com/TA2k/ioBroker.bmw",
+    "license": "MIT",
+    "keywords": [
+        "BMW"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TA2k/ioBroker.bmw"
+    },
+    "dependencies": {
+        "@iobroker/adapter-core": "^2.6.0",
+        "axios": "^0.24.0",
+        "axios-cookiejar-support": "^1.0.1",
+        "json-bigint": "^1.0.0",
+        "qs": "^6.10.3",
+        "tough-cookie": "^4.0.0"
+    },
+    "devDependencies": {
+        "@iobroker/testing": "^2.5.6",
+        "@types/chai": "^4.3.0",
+        "@types/chai-as-promised": "^7.1.5",
+        "@types/gulp": "^4.0.9",
+        "@types/mocha": "^9.1.0",
+        "@types/node": "^14.18.12",
+        "@types/proxyquire": "^1.3.28",
+        "@types/sinon": "^10.0.11",
+        "@types/sinon-chai": "^3.2.8",
+        "chai": "^4.3.6",
+        "chai-as-promised": "^7.1.1",
+        "eslint": "^7.32.0",
+        "mocha": "^9.2.1",
+        "proxyquire": "^2.1.3",
+        "sinon": "^12.0.1",
+        "sinon-chai": "^3.7.0",
+        "typescript": "~4.4.4"
+    },
+    "main": "main.js",
+    "scripts": {
+        "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
+        "test:package": "mocha test/package --exit",
+        "test:unit": "mocha test/unit --exit",
+        "test:integration": "mocha test/integration --exit",
+        "test": "npm run test:js && npm run test:package",
+        "check": "tsc --noEmit -p tsconfig.check.json",
+        "lint": "eslint"
+    },
+    "bugs": {
+        "url": "https://github.com/TA2k/ioBroker.bmw/issues"
+    },
+    "readmeFilename": "README.md"
 }

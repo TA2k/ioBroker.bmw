@@ -142,7 +142,6 @@ class Bmw extends utils.Adapter {
                 return res.data;
             })
             .catch((error) => {
-                this.log.error("Login step 2 failed");
                 let code = "";
                 if (error.response && error.response.status === 400) {
                     this.log.error(JSON.stringify(error.response.data));
