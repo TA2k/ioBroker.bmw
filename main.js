@@ -102,6 +102,7 @@ class Bmw extends utils.Adapter {
                 return res.data;
             })
             .catch((error) => {
+                this.log.error("Login failed");
                 this.log.error(error);
                 if (error.response) {
                     this.log.error(JSON.stringify(error.response.data));
@@ -141,6 +142,7 @@ class Bmw extends utils.Adapter {
                 return res.data;
             })
             .catch((error) => {
+                this.log.error("Login step 2 failed");
                 let code = "";
                 if (error.response && error.response.status === 400) {
                     this.log.error(JSON.stringify(error.response.data));
@@ -175,6 +177,7 @@ class Bmw extends utils.Adapter {
                 return res.data;
             })
             .catch((error) => {
+                this.log.error("Login step 3 failed");
                 this.log.error(error);
                 if (error.response) {
                     this.log.error(JSON.stringify(error.response.data));
@@ -234,6 +237,7 @@ class Bmw extends utils.Adapter {
                 }
             })
             .catch((error) => {
+                this.log.error("getVehicles failed");
                 this.log.error(error);
                 error.response && this.log.error(JSON.stringify(error.response.data));
             });
@@ -310,6 +314,7 @@ class Bmw extends utils.Adapter {
                     }
                 })
                 .catch((error) => {
+                    this.log.error("getvehicles v2 failed");
                     this.log.error(error);
                 });
         }
@@ -370,6 +375,7 @@ class Bmw extends utils.Adapter {
                         this.nonChargingHistory[vin] = true;
                         return;
                     }
+                    this.log.error("updateChargingSessionv2 failed");
                     this.log.error(element.url);
                     this.log.error(error);
                     error.response && this.log.error(JSON.stringify(error.response.data));
@@ -510,6 +516,7 @@ class Bmw extends utils.Adapter {
                         return res.data;
                     })
                     .catch((error) => {
+                        this.log.error("Remote command failed");
                         this.log.error(error);
                         if (error.response) {
                             this.log.error(JSON.stringify(error.response.data));
