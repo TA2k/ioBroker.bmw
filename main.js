@@ -56,7 +56,7 @@ class Bmw extends utils.Adapter {
         }
         await this.login();
         if (this.session.access_token) {
-            await this.getVehicles();
+            // await this.getVehicles(); //old depracted api
             await this.cleanObjects();
             await this.getVehiclesv2();
             this.updateInterval = setInterval(async () => {
