@@ -9,10 +9,10 @@
 const utils = require("@iobroker/adapter-core");
 const axios = require("axios");
 
+const { HttpsCookieAgent } = require("http-cookie-agent");
 const crypto = require("crypto");
 const qs = require("qs");
 const { extractKeys } = require("./lib/extractKeys");
-const axiosCookieJarSupport = require("axios-cookiejar-support").default;
 const tough = require("tough-cookie");
 class Bmw extends utils.Adapter {
     /**
@@ -38,9 +38,15 @@ class Bmw extends utils.Adapter {
             this.log.info("Set interval to minimum 0.5");
             this.config.interval = 0.5;
         }
-        axiosCookieJarSupport(axios);
-        this.cookieJar = new tough.CookieJar();
-        this.requestClient = axios.create();
+        this.cookieJar = new tough.CookieJar(null, { ignoreError: true });
+
+        this.requestClient = axios.create({
+            jar: this.cookieJar,
+            withCredentials: true,
+            httpsAgent: new HttpsCookieAgent({
+                jar: this.cookieJar,
+            }),
+        });
         this.updateInterval = null;
         this.reLoginTimeout = null;
         this.refreshTokenTimeout = null;
@@ -143,7 +149,7 @@ class Bmw extends utils.Adapter {
             })
             .catch((error) => {
                 let code = "";
-                if (error.response && error.response.status === 400) {
+                if (error.response && error.response.status >= 400) {
                     this.log.error(JSON.stringify(error.response.data));
                     return;
                 }
@@ -153,6 +159,7 @@ class Bmw extends utils.Adapter {
                     this.log.debug(code);
                     return code;
                 }
+                this.log.error(error);
             });
         await this.requestClient({
             method: "post",
