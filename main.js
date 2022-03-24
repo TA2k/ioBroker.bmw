@@ -142,6 +142,7 @@ class Bmw extends utils.Adapter {
             data: qs.stringify(data),
             jar: this.cookieJar,
             withCredentials: true,
+            maxRedirects: 0,
         })
             .then((res) => {
                 this.log.debug(JSON.stringify(res.data));
@@ -153,13 +154,14 @@ class Bmw extends utils.Adapter {
                     this.log.error(JSON.stringify(error.response.data));
                     return;
                 }
-                if (error.config) {
-                    this.log.debug(JSON.stringify(error.config.url));
-                    code = qs.parse(error.config.url.split("?")[1]).code;
+                if (error.response.status === 302) {
+                    this.log.debug(JSON.stringify(error.response.headers.location));
+                    code = qs.parse(error.response.headers.location.split("?")[1]).code;
                     this.log.debug(code);
                     return code;
                 }
                 this.log.error(error);
+                return;
             });
         await this.requestClient({
             method: "post",
