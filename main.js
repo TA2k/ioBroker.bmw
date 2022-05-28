@@ -258,7 +258,7 @@ class Bmw extends utils.Adapter {
         for (const brand of brands) {
             const headers = {
                 "user-agent": this.userAgentDart,
-                "x-user-agent": this.xuserAgent.replace(";brand;", brand),
+                "x-user-agent": this.xuserAgent.replace(";brand;", `;${brand};`),
                 authorization: "Bearer " + this.session.access_token,
                 "accept-language": "de-DE",
                 host: "cocoapi.bmwgroup.com",
@@ -337,7 +337,7 @@ class Bmw extends utils.Adapter {
         }
         const headers = {
             "user-agent": this.userAgentDart,
-            "x-user-agent": "android(v1.07_20200330);bmw;1.5.2(8932)",
+            "x-user-agent": this.xuserAgent.replace(";brand;", `;bmw;`),
             authorization: "Bearer " + this.session.access_token,
             "accept-language": "de-DE",
             "24-hour-format": "true",
@@ -506,7 +506,7 @@ class Bmw extends utils.Adapter {
 
                 const headers = {
                     "user-agent": this.userAgentDart,
-                    "x-user-agent": "android(v1.07_20200330);bmw;1.5.2(8932)",
+                    "x-user-agent": this.xuserAgent.replace(";brand;", `;bmw;`),
                     authorization: "Bearer " + this.session.access_token,
                     "accept-language": "de-DE",
                     host: "cocoapi.bmwgroup.com",
