@@ -26,6 +26,9 @@ class Bmw extends utils.Adapter {
         this.on("ready", this.onReady.bind(this));
         this.on("stateChange", this.onStateChange.bind(this));
         this.on("unload", this.onUnload.bind(this));
+        this.userAgent = "My%20BMW/8932 CFNetwork/978.0.7 Darwin/18.7.0";
+        this.userAgentDart = "Dart/2.14 (dart:io)";
+        this.xuserAgent = "android(SP1A.210812.016.C1);brand;2.5.2(14945);row";
     }
 
     /**
@@ -171,7 +174,7 @@ class Bmw extends utils.Adapter {
             withCredentials: true,
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                "User-Agent": "My%20BMW/8932 CFNetwork/978.0.7 Darwin/18.7.0",
+                "User-Agent": this.userAgent,
                 Accept: "*/*",
                 "Accept-Language": "de-de",
                 Authorization: "Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==",
@@ -254,8 +257,8 @@ class Bmw extends utils.Adapter {
         const brands = ["bmw", "mini"];
         for (const brand of brands) {
             const headers = {
-                "user-agent": "Dart/2.10 (dart:io)",
-                "x-user-agent": "android(v1.07_20200330);" + brand + ";1.5.2(8932)",
+                "user-agent": this.userAgentDart,
+                "x-user-agent": this.xuserAgent.replace(";brand;", brand),
                 authorization: "Bearer " + this.session.access_token,
                 "accept-language": "de-DE",
                 host: "cocoapi.bmwgroup.com",
@@ -324,6 +327,7 @@ class Bmw extends utils.Adapter {
                 .catch((error) => {
                     this.log.error("getvehicles v2 failed");
                     this.log.error(error);
+                    error.response && this.log.error(JSON.stringify(error.response.data));
                 });
         }
     }
@@ -332,7 +336,7 @@ class Bmw extends utils.Adapter {
             return;
         }
         const headers = {
-            "user-agent": "Dart/2.10 (dart:io)",
+            "user-agent": this.userAgentDart,
             "x-user-agent": "android(v1.07_20200330);bmw;1.5.2(8932)",
             authorization: "Bearer " + this.session.access_token,
             "accept-language": "de-DE",
@@ -501,7 +505,7 @@ class Bmw extends utils.Adapter {
                 command = command.split("_")[0];
 
                 const headers = {
-                    "user-agent": "Dart/2.10 (dart:io)",
+                    "user-agent": this.userAgentDart,
                     "x-user-agent": "android(v1.07_20200330);bmw;1.5.2(8932)",
                     authorization: "Bearer " + this.session.access_token,
                     "accept-language": "de-DE",

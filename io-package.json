@@ -1,8 +1,11 @@
 {
     "common": {
         "name": "bmw",
-        "version": "2.5.3",
+        "version": "2.5.4",
         "news": {
+            "2.5.4": {
+                "en": "Fix login"
+            },
             "2.5.3": {
                 "en": "Fix login"
             },
