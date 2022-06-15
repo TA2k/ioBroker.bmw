@@ -256,6 +256,7 @@ class Bmw extends utils.Adapter {
     async getVehiclesv2() {
         const brands = ["bmw", "mini"];
         for (const brand of brands) {
+            this.log.debug(`Start getting ${brand} vehicles`);
             const headers = {
                 "user-agent": this.userAgentDart,
                 "x-user-agent": this.xuserAgent.replace(";brand;", `;${brand};`),
@@ -321,6 +322,7 @@ class Bmw extends utils.Adapter {
                             });
                         });
                         this.extractKeys(this, vehicle.vin, vehicle, null, true);
+                        await this.sleep(5000);
                         this.updateChargingSessionv2(vehicle.vin);
                     }
                 })
@@ -329,7 +331,11 @@ class Bmw extends utils.Adapter {
                     this.log.error(error);
                     error.response && this.log.error(JSON.stringify(error.response.data));
                 });
+            await this.sleep(5000);
         }
+    }
+    sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
     async updateChargingSessionv2(vin) {
         if (this.nonChargingHistory[vin]) {
@@ -497,7 +503,7 @@ class Bmw extends utils.Adapter {
 
                 let command = id.split(".")[4];
                 if (command === "force-refresh") {
-                    this.log.debug("force refresh");
+                    this.log.info("force refresh");
                     this.getVehiclesv2();
                     return;
                 }
@@ -535,6 +541,7 @@ class Bmw extends utils.Adapter {
                         }
                     });
                 this.refreshTimeout = setTimeout(async () => {
+                    this.log.info("Refresh values");
                     await this.getVehiclesv2();
                 }, 10 * 1000);
             } else {
