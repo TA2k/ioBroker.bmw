@@ -1,143 +1,138 @@
 {
-    "common": {
-        "name": "bmw",
-        "version": "2.5.4",
-        "news": {
-            "2.5.4": {
-                "en": "Fix login"
-            },
-            "2.5.3": {
-                "en": "Fix login"
-            },
-            "2.5.2": {
-                "en": "Bugfixes"
-            },
-            "2.5.1": {
-                "en": "Add login error message",
-                "de": "Loginproblem Nachricht hinzugefügt"
-            },
-            "2.5.0": {
-                "en": "Fix Login",
-                "de": "Loginproblem behoben"
-            },
-            "2.4.1": {
-                "en": "Add support for MINI and a force refresh remote",
-                "de": "Support für MINI hinzugefügt und ein Update erzwingen remote"
-            },
-            "2.3.0": {
-                "en": "Disable v1 Endpoints",
-                "de": "Deaktivieren v1 Endpunkte wurden entfernt."
-            },
-            "2.1.2": {
-                "en": "Upgrade to statusV2 and remoteV2",
-                "de": "Status und Remote Kontrolle auf v2 der neuen BMW App geupdated"
-            },
-            "2.0.0": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "zh-cn": "首次出版"
-            }
-        },
-        "titleLang": {
-            "en": "BMW",
-            "de": "BMW",
-            "ru": "BMW",
-            "pt": "BMW",
-            "nl": "BMW",
-            "fr": "BMW",
-            "it": "BMW",
-            "es": "BMW",
-            "pl": "BMW",
-            "zh-cn": "宝马"
-        },
-        "desc": {
-            "en": "Adapter for BMW",
-            "de": "Adapter für BMW",
-            "ru": "Адаптер для BMW",
-            "pt": "Adaptador para bmw",
-            "nl": "Adapter voor BMW",
-            "fr": "Adaptateur pour BMW",
-            "it": "Adattatore per BMW",
-            "es": "Adaptador para BMW",
-            "pl": "Adapter do BMW",
-            "zh-cn": "宝马适配器"
-        },
-        "authors": [
-            "TA2k <tombox2020@gmail.com>"
-        ],
-        "keywords": [
-            "BMW"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "main": "main.js",
-        "icon": "bmw.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/TA2k/ioBroker.bmw/master/admin/bmw.png",
-        "readme": "https://github.com/TA2k/ioBroker.bmw/blob/master/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "vehicle",
-        "compact": true,
-        "connectionType": "cloud",
-        "dataSource": "poll",
-        "materialize": true,
-        "plugins": {
-            "sentry": {
-                "dsn": "https://f976d718acc2489fb0e1991d4c8d26a0@sentry.iobroker.net/148"
-            }
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=3.0.0"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=4.0.9"
-            }
-        ]
+  "common": {
+    "name": "bmw",
+    "version": "2.5.5",
+    "news": {
+      "2.5.5": {
+        "en": "Fix login"
+      },
+      "2.5.4": {
+        "en": "Fix login"
+      },
+      "2.5.3": {
+        "en": "Fix login"
+      },
+      "2.5.2": {
+        "en": "Bugfixes"
+      },
+      "2.5.1": {
+        "en": "Add login error message",
+        "de": "Loginproblem Nachricht hinzugefügt"
+      },
+      "2.5.0": {
+        "en": "Fix Login",
+        "de": "Loginproblem behoben"
+      },
+      "2.4.1": {
+        "en": "Add support for MINI and a force refresh remote",
+        "de": "Support für MINI hinzugefügt und ein Update erzwingen remote"
+      },
+      "2.3.0": {
+        "en": "Disable v1 Endpoints",
+        "de": "Deaktivieren v1 Endpunkte wurden entfernt."
+      },
+      "2.1.2": {
+        "en": "Upgrade to statusV2 and remoteV2",
+        "de": "Status und Remote Kontrolle auf v2 der neuen BMW App geupdated"
+      },
+      "2.0.0": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "zh-cn": "首次出版"
+      }
     },
-    "encryptedNative": [
-        "password"
-    ],
-    "protectedNative": [
-        "password"
-    ],
-    "native": {
-        "username": "",
-        "password": "",
-        "interval": 5
+    "titleLang": {
+      "en": "BMW",
+      "de": "BMW",
+      "ru": "BMW",
+      "pt": "BMW",
+      "nl": "BMW",
+      "fr": "BMW",
+      "it": "BMW",
+      "es": "BMW",
+      "pl": "BMW",
+      "zh-cn": "宝马"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "Device or service connected",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
+    "desc": {
+      "en": "Adapter for BMW",
+      "de": "Adapter für BMW",
+      "ru": "Адаптер для BMW",
+      "pt": "Adaptador para bmw",
+      "nl": "Adapter voor BMW",
+      "fr": "Adaptateur pour BMW",
+      "it": "Adattatore per BMW",
+      "es": "Adaptador para BMW",
+      "pl": "Adapter do BMW",
+      "zh-cn": "宝马适配器"
+    },
+    "authors": ["TA2k <tombox2020@gmail.com>"],
+    "keywords": ["BMW"],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "main.js",
+    "icon": "bmw.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/TA2k/ioBroker.bmw/master/admin/bmw.png",
+    "readme": "https://github.com/TA2k/ioBroker.bmw/blob/master/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "vehicle",
+    "compact": true,
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "materialize": true,
+    "plugins": {
+      "sentry": {
+        "dsn": "https://f976d718acc2489fb0e1991d4c8d26a0@sentry.iobroker.net/148"
+      }
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=3.0.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=4.0.9"
+      }
     ]
+  },
+  "encryptedNative": ["password"],
+  "protectedNative": ["password"],
+  "native": {
+    "username": "",
+    "password": "",
+    "interval": 5
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Device or service connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }
