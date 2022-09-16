@@ -9,7 +9,7 @@
 const utils = require("@iobroker/adapter-core");
 const axios = require("axios");
 
-const { HttpsCookieAgent } = require("http-cookie-agent");
+const { HttpsCookieAgent } = require("http-cookie-agent/http");
 const crypto = require("crypto");
 const qs = require("qs");
 const { extractKeys } = require("./lib/extractKeys");
@@ -29,6 +29,14 @@ class Bmw extends utils.Adapter {
     this.userAgent = "My%20BMW/8932 CFNetwork/978.0.7 Darwin/18.7.0";
     this.userAgentDart = "Dart/2.14 (dart:io)";
     this.xuserAgent = "android(SP1A.210812.016.C1);brand;99.0.0(99999);row";
+    this.updateInterval = null;
+    this.reLoginTimeout = null;
+    this.refreshTokenTimeout = null;
+    this.extractKeys = extractKeys;
+    this.vinArray = [];
+    this.session = {};
+    this.statusBlock = {};
+    this.nonChargingHistory = {};
   }
 
   /**
@@ -46,18 +54,9 @@ class Bmw extends utils.Adapter {
     this.requestClient = axios.create({
       jar: this.cookieJar,
       withCredentials: true,
-      httpsAgent: new HttpsCookieAgent({
-        jar: this.cookieJar,
-      }),
+      httpsAgent: new HttpsCookieAgent({ cookies: { jar: this.cookieJar } }),
     });
-    this.updateInterval = null;
-    this.reLoginTimeout = null;
-    this.refreshTokenTimeout = null;
-    this.extractKeys = extractKeys;
-    this.vinArray = [];
-    this.session = {};
-    this.statusBlock = {};
-    this.nonChargingHistory = {};
+
     this.subscribeStates("*");
     if (!this.config.username || !this.config.password) {
       this.log.error("Please set username and password");
@@ -397,8 +396,8 @@ class Bmw extends utils.Adapter {
           this.extractKeys(this, vin + element.path + dateFormatted, data);
         })
         .catch((error) => {
-          if (error.response && (error.response.status === 422 || error.response.status === 403)) {
-            this.log.info("No charging session available. Ignore " + vin);
+          if (error.response) {
+            this.log.info("No charging session available. Ignore " + vin + "until restart");
             this.nonChargingHistory[vin] = true;
             return;
           }
