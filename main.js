@@ -7,7 +7,7 @@
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require("@iobroker/adapter-core");
-const axios = require("axios");
+const axios = require("axios").default;
 
 const { HttpsCookieAgent } = require("http-cookie-agent/http");
 const crypto = require("crypto");
@@ -37,6 +37,12 @@ class Bmw extends utils.Adapter {
     this.session = {};
     this.statusBlock = {};
     this.nonChargingHistory = {};
+    this.cookieJar = new tough.CookieJar(null, { ignoreError: true });
+
+    this.requestClient = axios.create({
+      withCredentials: true,
+      httpsAgent: new HttpsCookieAgent({ cookies: { jar: this.cookieJar } }),
+    });
   }
 
   /**
@@ -49,13 +55,6 @@ class Bmw extends utils.Adapter {
       this.log.info("Set interval to minimum 0.5");
       this.config.interval = 0.5;
     }
-    this.cookieJar = new tough.CookieJar(null, { ignoreError: true });
-
-    this.requestClient = axios.create({
-      jar: this.cookieJar,
-      withCredentials: true,
-      httpsAgent: new HttpsCookieAgent({ cookies: { jar: this.cookieJar } }),
-    });
 
     this.subscribeStates("*");
     if (!this.config.username || !this.config.password) {
@@ -103,7 +102,6 @@ class Bmw extends utils.Adapter {
       url: "https://customer.bmwgroup.com/gcdm/oauth/authenticate",
       headers: headers,
       data: qs.stringify(data),
-      jar: this.cookieJar,
       withCredentials: true,
     })
       .then((res) => {
@@ -143,7 +141,6 @@ class Bmw extends utils.Adapter {
       url: "https://customer.bmwgroup.com/gcdm/oauth/authenticate",
       headers: headers,
       data: qs.stringify(data),
-      jar: this.cookieJar,
       withCredentials: true,
       maxRedirects: 0,
     })
@@ -169,8 +166,6 @@ class Bmw extends utils.Adapter {
     await this.requestClient({
       method: "post",
       url: "https://customer.bmwgroup.com/gcdm/oauth/token",
-
-      jar: this.cookieJar,
       withCredentials: true,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -450,7 +445,6 @@ class Bmw extends utils.Adapter {
     await this.requestClient({
       method: "post",
       url: "https://customer.bmwgroup.com/gcdm/oauth/token",
-      jar: this.cookieJar,
       withCredentials: true,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
