@@ -29,9 +29,9 @@ class Bmw extends utils.Adapter {
     this.userAgent = "My%20BMW/8932 CFNetwork/978.0.7 Darwin/18.7.0";
     this.userAgentDart = "Dart/2.14 (dart:io)";
     this.xuserAgent = "android(SP1A.210812.016.C1);brand;99.0.0(99999);row";
-    this.updateInterval = null;
-    this.reLoginTimeout = null;
-    this.refreshTokenTimeout = null;
+    this.updateInterval;
+    this.reLoginTimeout;
+    this.refreshTokenInterval;
     this.extractKeys = extractKeys;
     this.vinArray = [];
     this.session = {};
@@ -479,7 +479,6 @@ class Bmw extends utils.Adapter {
     try {
       clearTimeout(this.refreshTimeout);
       clearTimeout(this.reLoginTimeout);
-      clearTimeout(this.refreshTokenTimeout);
       clearInterval(this.updateInterval);
       clearInterval(this.refreshTokenInterval);
       callback();
