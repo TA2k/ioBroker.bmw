@@ -26,6 +26,9 @@ bmw.0.VIN.remotev2
 
 ## Changelog
 
+### 2.5.6
+
+- Fix charging message
 ### 2.5.5
 
 - Fix login
