@@ -112,7 +112,7 @@
   "native": {
     "username": "",
     "password": "",
-    "interval": 5
+    "interval": 10
   },
   "objects": [],
   "instanceObjects": [
