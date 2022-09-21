@@ -65,6 +65,8 @@ class Bmw extends utils.Adapter {
     if (this.session.access_token) {
       // await this.getVehicles(); //old depracted api
       await this.cleanObjects();
+
+      this.log.info(`Start getting ${this.config.brand} vehicles`);
       await this.getVehiclesv2();
       this.updateInterval = setInterval(async () => {
         await this.getVehiclesv2();
@@ -249,85 +251,86 @@ class Bmw extends utils.Adapter {
       });
   }
   async getVehiclesv2() {
-    const brands = ["bmw", "mini"];
-    for (const brand of brands) {
-      this.log.debug(`Start getting ${brand} vehicles`);
-      const headers = {
-        "user-agent": this.userAgentDart,
-        "x-user-agent": this.xuserAgent.replace(";brand;", `;${brand};`),
-        authorization: "Bearer " + this.session.access_token,
-        "accept-language": "de-DE",
-        host: "cocoapi.bmwgroup.com",
-        "24-hour-format": "true",
-      };
+    const brand = this.config.brand;
+    const headers = {
+      "user-agent": this.userAgentDart,
+      "x-user-agent": this.xuserAgent.replace(";brand;", `;${brand};`),
+      authorization: "Bearer " + this.session.access_token,
+      "accept-language": "de-DE",
+      host: "cocoapi.bmwgroup.com",
+      "24-hour-format": "true",
+    };
 
-      await this.requestClient({
-        method: "get",
-        url: "https://cocoapi.bmwgroup.com/eadrax-vcs/v1/vehicles?apptimezone=120&appDateTime=" + Date.now() + "&tireGuardMode=ENABLED",
-        headers: headers,
+    await this.requestClient({
+      method: "get",
+      url: "https://cocoapi.bmwgroup.com/eadrax-vcs/v1/vehicles?apptimezone=120&appDateTime=" + Date.now() + "&tireGuardMode=ENABLED",
+      headers: headers,
+    })
+      .then(async (res) => {
+        this.log.debug(JSON.stringify(res.data));
+        this.log.info(`Found ${res.data.length} ${brand} vehicles`);
+        if (res.data.length === 0) {
+          this.log.info(`No ${brand} vehicles found please check brand in instance settings`);
+          return;
+        }
+        for (const vehicle of res.data) {
+          await this.setObjectNotExistsAsync(vehicle.vin, {
+            type: "device",
+            common: {
+              name: vehicle.model,
+            },
+            native: {},
+          });
+
+          await this.setObjectNotExistsAsync(vehicle.vin + ".properties", {
+            type: "channel",
+            common: {
+              name: "Current status of the car v2",
+            },
+            native: {},
+          });
+          await this.setObjectNotExistsAsync(vehicle.vin + ".remotev2", {
+            type: "channel",
+            common: {
+              name: "Remote Controls",
+            },
+            native: {},
+          });
+
+          const remoteArray = [
+            { command: "door-lock" },
+            { command: "door-unlock" },
+            { command: "horn-blow" },
+            { command: "light-flash" },
+            { command: "vehicle-finder" },
+            { command: "climate-now_START" },
+            { command: "climate-now_STOP" },
+            { command: "force-refresh", name: "Force Refresh" },
+          ];
+          remoteArray.forEach((remote) => {
+            this.setObjectNotExists(vehicle.vin + ".remotev2." + remote.command, {
+              type: "state",
+              common: {
+                name: remote.name || "",
+                type: remote.type || "boolean",
+                role: remote.role || "boolean",
+                write: true,
+                read: true,
+              },
+              native: {},
+            });
+          });
+          this.extractKeys(this, vehicle.vin, vehicle, null, true);
+          await this.sleep(5000);
+          this.updateChargingSessionv2(vehicle.vin);
+        }
       })
-        .then(async (res) => {
-          this.log.debug(JSON.stringify(res.data));
-
-          for (const vehicle of res.data) {
-            await this.setObjectNotExistsAsync(vehicle.vin, {
-              type: "device",
-              common: {
-                name: vehicle.model,
-              },
-              native: {},
-            });
-
-            await this.setObjectNotExistsAsync(vehicle.vin + ".properties", {
-              type: "channel",
-              common: {
-                name: "Current status of the car v2",
-              },
-              native: {},
-            });
-            await this.setObjectNotExistsAsync(vehicle.vin + ".remotev2", {
-              type: "channel",
-              common: {
-                name: "Remote Controls",
-              },
-              native: {},
-            });
-
-            const remoteArray = [
-              { command: "door-lock" },
-              { command: "door-unlock" },
-              { command: "horn-blow" },
-              { command: "light-flash" },
-              { command: "vehicle-finder" },
-              { command: "climate-now_START" },
-              { command: "climate-now_STOP" },
-              { command: "force-refresh", name: "Force Refresh" },
-            ];
-            remoteArray.forEach((remote) => {
-              this.setObjectNotExists(vehicle.vin + ".remotev2." + remote.command, {
-                type: "state",
-                common: {
-                  name: remote.name || "",
-                  type: remote.type || "boolean",
-                  role: remote.role || "boolean",
-                  write: true,
-                  read: true,
-                },
-                native: {},
-              });
-            });
-            this.extractKeys(this, vehicle.vin, vehicle, null, true);
-            await this.sleep(5000);
-            this.updateChargingSessionv2(vehicle.vin);
-          }
-        })
-        .catch((error) => {
-          this.log.error("getvehicles v2 failed");
-          this.log.error(error);
-          error.response && this.log.error(JSON.stringify(error.response.data));
-        });
-      await this.sleep(5000);
-    }
+      .catch((error) => {
+        this.log.error("getvehicles v2 failed");
+        this.log.error(error);
+        error.response && this.log.error(JSON.stringify(error.response.data));
+      });
+    await this.sleep(5000);
   }
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -338,7 +341,7 @@ class Bmw extends utils.Adapter {
     }
     const headers = {
       "user-agent": this.userAgentDart,
-      "x-user-agent": this.xuserAgent.replace(";brand;", `;bmw;`),
+      "x-user-agent": this.xuserAgent.replace(";brand;", `;${this.config.brand};`),
       authorization: "Bearer " + this.session.access_token,
       "accept-language": "de-DE",
       "24-hour-format": "true",
@@ -513,7 +516,7 @@ class Bmw extends utils.Adapter {
 
         const headers = {
           "user-agent": this.userAgentDart,
-          "x-user-agent": this.xuserAgent.replace(";brand;", `;bmw;`),
+          "x-user-agent": this.xuserAgent.replace(";brand;", `;${this.config.brand};`),
           authorization: "Bearer " + this.session.access_token,
           "accept-language": "de-DE",
           host: "cocoapi.bmwgroup.com",
