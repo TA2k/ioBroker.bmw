@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.5.6",
+    "version": "2.5.7",
     "news": {
+      "2.5.7": {
+        "en": "Fix Quota problem",
+        "de": "Quota Problem es muss jetzt explizit die Marke BMW oder Mini in den Optionen gewählt werden."
+      },
       "2.5.6": {
         "en": "Fix charging message"
       },
@@ -112,7 +116,7 @@
   "native": {
     "username": "",
     "password": "",
-    "interval": 10,
+    "interval": 5,
     "brand": "bmw"
   },
   "objects": [],
