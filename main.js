@@ -392,24 +392,29 @@ class Bmw extends utils.Adapter {
           });
           await this.extractKeys(this, vin + element.path + dateFormatted, data);
 
-          if (element.name === "chargingSessions") {
-            const datal = [...data.sessions][0];
-            datal._date = datal.id.split('_')[0];
-            datal._id = datal.id.split('_')[1];
-            datal.timestamp = new Date(datal._date).valueOf();
-            datal.energy = datal.energyCharged.replace('~','').trim().split(' ')[0];
-            datal.unit = datal.energyCharged.replace('~','').trim().split(' ')[1];
-            datal.id = "latest";
-            await this.setObjectNotExistsAsync(vin + element.path + 'latest', {
-              type: "channel",
-              common: {
-                name: element.name + " of the car v2",
-              },
-              native: {},
-            });
-            await this.extractKeys(this, vin + element.path + 'latest', datal);
+          if (element.name === "chargingSessions" && data.sessions && data.sessions.length > 0) {
+            try {
+              const datal = data.sessions[0];
+              datal._date = datal.id.split("_")[0];
+              datal._id = datal.id.split("_")[1];
+              datal.timestamp = new Date(datal._date).valueOf();
+              if (datal.energyCharged.replace) {
+                datal.energy = datal.energyCharged.replace("~", "").trim().split(" ")[0];
+                datal.unit = datal.energyCharged.replace("~", "").trim().split(" ")[1];
+              }
+              datal.id = "latest";
+              await this.setObjectNotExistsAsync(vin + element.path + "latest", {
+                type: "channel",
+                common: {
+                  name: element.name + "latest of the car v2",
+                },
+                native: {},
+              });
+              await this.extractKeys(this, vin + element.path + "latest", datal);
+            } catch (error) {
+              this.log.debug(error);
+            }
           }
-
         })
         .catch((error) => {
           if (error.response) {
