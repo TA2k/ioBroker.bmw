@@ -369,7 +369,7 @@ class Bmw extends utils.Adapter {
     urlArray.push({
       url: "https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-statistics?vin=" + vin + "&currentDate=" + fullDate,
       path: ".charging-statistics.",
-      name: "Charging statistics",
+      name: "charging statistics",
     });
     for (const element of urlArray) {
       await this.requestClient({
@@ -390,8 +390,26 @@ class Bmw extends utils.Adapter {
             },
             native: {},
           });
+          await this.extractKeys(this, vin + element.path + dateFormatted, data);
 
-          this.extractKeys(this, vin + element.path + dateFormatted, data);
+          if (element.name === "chargingSessions") {
+            const datal = [...data.sessions][0];
+            datal._date = datal.id.split('_')[0];
+            datal._id = datal.id.split('_')[1];
+            datal.timestamp = new Date(datal._date).valueOf();
+            datal.energy = datal.energyCharged.replace('~','').trim().split(' ')[0];
+            datal.unit = datal.energyCharged.replace('~','').trim().split(' ')[1];
+            datal.id = "latest";
+            await this.setObjectNotExistsAsync(vin + element.path + 'latest', {
+              type: "channel",
+              common: {
+                name: element.name + " of the car v2",
+              },
+              native: {},
+            });
+            await this.extractKeys(this, vin + element.path + 'latest', datal);
+          }
+
         })
         .catch((error) => {
           if (error.response) {
