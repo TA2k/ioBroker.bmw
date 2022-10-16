@@ -67,7 +67,7 @@ class Bmw extends utils.Adapter {
       await this.cleanObjects();
 
       this.log.info(`Start getting ${this.config.brand} vehicles`);
-      await this.getVehiclesv2();
+      await this.getVehiclesv2(true);
       this.updateInterval = setInterval(async () => {
         await this.getVehiclesv2();
       }, this.config.interval * 60 * 1000);
@@ -250,7 +250,7 @@ class Bmw extends utils.Adapter {
         error.response && this.log.error(JSON.stringify(error.response.data));
       });
   }
-  async getVehiclesv2() {
+  async getVehiclesv2(firstStart) {
     const brand = this.config.brand;
     const headers = {
       "user-agent": this.userAgentDart,
@@ -268,7 +268,9 @@ class Bmw extends utils.Adapter {
     })
       .then(async (res) => {
         this.log.debug(JSON.stringify(res.data));
-        this.log.info(`Found ${res.data.length} ${brand} vehicles`);
+        if (firstStart) {
+          this.log.info(`Found ${res.data.length} ${brand} vehicles`);
+        }
         if (res.data.length === 0) {
           this.log.info(`No ${brand} vehicles found please check brand in instance settings`);
           return;
