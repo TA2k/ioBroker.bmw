@@ -449,7 +449,11 @@ class Bmw extends utils.Adapter {
             });
           });
           // this.extractKeys(this, vehicle.vin, vehicle, null, true);
-          this.json2iob(this, vehicle.vin, vehicle, { forcedIndex: true, descriptions: this.description });
+          this.json2iob.parse(vehicle.vin, vehicle, {
+            forceIndex: true,
+            descriptions: this.description,
+          });
+
           await this.sleep(5000);
           this.updateChargingSessionv2(vehicle.vin);
         }
