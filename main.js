@@ -389,7 +389,7 @@ class Bmw extends utils.Adapter {
 
     await this.requestClient({
       method: "get",
-      url: "https://cocoapi.bmwgroup.com/eadrax-vcs/v1/vehicles?apptimezone=120&appDateTime=" + Date.now() + "&tireGuardMode=ENABLED",
+      url: "https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles?apptimezone=120&appDateTime=" + Date.now() + "&tireGuardMode=ENABLED",
       headers: headers,
     })
       .then(async (res) => {
