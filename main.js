@@ -190,12 +190,13 @@ class Bmw extends utils.Adapter {
     await this.login();
     if (this.session.access_token) {
       // await this.getVehicles(); //old depracted api
-      await this.cleanObjects();
 
       this.log.info(`Start getting ${this.config.brand} vehicles`);
       await this.getVehiclesv2(true);
+      await this.cleanObjects();
+      await this.updateDevices();
       this.updateInterval = setInterval(async () => {
-        await this.getVehiclesv2();
+        await this.updateDevices();
       }, this.config.interval * 60 * 1000);
       this.refreshTokenInterval = setInterval(() => {
         this.refreshToken();
@@ -359,6 +360,7 @@ class Bmw extends utils.Adapter {
           //     },
           //     native: {},
           // });
+
           await this.setObjectNotExistsAsync(vehicle.vin + ".general", {
             type: "channel",
             common: {
@@ -402,6 +404,7 @@ class Bmw extends utils.Adapter {
           return;
         }
         for (const vehicle of res.data) {
+          this.vinArray.push(vehicle.vin);
           await this.setObjectNotExistsAsync(vehicle.vin, {
             type: "device",
             common: {
@@ -409,11 +412,10 @@ class Bmw extends utils.Adapter {
             },
             native: {},
           });
-
-          await this.setObjectNotExistsAsync(vehicle.vin + ".properties", {
+          await this.setObjectNotExistsAsync(vehicle.vin + ".state", {
             type: "channel",
             common: {
-              name: "Current status of the car v2",
+              name: "Current status of the car v4",
             },
             native: {},
           });
@@ -464,6 +466,36 @@ class Bmw extends utils.Adapter {
         error.response && this.log.error(JSON.stringify(error.response.data));
       });
     await this.sleep(5000);
+  }
+  async updateDevices() {
+    const brand = this.config.brand;
+    const headers = {
+      "user-agent": this.userAgentDart,
+      "x-user-agent": this.xuserAgent.replace(";brand;", `;${brand};`),
+      authorization: "Bearer " + this.session.access_token,
+      "accept-language": "de-DE",
+      host: "cocoapi.bmwgroup.com",
+      "24-hour-format": "true",
+    };
+    for (const vin of this.vinArray) {
+      this.log.debug("update " + vin);
+      headers["bmw-vin"] = vin;
+      await this.requestClient({
+        method: "get",
+        url:
+          "https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=" + Date.now() + "&tireGuardMode=ENABLED",
+        headers: headers,
+      })
+        .then(async (res) => {
+          this.log.debug(JSON.stringify(res.data));
+          this.json2iob.parse(vin, res.data, { forceIndex: true, descriptions: this.description });
+        })
+        .catch((error) => {
+          this.log.error("update  failed");
+          this.log.error(error);
+          error.response && this.log.error(JSON.stringify(error.response.data));
+        });
+    }
   }
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -565,7 +597,7 @@ class Bmw extends utils.Adapter {
 
   async cleanObjects() {
     for (const vin of this.vinArray) {
-      const remoteState = await this.getObjectAsync(vin + ".apiV2");
+      const remoteState = await this.getObjectAsync(vin + ".properties");
 
       if (remoteState) {
         this.log.debug("clean old states" + vin);
@@ -573,6 +605,8 @@ class Bmw extends utils.Adapter {
         await this.delObjectAsync(vin + ".lastTrip", { recursive: true });
         await this.delObjectAsync(vin + ".allTrips", { recursive: true });
         await this.delObjectAsync(vin + ".status", { recursive: true });
+        await this.delObjectAsync(vin + ".properties", { recursive: true });
+        await this.delObjectAsync(vin + ".capabilities", { recursive: true });
         await this.delObjectAsync(vin + ".chargingprofile", { recursive: true });
         await this.delObjectAsync(vin + ".serviceExecutionHistory", { recursive: true });
         await this.delObjectAsync(vin + ".apiV2", { recursive: true });
