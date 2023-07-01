@@ -698,7 +698,7 @@ class Bmw extends utils.Adapter {
         let command = id.split(".")[4];
         if (command === "force-refresh") {
           this.log.info("force refresh");
-          this.getVehiclesv2();
+          this.updateDevices();
           return;
         }
         const action = command.split("_")[1];
@@ -736,7 +736,7 @@ class Bmw extends utils.Adapter {
           });
         this.refreshTimeout = setTimeout(async () => {
           this.log.info("Refresh values");
-          await this.getVehiclesv2();
+          await this.updateDevices();
         }, 10 * 1000);
       } else {
         // const resultDict = { chargingStatus: "CHARGE_NOW", doorLockState: "DOOR_LOCK" };

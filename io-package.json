@@ -1,10 +1,10 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.6.0",
+    "version": "2.6.1",
     "news": {
-      "2.6.0": {
-        "en": "Fix Status Updat. New status under bmw.0.VIN.state",
+      "2.6.1": {
+        "en": "Fix Status Update. New status under bmw.0.VIN.state",
         "de": "Status Update gefixt. Neuer Status unter bmw.0.VIN.state"
       },
       "2.5.7": {
