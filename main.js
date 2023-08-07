@@ -13,7 +13,6 @@ const { HttpsCookieAgent } = require("http-cookie-agent/http");
 const crypto = require("crypto");
 const qs = require("qs");
 const Json2iob = require("json2iob");
-const { extractKeys } = require("./lib/extractKeys");
 const tough = require("tough-cookie");
 class Bmw extends utils.Adapter {
   /**
@@ -33,7 +32,6 @@ class Bmw extends utils.Adapter {
     this.updateInterval;
     this.reLoginTimeout;
     this.refreshTokenInterval;
-    this.extractKeys = extractKeys;
     this.vinArray = [];
     this.session = {};
     this.statusBlock = {};
@@ -369,7 +367,7 @@ class Bmw extends utils.Adapter {
             native: {},
           });
 
-          this.extractKeys(this, vehicle.vin + ".general", vehicle);
+          this.json2iob.parse(vehicle.vin + ".general", vehicle);
         }
       })
       .catch((error) => {
@@ -450,7 +448,6 @@ class Bmw extends utils.Adapter {
               native: {},
             });
           });
-          // this.extractKeys(this, vehicle.vin, vehicle, null, true);
           this.json2iob.parse(vehicle.vin, vehicle, {
             forceIndex: true,
             descriptions: this.description,
