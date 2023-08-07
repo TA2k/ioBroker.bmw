@@ -555,7 +555,7 @@ class Bmw extends utils.Adapter {
             },
             native: {},
           });
-          await this.extractKeys(this, vin + element.path + dateFormatted, data);
+          await this.json2iob.parse(vin + element.path + dateFormatted, data);
 
           if (element.name === "chargingSessions" && data.sessions && data.sessions.length > 0) {
             try {
@@ -575,7 +575,7 @@ class Bmw extends utils.Adapter {
                 },
                 native: {},
               });
-              await this.extractKeys(this, vin + element.path + "latest", datal);
+              await this.json2iob.parse(vin + element.path + "latest", datal);
             } catch (error) {
               this.log.debug(error);
             }
