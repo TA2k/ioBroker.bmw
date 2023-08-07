@@ -283,7 +283,7 @@ class Bmw extends utils.Adapter {
           this.log.error(JSON.stringify(error.response.data));
           return;
         }
-        if (error.response.status === 302) {
+        if (error.response && error.response.status === 302) {
           this.log.debug(JSON.stringify(error.response.headers.location));
           code = qs.parse(error.response.headers.location.split("?")[1]).code;
           this.log.debug(code);
