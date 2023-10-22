@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.6.2",
+    "version": "2.6.3",
     "news": {
+      "2.6.3": {
+        "en": "Add start and stop charging remotes",
+        "de": "Start und Stop Charging Remotes hinzugefügt"
+      },
       "2.6.2": {
         "en": "Fix Charging response parsing",
         "de": "Fix Charging Antwort Verarbeitung"

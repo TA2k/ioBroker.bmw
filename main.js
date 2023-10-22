@@ -433,6 +433,8 @@ class Bmw extends utils.Adapter {
             { command: "vehicle-finder" },
             { command: "climate-now_START" },
             { command: "climate-now_STOP" },
+            { command: "start-charging" },
+            { command: "stop-charging" },
             { command: "force-refresh", name: "Force Refresh" },
           ];
           remoteArray.forEach((remote) => {
