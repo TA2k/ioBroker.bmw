@@ -455,8 +455,8 @@ class Bmw extends utils.Adapter {
             descriptions: this.description,
           });
 
-          await this.sleep(5000);
-          this.updateChargingSessionv2(vehicle.vin);
+          await this.sleep(11000);
+          await this.updateChargingSessionv2(vehicle.vin);
         }
       })
       .catch((error) => {
