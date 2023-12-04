@@ -337,7 +337,7 @@ class Bmw extends utils.Adapter {
       Accept: "*/*",
       Authorization: "Bearer " + this.session.access_token,
     };
-
+    this.log.debug("getVehicles");
     await this.requestClient({
       method: "get",
       url: "https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles",
@@ -389,7 +389,7 @@ class Bmw extends utils.Adapter {
       host: "cocoapi.bmwgroup.com",
       "24-hour-format": "true",
     };
-
+    this.log.debug("getVehiclesv2");
     await this.requestClient({
       method: "get",
       url: "https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles?apptimezone=120&appDateTime=" + Date.now() + "&tireGuardMode=ENABLED",
@@ -458,7 +458,6 @@ class Bmw extends utils.Adapter {
             descriptions: this.description,
           });
 
-          await this.sleep(11000);
           await this.updateChargingSessionv2(vehicle.vin);
         }
       })
@@ -492,17 +491,26 @@ class Bmw extends utils.Adapter {
           this.log.debug(JSON.stringify(res.data));
           this.json2iob.parse(vin, res.data, { forceIndex: true, descriptions: this.description });
         })
-        .catch((error) => {
-          this.log.error("update  failed");
+        .catch(async (error) => {
+          if (error.response && error.response.status === 429) {
+            this.log.info(error.response.data.message + " Retry in 5 seconds");
+            await this.sleep(5000);
+            await this.updateDevices();
+            return;
+          }
+          if (error.response && error.response.status === 403) {
+            this.log.warn(error.response.data.message);
+            return;
+          }
+          if (error.response && error.response.status >= 500) {
+            this.log.error("BMW Server is not available");
+          }
+          this.log.error("update failed");
           this.log.error(error);
           error.response && this.log.error(JSON.stringify(error.response.data));
         });
+      await this.updateChargingSessionv2(vin);
       await this.sleep(10000);
-      if (Date.now() - this.lastChargingSessionUpdate > 1000 * 60 * 60) {
-        await this.updateChargingSessionv2(vin);
-        this.lastChargingSessionUpdate = Date.now();
-        await this.sleep(10000);
-      }
     }
   }
   sleep(ms) {
@@ -512,6 +520,12 @@ class Bmw extends utils.Adapter {
     if (this.nonChargingHistory[vin]) {
       return;
     }
+    if (Date.now() - this.lastChargingSessionUpdate < 1000 * 60 * 60 * 6) {
+      this.log.debug("updateChargingSessionv2 to early " + vin);
+      return;
+    }
+    await this.sleep(10000);
+    this.lastChargingSessionUpdate = Date.now();
     const headers = {
       "user-agent": this.userAgentDart,
       "x-user-agent": this.xuserAgent.replace(";brand;", `;${this.config.brand};`),
@@ -546,6 +560,7 @@ class Bmw extends utils.Adapter {
     });
     for (const element of urlArray) {
       await this.sleep(10000);
+      this.log.debug("update " + vin + element.path);
       await this.requestClient({
         method: "get",
         url: element.url,
@@ -592,7 +607,7 @@ class Bmw extends utils.Adapter {
         })
         .catch((error) => {
           if (error.response) {
-            this.log.info("No charging session available. Ignore " + vin + "until restart");
+            this.log.info("No charging session available. Ignore " + vin + " until restart");
             this.nonChargingHistory[vin] = true;
             return;
           }
@@ -644,6 +659,7 @@ class Bmw extends utils.Adapter {
   }
 
   async refreshToken() {
+    this.log.debug("refresh token");
     await this.requestClient({
       method: "post",
       url: "https://customer.bmwgroup.com/gcdm/oauth/token",
@@ -726,7 +742,7 @@ class Bmw extends utils.Adapter {
         if (action) {
           url += "?action=" + action;
         }
-
+        this.log.debug("Send remote command " + command + " to " + vin);
         await this.requestClient({
           method: "post",
           url: url,

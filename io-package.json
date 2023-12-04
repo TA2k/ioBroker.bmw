@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.6.3",
+    "version": "2.7.0",
     "news": {
+      "2.7.0": {
+        "en": "Improve rate limit handling",
+        "de": "Rate Limit Handling verbessert"
+      },
       "2.6.3": {
         "en": "Add start and stop charging remotes",
         "de": "Start und Stop Charging Remotes hinzugefügt"
