@@ -37,6 +37,7 @@ class Bmw extends utils.Adapter {
     this.statusBlock = {};
     this.nonChargingHistory = {};
     this.json2iob = new Json2iob(this);
+    this.lastChargingSessionUpdate = 0;
     this.description = {
       allTrips: "alle Fahrten des Autos",
       avgCombinedConsumption: "Durchschnittlicher kombinierter Verbrauch",
@@ -194,11 +195,13 @@ class Bmw extends utils.Adapter {
       await this.cleanObjects();
       await this.updateDevices();
       this.updateInterval = setInterval(async () => {
+        await this.sleep(2000);
         await this.updateDevices();
       }, this.config.interval * 60 * 1000);
-      this.refreshTokenInterval = setInterval(() => {
-        this.refreshToken();
-      }, this.session.expires_in * 1000);
+      this.refreshTokenInterval = setInterval(async () => {
+        await this.refreshToken();
+        await this.sleep(5000);
+      }, (this.session.expires_in - 123) * 1000);
     }
   }
   async login() {
@@ -494,6 +497,12 @@ class Bmw extends utils.Adapter {
           this.log.error(error);
           error.response && this.log.error(JSON.stringify(error.response.data));
         });
+      await this.sleep(10000);
+      if (Date.now() - this.lastChargingSessionUpdate > 1000 * 60 * 60) {
+        await this.updateChargingSessionv2(vin);
+        this.lastChargingSessionUpdate = Date.now();
+        await this.sleep(10000);
+      }
     }
   }
   sleep(ms) {
@@ -536,6 +545,7 @@ class Bmw extends utils.Adapter {
       name: "charging statistics",
     });
     for (const element of urlArray) {
+      await this.sleep(10000);
       await this.requestClient({
         method: "get",
         url: element.url,
