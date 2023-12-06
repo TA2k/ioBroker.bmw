@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.7.0",
+    "version": "2.7.2",
     "news": {
+      "2.7.2": {
+        "en": "Move Rate Limit messages to debug",
+        "de": "Rate Limit Nachrichten in debug verschoben"
+      },
       "2.7.0": {
         "en": "Improve rate limit handling",
         "de": "Rate Limit Handling verbessert"
@@ -81,6 +85,7 @@
       "it": "BMW",
       "es": "BMW",
       "pl": "BMW",
+      "uk": "BMW",
       "zh-cn": "宝马"
     },
     "desc": {
@@ -93,6 +98,7 @@
       "it": "Adattatore per BMW",
       "es": "Adaptador para BMW",
       "pl": "Adapter do BMW",
+      "uk": "Adapter for BMW",
       "zh-cn": "宝马适配器"
     },
     "authors": ["TA2k <tombox2020@gmail.com>"],

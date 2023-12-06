@@ -463,6 +463,11 @@ class Bmw extends utils.Adapter {
       })
       .catch((error) => {
         this.log.error("getvehicles v2 failed");
+        if (error.response && error.response.status === 429) {
+          this.log.error(error.response.data.message + " Please wait and restart the adapter");
+          return;
+        }
+
         this.log.error(error);
         error.response && this.log.error(JSON.stringify(error.response.data));
       });
@@ -493,7 +498,7 @@ class Bmw extends utils.Adapter {
         })
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
-            this.log.info(error.response.data.message + " Retry in 5 seconds");
+            this.log.debug(error.response.data.message + " Retry in 5 seconds");
             await this.sleep(5000);
             await this.updateDevices();
             return;
