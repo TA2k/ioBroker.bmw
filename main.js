@@ -188,20 +188,24 @@ class Bmw extends utils.Adapter {
     }
     await this.login();
     if (this.session.access_token) {
-      // await this.getVehicles(); //old depracted api
-
       this.log.info(`Start getting ${this.config.brand} vehicles`);
       await this.getVehiclesv2(true);
       await this.cleanObjects();
       await this.updateDevices();
-      this.updateInterval = setInterval(async () => {
-        await this.sleep(2000);
-        await this.updateDevices();
-      }, this.config.interval * 60 * 1000);
-      this.refreshTokenInterval = setInterval(async () => {
-        await this.refreshToken();
-        await this.sleep(5000);
-      }, (this.session.expires_in - 123) * 1000);
+      this.updateInterval = setInterval(
+        async () => {
+          await this.sleep(2000);
+          await this.updateDevices();
+        },
+        this.config.interval * 60 * 1000,
+      );
+      this.refreshTokenInterval = setInterval(
+        async () => {
+          await this.refreshToken();
+          await this.sleep(5000);
+        },
+        (this.session.expires_in - 123) * 1000,
+      );
     }
   }
   async login() {
@@ -216,7 +220,8 @@ class Bmw extends utils.Adapter {
     const data = {
       client_id: '31c357a0-7a1d-4590-aa99-33b97244d048',
       response_type: 'code',
-      scope: 'openid profile email offline_access smacc vehicle_data perseus dlm svds cesim vsapi remote_services fupo authenticate_user',
+      scope:
+        'openid profile email offline_access smacc vehicle_data perseus dlm svds cesim vsapi remote_services fupo authenticate_user',
       redirect_uri: 'com.bmw.connected://oauth',
       state: 'cwU-gIE27j67poy2UcL3KQ',
       nonce: 'login_nonce',
@@ -249,9 +254,12 @@ class Bmw extends utils.Adapter {
 
           this.log.error('Start relogin in 5min');
           this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-          this.reLoginTimeout = setTimeout(() => {
-            this.login();
-          }, 5000 * 60 * 1);
+          this.reLoginTimeout = setTimeout(
+            () => {
+              this.login();
+            },
+            5000 * 60 * 1,
+          );
         }
         if (error.response && error.response.status === 400) {
           this.log.error('Please check username and password');
@@ -302,9 +310,14 @@ class Bmw extends utils.Adapter {
         'User-Agent': this.userAgent,
         Accept: '*/*',
         'Accept-Language': 'de-de',
-        Authorization: 'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
+        Authorization:
+          'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
       },
-      data: 'code=' + code + '&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code&code_verifier=' + code_verifier,
+      data:
+        'code=' +
+        code +
+        '&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code&code_verifier=' +
+        code_verifier,
     })
       .then((res) => {
         this.log.debug(JSON.stringify(res.data));
@@ -331,54 +344,7 @@ class Bmw extends utils.Adapter {
 
     return [result, hash];
   }
-  async getVehicles() {
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: '*/*',
-      Authorization: 'Bearer ' + this.session.access_token,
-    };
-    this.log.debug('getVehicles');
-    await this.requestClient({
-      method: 'get',
-      url: 'https://b2vapi.bmwgroup.com/webapi/v1/user/vehicles',
-      headers: headers,
-    })
-      .then(async (res) => {
-        this.log.debug(JSON.stringify(res.data));
-        for (const vehicle of res.data.vehicles) {
-          this.vinArray.push(vehicle.vin);
-          await this.setObjectNotExistsAsync(vehicle.vin, {
-            type: 'device',
-            common: {
-              name: vehicle.model,
-            },
-            native: {},
-          });
-          // await this.setObjectNotExistsAsync(vehicle.vin + ".remote", {
-          //     type: "channel",
-          //     common: {
-          //         name: "Remote Controls",
-          //     },
-          //     native: {},
-          // });
 
-          await this.setObjectNotExistsAsync(vehicle.vin + '.general', {
-            type: 'channel',
-            common: {
-              name: 'General Car Information',
-            },
-            native: {},
-          });
-
-          this.json2iob.parse(vehicle.vin + '.general', vehicle);
-        }
-      })
-      .catch((error) => {
-        this.log.error('getVehicles failed');
-        this.log.error(error);
-        error.response && this.log.error(JSON.stringify(error.response.data));
-      });
-  }
   async getVehiclesv2(firstStart) {
     const brand = this.config.brand;
     const headers = {
@@ -392,7 +358,10 @@ class Bmw extends utils.Adapter {
     this.log.debug('getVehiclesv2');
     await this.requestClient({
       method: 'get',
-      url: 'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
+      url:
+        'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles?apptimezone=120&appDateTime=' +
+        Date.now() +
+        '&tireGuardMode=ENABLED',
       headers: headers,
     })
       .then(async (res) => {
@@ -463,13 +432,19 @@ class Bmw extends utils.Adapter {
       })
       .catch((error) => {
         this.log.error('getvehicles v2 failed');
-        if (error.response && error.response.status === 429) {
-          this.log.error(error.response.data.message + ' Please wait and restart the adapter');
-          return;
-        }
-
         this.log.error(error);
         error.response && this.log.error(JSON.stringify(error.response.data));
+        if (error.response && (error.response.status === 403 || error.response.status === 429)) {
+          this.log.warn('Rate Limit exceeded, please wait 5 minutes');
+        }
+        this.log.info('Adapter will retry in 3 minutes to get vehicles');
+        this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
+        this.reLoginTimeout = setTimeout(
+          () => {
+            this.getVehiclesv2();
+          },
+          1000 * 60 * 3,
+        );
       });
     await this.sleep(5000);
   }
@@ -489,7 +464,9 @@ class Bmw extends utils.Adapter {
       await this.requestClient({
         method: 'get',
         url:
-          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
+          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' +
+          Date.now() +
+          '&tireGuardMode=ENABLED',
         headers: headers,
       })
         .then(async (res) => {
@@ -544,7 +521,9 @@ class Bmw extends utils.Adapter {
       '-' +
       ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : '0' + (d.getMonth() + 1).toString());
     // const day = d.getDate().toString().length == 2 ? d.getDate().toString() : "0" + d.getDate().toString();
-    const fullDate = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().replace('Z', '000');
+    const fullDate = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .replace('Z', '000');
 
     const urlArray = [];
     urlArray.push({
@@ -652,7 +631,9 @@ class Bmw extends utils.Adapter {
     const date_format_str =
       d.getFullYear().toString() +
       '-' +
-      ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : '0' + (d.getMonth() + 1).toString()) +
+      ((d.getMonth() + 1).toString().length == 2
+        ? (d.getMonth() + 1).toString()
+        : '0' + (d.getMonth() + 1).toString()) +
       '-' +
       (d.getDate().toString().length == 2 ? d.getDate().toString() : '0' + d.getDate().toString()) +
       'T' +
@@ -672,9 +653,13 @@ class Bmw extends utils.Adapter {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         Accept: '*/*',
-        Authorization: 'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
+        Authorization:
+          'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
       },
-      data: 'redirect_uri=com.bmw.connected://oauth&refresh_token=' + this.session.refresh_token + '&grant_type=refresh_token',
+      data:
+        'redirect_uri=com.bmw.connected://oauth&refresh_token=' +
+        this.session.refresh_token +
+        '&grant_type=refresh_token',
     })
       .then((res) => {
         this.log.debug(JSON.stringify(res.data));
@@ -688,9 +673,12 @@ class Bmw extends utils.Adapter {
         error.response && this.log.error(JSON.stringify(error.response.data));
         this.log.error('Start relogin in 1min');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(() => {
-          this.login();
-        }, 1000 * 60 * 1);
+        this.reLoginTimeout = setTimeout(
+          () => {
+            this.login();
+          },
+          1000 * 60 * 1,
+        );
       });
   }
 
