@@ -220,8 +220,7 @@ class Bmw extends utils.Adapter {
     const data = {
       client_id: '31c357a0-7a1d-4590-aa99-33b97244d048',
       response_type: 'code',
-      scope:
-        'openid profile email offline_access smacc vehicle_data perseus dlm svds cesim vsapi remote_services fupo authenticate_user',
+      scope: 'openid profile email offline_access smacc vehicle_data perseus dlm svds cesim vsapi remote_services fupo authenticate_user',
       redirect_uri: 'com.bmw.connected://oauth',
       state: 'cwU-gIE27j67poy2UcL3KQ',
       nonce: 'login_nonce',
@@ -310,14 +309,9 @@ class Bmw extends utils.Adapter {
         'User-Agent': this.userAgent,
         Accept: '*/*',
         'Accept-Language': 'de-de',
-        Authorization:
-          'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
+        Authorization: 'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
       },
-      data:
-        'code=' +
-        code +
-        '&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code&code_verifier=' +
-        code_verifier,
+      data: 'code=' + code + '&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code&code_verifier=' + code_verifier,
     })
       .then((res) => {
         this.log.debug(JSON.stringify(res.data));
@@ -358,10 +352,7 @@ class Bmw extends utils.Adapter {
     this.log.debug('getVehiclesv2');
     await this.requestClient({
       method: 'get',
-      url:
-        'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles?apptimezone=120&appDateTime=' +
-        Date.now() +
-        '&tireGuardMode=ENABLED',
+      url: 'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
       headers: headers,
     })
       .then(async (res) => {
@@ -464,9 +455,7 @@ class Bmw extends utils.Adapter {
       await this.requestClient({
         method: 'get',
         url:
-          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' +
-          Date.now() +
-          '&tireGuardMode=ENABLED',
+          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
         headers: headers,
       })
         .then(async (res) => {
@@ -521,9 +510,7 @@ class Bmw extends utils.Adapter {
       '-' +
       ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : '0' + (d.getMonth() + 1).toString());
     // const day = d.getDate().toString().length == 2 ? d.getDate().toString() : "0" + d.getDate().toString();
-    const fullDate = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
-      .toISOString()
-      .replace('Z', '000');
+    const fullDate = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().replace('Z', '000');
 
     const urlArray = [];
     urlArray.push({
@@ -563,9 +550,30 @@ class Bmw extends utils.Adapter {
             },
             native: {},
           });
-          await this.json2iob.parse(vin + element.path + dateFormatted, data);
-
           if (element.name === 'chargingSessions' && data.sessions && data.sessions.length > 0) {
+            data.totalEnergy = data.total.replace('~', '').trim().split(' ')[0];
+            data.totalUnit = data.total.replace('~', '').trim().split(' ')[1];
+            data.totalCost = data.costsGroupedByCurrency.replace('~', '').trim().split(' ')[0];
+
+            for (const session of data.sessions) {
+              try {
+                session.date = session.id.split('_')[0];
+                session.id = session.id.split('_')[1] ? session.id.split('_')[1] : session.id;
+                session.timestamp = new Date(session.date).valueOf();
+                if (session.energyCharged.replace) {
+                  session.energy = session.energyCharged.replace('~', '').trim().split(' ')[0];
+                  session.unit = session.energyCharged.replace('~', '').trim().split(' ')[1];
+                }
+                if (session.subtitle.replace) {
+                  const cleanedSubtitle = session.subtitle.replace('~', '').replace('•', '').replace('  ', ' ').replace('  ', ' ').trim();
+                  session.duration = cleanedSubtitle.split(' ')[1];
+                  session.cost = cleanedSubtitle.split(' ')[2];
+                }
+              } catch (error) {
+                this.log.debug(error);
+              }
+            }
+            await this.json2iob.parse(vin + element.path + dateFormatted, data, { preferedArrayName: 'date' });
             try {
               const datal = data.sessions[0];
               datal._date = datal.id.split('_')[0];
@@ -631,9 +639,7 @@ class Bmw extends utils.Adapter {
     const date_format_str =
       d.getFullYear().toString() +
       '-' +
-      ((d.getMonth() + 1).toString().length == 2
-        ? (d.getMonth() + 1).toString()
-        : '0' + (d.getMonth() + 1).toString()) +
+      ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : '0' + (d.getMonth() + 1).toString()) +
       '-' +
       (d.getDate().toString().length == 2 ? d.getDate().toString() : '0' + d.getDate().toString()) +
       'T' +
@@ -653,13 +659,9 @@ class Bmw extends utils.Adapter {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         Accept: '*/*',
-        Authorization:
-          'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
+        Authorization: 'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
       },
-      data:
-        'redirect_uri=com.bmw.connected://oauth&refresh_token=' +
-        this.session.refresh_token +
-        '&grant_type=refresh_token',
+      data: 'redirect_uri=com.bmw.connected://oauth&refresh_token=' + this.session.refresh_token + '&grant_type=refresh_token',
     })
       .then((res) => {
         this.log.debug(JSON.stringify(res.data));
