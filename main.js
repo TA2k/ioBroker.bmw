@@ -553,7 +553,10 @@ class Bmw extends utils.Adapter {
           if (element.name === 'chargingSessions' && data.sessions && data.sessions.length > 0) {
             data.totalEnergy = data.total.replace('~', '').trim().split(' ')[0];
             data.totalUnit = data.total.replace('~', '').trim().split(' ')[1];
-            data.totalCost = data.costsGroupedByCurrency.replace('~', '').trim().split(' ')[0];
+            data.totalCost = [];
+            for (const current of data.costsGroupedByCurrency) {
+              data.totalCost.push(current.replace('~', '').trim().split(' ')[0]);
+            }
 
             for (const session of data.sessions) {
               try {
