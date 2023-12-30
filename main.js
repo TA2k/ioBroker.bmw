@@ -557,7 +557,7 @@ class Bmw extends utils.Adapter {
             for (const current of data.costsGroupedByCurrency) {
               data.totalCost.push(current.replace('~', '').trim().split(' ')[0]);
             }
-
+            const newSessions = [];
             for (const session of data.sessions) {
               try {
                 session.date = session.id.split('_')[0];
@@ -572,10 +572,12 @@ class Bmw extends utils.Adapter {
                   session.duration = cleanedSubtitle.split(' ')[1];
                   session.cost = cleanedSubtitle.split(' ')[2];
                 }
+                newSessions.push(session);
               } catch (error) {
                 this.log.debug(error);
               }
             }
+            data.sessions = newSessions;
             await this.json2iob.parse(vin + element.path + dateFormatted, data, { preferedArrayName: 'date' });
             try {
               const datal = data.sessions[0];
