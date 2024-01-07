@@ -192,12 +192,21 @@ class Bmw extends utils.Adapter {
       await this.getVehiclesv2(true);
       await this.cleanObjects();
       await this.updateDevices();
+      await this.sleep(5000);
+      await this.updateDemands();
       this.updateInterval = setInterval(
         async () => {
           await this.sleep(2000);
           await this.updateDevices();
         },
         this.config.interval * 60 * 1000,
+      );
+      this.demandInterval = setInterval(
+        async () => {
+          await this.sleep(2000);
+          await this.updateDemands();
+        },
+        24 * 60 * 60 * 1000,
       );
       this.refreshTokenInterval = setInterval(
         async () => {
@@ -484,6 +493,66 @@ class Bmw extends utils.Adapter {
       await this.sleep(10000);
     }
   }
+  async updateDemands() {
+    const brand = this.config.brand;
+    const headers = {
+      'user-agent': this.userAgentDart,
+      'x-user-agent': this.xuserAgent.replace(';brand;', `;${brand};`),
+      authorization: 'Bearer ' + this.session.access_token,
+      'accept-language': 'de-DE',
+      host: 'cocoapi.bmwgroup.com',
+      '24-hour-format': 'true',
+    };
+    for (const vin of this.vinArray) {
+      this.log.debug('update demands ' + vin);
+      headers['bmw-vin'] = vin;
+      await this.requestClient({
+        method: 'get',
+        url: 'https://cocoapi.bmwgroup.com/eadrax-slcs/v1/demands',
+        headers: headers,
+      })
+        .then(async (res) => {
+          this.log.debug(JSON.stringify(res.data));
+          this.json2iob.parse(vin + '.servicedemands', res.data, {
+            channelName: 'Service Demands',
+            forceIndex: true,
+            descriptions: this.description,
+          });
+          await this.setObjectNotExistsAsync(vin + '.servicedemands.json', {
+            type: 'state',
+            common: {
+              name: 'Service Demands JSON',
+              type: 'string',
+              role: 'json',
+              write: false,
+              read: true,
+            },
+            native: {},
+          });
+          await this.setStateAsync(vin + '.servicedemands.json', JSON.stringify(res.data), true);
+        })
+        .catch(async (error) => {
+          if (error.response && error.response.status === 429) {
+            this.log.debug(error.response.data.message + ' Retry in 5 seconds');
+            await this.sleep(5000);
+            await this.updateDemands();
+            return;
+          }
+          if (error.response && error.response.status === 403) {
+            this.log.warn(error.response.data.message);
+            return;
+          }
+          if (error.response && error.response.status >= 500) {
+            this.log.error('BMW Server is not available');
+          }
+          this.log.error('update failed');
+          this.log.error(error);
+          error.response && this.log.error(JSON.stringify(error.response.data));
+        });
+      await this.updateChargingSessionv2(vin);
+      await this.sleep(10000);
+    }
+  }
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
@@ -699,6 +768,7 @@ class Bmw extends utils.Adapter {
       clearTimeout(this.reLoginTimeout);
       clearInterval(this.updateInterval);
       clearInterval(this.refreshTokenInterval);
+      this.demandInterval && clearInterval(this.demandInterval);
       callback();
     } catch (e) {
       callback();
