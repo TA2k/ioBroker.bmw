@@ -191,30 +191,24 @@ class Bmw extends utils.Adapter {
       this.log.info(`Start getting ${this.config.brand} vehicles`);
       await this.getVehiclesv2(true);
       await this.cleanObjects();
-      await this.updateDevices();
       await this.sleep(5000);
       await this.updateDemands();
-      this.updateInterval = setInterval(
-        async () => {
-          await this.sleep(2000);
-          await this.updateDevices();
-        },
-        this.config.interval * 60 * 1000,
-      );
-      this.demandInterval = setInterval(
-        async () => {
-          await this.sleep(2000);
-          await this.updateDemands();
-        },
-        24 * 60 * 60 * 1000,
-      );
-      this.refreshTokenInterval = setInterval(
-        async () => {
-          await this.refreshToken();
-          await this.sleep(5000);
-        },
-        (this.session.expires_in - 123) * 1000,
-      );
+      await this.sleep(5000);
+      await this.updateTrips();
+      this.updateInterval = setInterval(async () => {
+        await this.sleep(2000);
+        await this.updateDevices();
+      }, this.config.interval * 60 * 1000);
+      this.demandInterval = setInterval(async () => {
+        await this.sleep(2000);
+        await this.updateDemands();
+        await this.sleep(5000);
+        await this.updateTrips();
+      }, 24 * 60 * 60 * 1000);
+      this.refreshTokenInterval = setInterval(async () => {
+        await this.refreshToken();
+        await this.sleep(5000);
+      }, (this.session.expires_in - 123) * 1000);
     }
   }
   async login() {
@@ -262,12 +256,9 @@ class Bmw extends utils.Adapter {
 
           this.log.error('Start relogin in 5min');
           this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-          this.reLoginTimeout = setTimeout(
-            () => {
-              this.login();
-            },
-            5000 * 60 * 1,
-          );
+          this.reLoginTimeout = setTimeout(() => {
+            this.login();
+          }, 5000 * 60 * 1);
         }
         if (error.response && error.response.status === 400) {
           this.log.error('Please check username and password');
@@ -439,12 +430,9 @@ class Bmw extends utils.Adapter {
         }
         this.log.info('Adapter will retry in 3 minutes to get vehicles');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.getVehiclesv2();
-          },
-          1000 * 60 * 3,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.getVehiclesv2();
+        }, 1000 * 60 * 3);
       });
     await this.sleep(5000);
   }
@@ -463,8 +451,7 @@ class Bmw extends utils.Adapter {
       headers['bmw-vin'] = vin;
       await this.requestClient({
         method: 'get',
-        url:
-          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
+        url: 'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
         headers: headers,
       })
         .then(async (res) => {
@@ -513,10 +500,11 @@ class Bmw extends utils.Adapter {
       })
         .then(async (res) => {
           this.log.debug(JSON.stringify(res.data));
-          this.json2iob.parse(vin + '.servicedemands', res.data, {
+          await this.json2iob.parse(vin + '.servicedemands', res.data, {
             channelName: 'Service Demands',
             forceIndex: true,
             descriptions: this.description,
+            deleteBeforeUpdate: true,
           });
           await this.setObjectNotExistsAsync(vin + '.servicedemands.json', {
             type: 'state',
@@ -533,9 +521,71 @@ class Bmw extends utils.Adapter {
         })
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
-            this.log.debug(error.response.data.message + ' Retry in 5 seconds');
-            await this.sleep(5000);
+            this.log.debug(error.response.data.message + ' Retry in 15 minutes');
+            await this.sleep(1000 * 60 * 15);
             await this.updateDemands();
+            return;
+          }
+          if (error.response && error.response.status === 403) {
+            this.log.warn(error.response.data.message);
+            return;
+          }
+          if (error.response && error.response.status >= 500) {
+            this.log.error('BMW Server is not available');
+          }
+          this.log.error('update failed');
+          this.log.error(error);
+          error.response && this.log.error(JSON.stringify(error.response.data));
+        });
+      await this.updateChargingSessionv2(vin);
+      await this.sleep(10000);
+    }
+  }
+  async updateTrips() {
+    const brand = this.config.brand;
+    const headers = {
+      'user-agent': this.userAgentDart,
+      'x-user-agent': this.xuserAgent.replace(';brand;', `;${brand};`),
+      authorization: 'Bearer ' + this.session.access_token,
+      'accept-language': 'de-DE',
+      host: 'cocoapi.bmwgroup.com',
+      '24-hour-format': 'true',
+      'x-gcid': this.session.gcid,
+    };
+    for (const vin of this.vinArray) {
+      this.log.debug('update trips ' + vin);
+      headers['bmw-vin'] = vin;
+      await this.requestClient({
+        method: 'get',
+        url: 'https://cocoapi.bmwgroup.com/eadrax-suscs/v1/vehicles/sustainability/widget',
+        headers: headers,
+      })
+        .then(async (res) => {
+          this.log.debug(JSON.stringify(res.data));
+          await this.json2iob.parse(vin + '.trips', res.data, {
+            channelName: 'Trip History',
+            forceIndex: true,
+            descriptions: this.description,
+            deleteBeforeUpdate: true,
+          });
+          await this.setObjectNotExistsAsync(vin + '.trips.json', {
+            type: 'state',
+            common: {
+              name: 'Trip History JSON',
+              type: 'string',
+              role: 'json',
+              write: false,
+              read: true,
+            },
+            native: {},
+          });
+          await this.setStateAsync(vin + '.trips.json', JSON.stringify(res.data), true);
+        })
+        .catch(async (error) => {
+          if (error.response && error.response.status === 429) {
+            this.log.debug(error.response.data.message + ' Retry in 15 minutes');
+            await this.sleep(1000 * 60 * 15);
+            await this.updateTrips();
             return;
           }
           if (error.response && error.response.status === 403) {
@@ -612,7 +662,7 @@ class Bmw extends utils.Adapter {
           if (data.chargingSessions) {
             data = data.chargingSessions;
           }
-          await this.setObjectNotExistsAsync(vin + element.path + dateFormatted, {
+          await this.extendObjectAsync(vin + element.path + dateFormatted, {
             type: 'channel',
             common: {
               name: element.name + ' of the car v2',
@@ -749,12 +799,9 @@ class Bmw extends utils.Adapter {
         error.response && this.log.error(JSON.stringify(error.response.data));
         this.log.error('Start relogin in 1min');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.login();
-          },
-          1000 * 60 * 1,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.login();
+        }, 1000 * 60 * 1);
       });
   }
 
