@@ -17,10 +17,10 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.0.4",
-    "axios": "^1.6.3",
+    "axios": "^1.6.5",
     "http-cookie-agent": "^5.0.4",
     "json-bigint": "^1.0.0",
-    "json2iob": "^2.6.5",
+    "json2iob": "^2.6.6",
     "qs": "^6.11.2",
     "tough-cookie": "^4.1.3"
   },
