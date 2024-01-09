@@ -533,11 +533,10 @@ class Bmw extends utils.Adapter {
           if (error.response && error.response.status >= 500) {
             this.log.error('BMW Server is not available');
           }
-          this.log.error('update failed');
+          this.log.error('update demand failed');
           this.log.error(error);
           error.response && this.log.error(JSON.stringify(error.response.data));
         });
-      await this.updateChargingSessionv2(vin);
       await this.sleep(10000);
     }
   }
@@ -566,7 +565,6 @@ class Bmw extends utils.Adapter {
             channelName: 'Trip History',
             forceIndex: true,
             descriptions: this.description,
-            deleteBeforeUpdate: true,
           });
           await this.setObjectNotExistsAsync(vin + '.trips.json', {
             type: 'state',
@@ -595,11 +593,10 @@ class Bmw extends utils.Adapter {
           if (error.response && error.response.status >= 500) {
             this.log.error('BMW Server is not available');
           }
-          this.log.error('update failed');
+          this.log.error('update trip failed');
           this.log.error(error);
           error.response && this.log.error(JSON.stringify(error.response.data));
         });
-      await this.updateChargingSessionv2(vin);
       await this.sleep(10000);
     }
   }
