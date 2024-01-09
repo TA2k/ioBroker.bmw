@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.7.2",
+    "version": "2.8.0",
     "news": {
+      "2.8.0": {
+        "en": "Add support service demand and trip api",
+        "de": "Support für Service und Trips API hinzugefügt"
+      },
       "2.7.2": {
         "en": "Move Rate Limit messages to debug",
         "de": "Rate Limit Nachrichten in debug verschoben"

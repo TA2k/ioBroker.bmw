@@ -1,6 +1,6 @@
 {
   "name": "iobroker.bmw",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "description": "Adapter for BMW",
   "author": {
     "name": "TA2k",
@@ -32,7 +32,7 @@
     "@iobroker/testing": "^4.1.0",
     "@tsconfig/node16": "^16.1.1",
     "@types/mocha": "^10.0.6",
-    "@types/node": "^20.10.6",
+    "@types/node": "^20.10.7",
     "@types/proxyquire": "^1.3.31",
     "@types/sinon": "^17.0.2",
     "@types/sinon-chai": "^3.2.12",
