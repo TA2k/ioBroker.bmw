@@ -187,6 +187,7 @@ class Bmw extends utils.Adapter {
       return;
     }
     await this.login();
+
     if (this.session.access_token) {
       this.log.info(`Start getting ${this.config.brand} vehicles`);
       await this.getVehiclesv2(true);
@@ -195,29 +196,20 @@ class Bmw extends utils.Adapter {
       await this.updateDemands();
       await this.sleep(5000);
       await this.updateTrips();
-      this.updateInterval = setInterval(
-        async () => {
-          await this.sleep(2000);
-          await this.updateDevices();
-        },
-        this.config.interval * 60 * 1000,
-      );
-      this.demandInterval = setInterval(
-        async () => {
-          await this.sleep(2000);
-          await this.updateDemands();
-          await this.sleep(5000);
-          await this.updateTrips();
-        },
-        24 * 60 * 60 * 1000,
-      );
-      this.refreshTokenInterval = setInterval(
-        async () => {
-          await this.refreshToken();
-          await this.sleep(5000);
-        },
-        (this.session.expires_in - 123) * 1000,
-      );
+      this.updateInterval = setInterval(async () => {
+        await this.sleep(2000);
+        await this.updateDevices();
+      }, this.config.interval * 60 * 1000);
+      this.demandInterval = setInterval(async () => {
+        await this.sleep(2000);
+        await this.updateDemands();
+        await this.sleep(5000);
+        await this.updateTrips();
+      }, 24 * 60 * 60 * 1000);
+      this.refreshTokenInterval = setInterval(async () => {
+        await this.refreshToken();
+        await this.sleep(5000);
+      }, (this.session.expires_in - 123) * 1000);
     }
   }
   async login() {
@@ -265,12 +257,9 @@ class Bmw extends utils.Adapter {
 
           this.log.error('Start relogin in 5min');
           this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-          this.reLoginTimeout = setTimeout(
-            () => {
-              this.login();
-            },
-            5000 * 60 * 1,
-          );
+          this.reLoginTimeout = setTimeout(() => {
+            this.login();
+          }, 5000 * 60 * 1);
         }
         if (error.response && error.response.status === 400) {
           this.log.error('Please check username and password');
@@ -442,12 +431,9 @@ class Bmw extends utils.Adapter {
         }
         this.log.info('Adapter will retry in 3 minutes to get vehicles');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.getVehiclesv2();
-          },
-          1000 * 60 * 3,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.getVehiclesv2();
+        }, 1000 * 60 * 3);
       });
     await this.sleep(5000);
   }
@@ -466,8 +452,7 @@ class Bmw extends utils.Adapter {
       headers['bmw-vin'] = vin;
       await this.requestClient({
         method: 'get',
-        url:
-          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
+        url: 'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
         headers: headers,
       })
         .then(async (res) => {
@@ -635,7 +620,9 @@ class Bmw extends utils.Adapter {
       authorization: 'Bearer ' + this.session.access_token,
       'accept-language': 'de-DE',
       '24-hour-format': 'true',
+      'bmw-vin': vin,
     };
+
     const d = new Date();
     const dateFormatted =
       d.getFullYear().toString() +
@@ -647,7 +634,7 @@ class Bmw extends utils.Adapter {
     const urlArray = [];
     urlArray.push({
       url:
-        'https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-sessions?vin=' +
+        'https://cocoapi.bmwgroup.com/eadrax-chs/v2/charging-sessions?vin=' +
         vin +
         '&next_token&date=' +
         dateFormatted +
@@ -657,7 +644,7 @@ class Bmw extends utils.Adapter {
     });
 
     urlArray.push({
-      url: 'https://cocoapi.bmwgroup.com/eadrax-chs/v1/charging-statistics?vin=' + vin + '&currentDate=' + fullDate,
+      url: 'https://cocoapi.bmwgroup.com/eadrax-chs/v2/charging-statistics?vin=' + vin + '&currentDate=' + fullDate,
       path: '.charging-statistics.',
       name: 'charging statistics',
     });
@@ -735,6 +722,10 @@ class Bmw extends utils.Adapter {
           }
         })
         .catch((error) => {
+          if (error.response && error.response.status === 403) {
+            this.log.debug(error.response.data.message + ' Retry in 5 seconds');
+            return;
+          }
           if (error.response) {
             this.log.info('No charging session available. Ignore ' + vin + ' until restart');
             this.nonChargingHistory[vin] = true;
@@ -814,12 +805,9 @@ class Bmw extends utils.Adapter {
         error.response && this.log.error(JSON.stringify(error.response.data));
         this.log.error('Start relogin in 1min');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.login();
-          },
-          1000 * 60 * 1,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.login();
+        }, 1000 * 60 * 1);
       });
   }
 
