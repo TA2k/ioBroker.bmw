@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.8.0",
+    "version": "2.8.1",
     "news": {
+      "2.8.1": {
+        "en": "fix for remote commands",
+        "de": "Fix für Remote Commands",
+        "ru": "фиксация удаленных команд",
+        "pt": "corrigir comandos remotos",
+        "nl": "fix remote commando's",
+        "fr": "correction des commandes distantes",
+        "it": "correggere i comandi remoti",
+        "es": "fijar comandos remotos",
+        "pl": "naprawianie zdalnych poleceń",
+        "uk": "фіксувати віддалені команди",
+        "zh-cn": "修正远程命令"
+      },
       "2.8.0": {
         "en": "Add support service demand and trip api",
         "de": "Support für Service und Trips API hinzugefügt"
@@ -26,57 +39,6 @@
       "2.6.1": {
         "en": "Fix Status Update. New status under bmw.0.VIN.state",
         "de": "Status Update gefixt. Neuer Status unter bmw.0.VIN.state"
-      },
-      "2.5.7": {
-        "en": "Fix Quota problem",
-        "de": "Quota Problem es muss jetzt explizit die Marke BMW oder Mini in den Optionen gewählt werden."
-      },
-      "2.5.6": {
-        "en": "Fix charging message"
-      },
-      "2.5.5": {
-        "en": "Fix login"
-      },
-      "2.5.4": {
-        "en": "Fix login"
-      },
-      "2.5.3": {
-        "en": "Fix login"
-      },
-      "2.5.2": {
-        "en": "Bugfixes"
-      },
-      "2.5.1": {
-        "en": "Add login error message",
-        "de": "Loginproblem Nachricht hinzugefügt"
-      },
-      "2.5.0": {
-        "en": "Fix Login",
-        "de": "Loginproblem behoben"
-      },
-      "2.4.1": {
-        "en": "Add support for MINI and a force refresh remote",
-        "de": "Support für MINI hinzugefügt und ein Update erzwingen remote"
-      },
-      "2.3.0": {
-        "en": "Disable v1 Endpoints",
-        "de": "Deaktivieren v1 Endpunkte wurden entfernt."
-      },
-      "2.1.2": {
-        "en": "Upgrade to statusV2 and remoteV2",
-        "de": "Status und Remote Kontrolle auf v2 der neuen BMW App geupdated"
-      },
-      "2.0.0": {
-        "en": "initial release",
-        "de": "Erstveröffentlichung",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "zh-cn": "首次出版"
       }
     },
     "titleLang": {
