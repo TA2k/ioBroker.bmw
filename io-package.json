@@ -105,7 +105,8 @@
     "username": "",
     "password": "",
     "interval": 5,
-    "brand": "bmw"
+    "brand": "bmw",
+    "ignorelist": ""
   },
   "objects": [],
   "instanceObjects": [
