@@ -378,10 +378,13 @@ class Bmw extends utils.Adapter {
           return;
         }
         for (const vehicle of res.data) {
-          const ignoreListArray = this.config.ignorelist.replace(/\s/g, '').split(',');
-          if (ignoreListArray.includes(vehicle.vin)) {
-            this.log.info('Ignore ' + vehicle.vin);
-            continue;
+          if (this.config.ignorelist) {
+            this.log.info('Ignorelist found');
+            const ignoreListArray = this.config.ignorelist.replace(/\s/g, '').split(',');
+            if (ignoreListArray.includes(vehicle.vin)) {
+              this.log.info('Ignore ' + vehicle.vin);
+              continue;
+            }
           }
           this.vinArray.push(vehicle.vin);
           await this.extendObjectAsync(vehicle.vin, {

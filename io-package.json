@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.8.1",
+    "version": "2.8.2",
     "news": {
+      "2.8.2": {
+        "en": "fix error getvehicles v2 failed",
+        "de": "fehlerbehebung v2 versagt",
+        "ru": "ошибка фиксации",
+        "pt": "corrigir erro getvehicles v2 falhou",
+        "nl": "fix error get vehicles v2 is mislukt",
+        "fr": "erreur de correction getvéhicules v2 échoué",
+        "it": "errore di correzione getvehicles v2 guasto",
+        "es": "error de corrección getvehicles v2 fallado",
+        "pl": "naprawić błąd getvehicles v2 nie powiodło się",
+        "uk": "виправлення помилок getvehicles v2 не вдалося",
+        "zh-cn": "修补错误获得车辆 v2 失败"
+      },
       "2.8.1": {
         "en": "fix for remote commands",
         "de": "Fix für Remote Commands",
@@ -35,10 +48,6 @@
       "2.6.2": {
         "en": "Fix Charging response parsing",
         "de": "Fix Charging Antwort Verarbeitung"
-      },
-      "2.6.1": {
-        "en": "Fix Status Update. New status under bmw.0.VIN.state",
-        "de": "Status Update gefixt. Neuer Status unter bmw.0.VIN.state"
       }
     },
     "titleLang": {
@@ -67,8 +76,12 @@
       "uk": "Adapter for BMW",
       "zh-cn": "宝马适配器"
     },
-    "authors": ["TA2k <tombox2020@gmail.com>"],
-    "keywords": ["BMW"],
+    "authors": [
+      "TA2k <tombox2020@gmail.com>"
+    ],
+    "keywords": [
+      "BMW"
+    ],
     "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "main.js",
@@ -99,8 +112,12 @@
       }
     ]
   },
-  "encryptedNative": ["password"],
-  "protectedNative": ["password"],
+  "encryptedNative": [
+    "password"
+  ],
+  "protectedNative": [
+    "password"
+  ],
   "native": {
     "username": "",
     "password": "",
