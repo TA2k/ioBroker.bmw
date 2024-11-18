@@ -76,12 +76,8 @@
       "uk": "Adapter for BMW",
       "zh-cn": "宝马适配器"
     },
-    "authors": [
-      "TA2k <tombox2020@gmail.com>"
-    ],
-    "keywords": [
-      "BMW"
-    ],
+    "authors": ["TA2k <tombox2020@gmail.com>"],
+    "keywords": ["BMW"],
     "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "main.js",
@@ -112,18 +108,15 @@
       }
     ]
   },
-  "encryptedNative": [
-    "password"
-  ],
-  "protectedNative": [
-    "password"
-  ],
+  "encryptedNative": ["password"],
+  "protectedNative": ["password"],
   "native": {
     "username": "",
     "password": "",
     "interval": 5,
     "brand": "bmw",
-    "ignorelist": ""
+    "ignorelist": "",
+    "captcha": ""
   },
   "objects": [],
   "instanceObjects": [

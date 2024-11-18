@@ -242,6 +242,7 @@ class Bmw extends utils.Adapter {
       username: this.config.username,
       password: this.config.password,
       grant_type: 'authorization_code',
+      hcaptchatoken: this.config.captcha,
     };
 
     const authUrl = await this.requestClient({
@@ -326,9 +327,40 @@ class Bmw extends utils.Adapter {
       },
       data: 'code=' + code + '&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code&code_verifier=' + code_verifier,
     })
-      .then((res) => {
+      .then(async (res) => {
         this.log.debug(JSON.stringify(res.data));
         this.session = res.data;
+        await this.extendObject('auth', {
+          type: 'channel',
+          common: {
+            name: 'Authentification Information',
+          },
+          native: {},
+        });
+        await this.extendObject('auth.access_token', {
+          type: 'state',
+          common: {
+            name: 'Access Token',
+            type: 'string',
+            role: 'value',
+            read: true,
+            write: false,
+          },
+          native: {},
+        });
+        await this.extendObject('auth.refresh_token', {
+          type: 'state',
+          common: {
+            name: 'Refresh Token',
+            type: 'string',
+            role: 'value',
+            read: true,
+            write: false,
+          },
+          native: {},
+        });
+        this.setState('auth.access_token', this.session.access_token, true);
+        this.setState('auth.refresh_token', this.session.refresh_token, true);
         this.setState('info.connection', true, true);
         return res.data;
       })
@@ -851,6 +883,7 @@ class Bmw extends utils.Adapter {
       this.demandInterval && clearInterval(this.demandInterval);
       callback();
     } catch (e) {
+      this.log.error(e);
       callback();
     }
   }
