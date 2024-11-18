@@ -186,7 +186,20 @@ class Bmw extends utils.Adapter {
       this.log.error('Please set username and password');
       return;
     }
-    await this.login();
+    const sessionState = await this.getStateAsync('auth.session');
+    if (sessionState && sessionState.val) {
+      this.session = JSON.parse(sessionState.val);
+      this.log.info('Session found. If the login fails please delete bmw.0.auth.session and restart the adapter');
+      this.log.debug(JSON.stringify(this.session));
+      await this.refreshToken();
+    } else {
+      if (!this.config.captcha) {
+        this.log.error('Please generate a captcha in the instance settings');
+        return;
+      }
+
+      await this.login();
+    }
 
     if (this.session.access_token) {
       this.log.info(`Start getting ${this.config.brand} vehicles`);
@@ -196,29 +209,20 @@ class Bmw extends utils.Adapter {
       await this.updateDemands();
       await this.sleep(5000);
       await this.updateTrips();
-      this.updateInterval = setInterval(
-        async () => {
-          await this.sleep(2000);
-          await this.updateDevices();
-        },
-        this.config.interval * 60 * 1000,
-      );
-      this.demandInterval = setInterval(
-        async () => {
-          await this.sleep(2000);
-          await this.updateDemands();
-          await this.sleep(5000);
-          await this.updateTrips();
-        },
-        24 * 60 * 60 * 1000,
-      );
-      this.refreshTokenInterval = setInterval(
-        async () => {
-          await this.refreshToken();
-          await this.sleep(5000);
-        },
-        (this.session.expires_in - 123) * 1000,
-      );
+      this.updateInterval = setInterval(async () => {
+        await this.sleep(2000);
+        await this.updateDevices();
+      }, this.config.interval * 60 * 1000);
+      this.demandInterval = setInterval(async () => {
+        await this.sleep(2000);
+        await this.updateDemands();
+        await this.sleep(5000);
+        await this.updateTrips();
+      }, 24 * 60 * 60 * 1000);
+      this.refreshTokenInterval = setInterval(async () => {
+        await this.refreshToken();
+        await this.sleep(5000);
+      }, (this.session.expires_in - 123) * 1000);
     }
   }
   async login() {
@@ -228,6 +232,7 @@ class Bmw extends utils.Adapter {
         'Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Mobile/15E148 Safari/604.1',
       'Accept-Language': 'de-de',
       'Content-Type': 'application/x-www-form-urlencoded',
+      hcaptchatoken: this.config.captcha,
     };
     const [code_verifier, codeChallenge] = this.getCodeChallenge();
     const data = {
@@ -242,7 +247,6 @@ class Bmw extends utils.Adapter {
       username: this.config.username,
       password: this.config.password,
       grant_type: 'authorization_code',
-      hcaptchatoken: this.config.captcha,
     };
 
     const authUrl = await this.requestClient({
@@ -252,27 +256,28 @@ class Bmw extends utils.Adapter {
       data: qs.stringify(data),
       withCredentials: true,
     })
-      .then((res) => {
+      .then(async (res) => {
         this.log.debug(JSON.stringify(res.data));
         return res.data;
       })
-      .catch((error) => {
+      .catch(async (error) => {
         this.log.error('Login failed');
         this.log.error(error);
         if (error.response) {
           this.log.error(JSON.stringify(error.response.data));
         }
         if (error.response && error.response.status === 401) {
-          this.log.error('Please check username and password or too many logins in 5 minutes');
-
+          this.log.error('Please check username and password or generate a new captcha in the instance settings');
+          this.log.error('Please wait 5 minutes before trying again');
           this.log.error('Start relogin in 5min');
+
           this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-          this.reLoginTimeout = setTimeout(
-            () => {
-              this.login();
-            },
-            5000 * 60 * 1,
-          );
+          this.reLoginTimeout = setTimeout(async () => {
+            //get adapter settings and set captcha to null
+            const adapterSettings = await this.getForeignObjectAsync('system.adapter.' + this.namespace);
+            adapterSettings.native.captcha = null;
+            await this.setForeignObjectAsync('system.adapter.' + this.namespace, adapterSettings);
+          }, 5000 * 60 * 1);
         }
         if (error.response && error.response.status === 400) {
           this.log.error('Please check username and password');
@@ -337,10 +342,10 @@ class Bmw extends utils.Adapter {
           },
           native: {},
         });
-        await this.extendObject('auth.access_token', {
+        await this.extendObject('auth.session', {
           type: 'state',
           common: {
-            name: 'Access Token',
+            name: 'Session Token',
             type: 'string',
             role: 'value',
             read: true,
@@ -348,19 +353,8 @@ class Bmw extends utils.Adapter {
           },
           native: {},
         });
-        await this.extendObject('auth.refresh_token', {
-          type: 'state',
-          common: {
-            name: 'Refresh Token',
-            type: 'string',
-            role: 'value',
-            read: true,
-            write: false,
-          },
-          native: {},
-        });
-        this.setState('auth.access_token', this.session.access_token, true);
-        this.setState('auth.refresh_token', this.session.refresh_token, true);
+
+        this.setState('auth.session', JSON.stringify(this.session), true);
         this.setState('info.connection', true, true);
         return res.data;
       })
@@ -483,12 +477,9 @@ class Bmw extends utils.Adapter {
         }
         this.log.info('Adapter will retry in 3 minutes to get vehicles');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.getVehiclesv2();
-          },
-          1000 * 60 * 3,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.getVehiclesv2();
+        }, 1000 * 60 * 3);
       });
     await this.sleep(5000);
   }
@@ -507,8 +498,7 @@ class Bmw extends utils.Adapter {
       headers['bmw-vin'] = vin;
       await this.requestClient({
         method: 'get',
-        url:
-          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
+        url: 'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
         headers: headers,
       })
         .then(async (res) => {
@@ -852,6 +842,8 @@ class Bmw extends utils.Adapter {
       .then((res) => {
         this.log.debug(JSON.stringify(res.data));
         this.session = res.data;
+
+        this.setState('auth.session', JSON.stringify(this.session), true);
         this.setState('info.connection', true, true);
         return res.data;
       })
@@ -861,12 +853,9 @@ class Bmw extends utils.Adapter {
         error.response && this.log.error(JSON.stringify(error.response.data));
         this.log.error('Start relogin in 1min');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.login();
-          },
-          1000 * 60 * 1,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.login();
+        }, 1000 * 60 * 1);
       });
   }
 
@@ -874,13 +863,19 @@ class Bmw extends utils.Adapter {
    * Is called when adapter shuts down - callback has to be called under any circumstances!
    * @param {() => void} callback
    */
-  onUnload(callback) {
+  async onUnload(callback) {
     try {
       clearTimeout(this.refreshTimeout);
       clearTimeout(this.reLoginTimeout);
       clearInterval(this.updateInterval);
       clearInterval(this.refreshTokenInterval);
       this.demandInterval && clearInterval(this.demandInterval);
+      //get adapter settings and set captcha to null
+      if (this.config.captcha) {
+        const adapterSettings = await this.getForeignObjectAsync('system.adapter.' + this.namespace);
+        adapterSettings.native.captcha = null;
+        await this.setForeignObjectAsync('system.adapter.' + this.namespace, adapterSettings);
+      }
       callback();
     } catch (e) {
       this.log.error(e);

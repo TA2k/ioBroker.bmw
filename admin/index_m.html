@@ -81,10 +81,10 @@
           <label for="password" class="translate">App Password</label>
         </div>
       </div>
-      <p></p>
       <div class="row">
-        <div id="captchaResponse">
-          <div style="text-align: center">
+        <div class="col s6 input-field" id="captchaResponse">
+          Check Captcha Box and press Submit. Save the form.
+          <div>
             <form id="captcha_form" action="#" method="post">
               <!-- hCaptcha widget -->
               <div class="h-captcha" data-sitekey="7244955f-8f30-4445-adff-4fefe059f815"></div>
@@ -106,11 +106,14 @@
 
             if (hCaptchaResponse) {
               document.getElementById('captcha').value = hCaptchaResponse;
+              //trigger change event
+              var event = new Event('change');
+              document.getElementById('captcha').dispatchEvent(event);
             }
           });
         </script>
 
-        <textarea type="text" class="value" id="captcha" />
+        <input type="text" class="value" id="captcha" />
         <label for="captcha" class="translate">Captcha</label>
       </div>
       <div class="row">
@@ -118,6 +121,7 @@
           <select id="brand" class="value">
             <option value="bmw">BMW</option>
             <option value="mini">Mini</option>
+            <option value="toyota">Toyota Supra</option>
           </select>
           <label for="brand" class="translate">Brand</label>
         </div>
