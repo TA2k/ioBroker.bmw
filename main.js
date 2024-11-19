@@ -209,20 +209,29 @@ class Bmw extends utils.Adapter {
       await this.updateDemands();
       await this.sleep(5000);
       await this.updateTrips();
-      this.updateInterval = setInterval(async () => {
-        await this.sleep(2000);
-        await this.updateDevices();
-      }, this.config.interval * 60 * 1000);
-      this.demandInterval = setInterval(async () => {
-        await this.sleep(2000);
-        await this.updateDemands();
-        await this.sleep(5000);
-        await this.updateTrips();
-      }, 24 * 60 * 60 * 1000);
-      this.refreshTokenInterval = setInterval(async () => {
-        await this.refreshToken();
-        await this.sleep(5000);
-      }, (this.session.expires_in - 123) * 1000);
+      this.updateInterval = setInterval(
+        async () => {
+          await this.sleep(2000);
+          await this.updateDevices();
+        },
+        this.config.interval * 60 * 1000,
+      );
+      this.demandInterval = setInterval(
+        async () => {
+          await this.sleep(2000);
+          await this.updateDemands();
+          await this.sleep(5000);
+          await this.updateTrips();
+        },
+        24 * 60 * 60 * 1000,
+      );
+      this.refreshTokenInterval = setInterval(
+        async () => {
+          await this.refreshToken();
+          await this.sleep(5000);
+        },
+        (this.session.expires_in - 123) * 1000,
+      );
     }
   }
   async login() {
@@ -272,15 +281,21 @@ class Bmw extends utils.Adapter {
           this.log.error('Start relogin in 5min');
 
           this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-          this.reLoginTimeout = setTimeout(async () => {
-            //get adapter settings and set captcha to null
-            const adapterSettings = await this.getForeignObjectAsync('system.adapter.' + this.namespace);
-            adapterSettings.native.captcha = null;
-            await this.setForeignObjectAsync('system.adapter.' + this.namespace, adapterSettings);
-          }, 5000 * 60 * 1);
+          this.reLoginTimeout = setTimeout(
+            async () => {
+              //get adapter settings and set captcha to null
+              const adapterSettings = await this.getForeignObjectAsync('system.adapter.' + this.namespace);
+              adapterSettings.native.captcha = null;
+              await this.setForeignObjectAsync('system.adapter.' + this.namespace, adapterSettings);
+            },
+            5000 * 60 * 1,
+          );
         }
         if (error.response && error.response.status === 400) {
           this.log.error('Please check username and password');
+        }
+        if (error.response && error.response.status === 429) {
+          this.log.error('Login Rate Limit exceeded, please wait 5 minutes');
         }
       });
     if (!authUrl || !authUrl.redirect_to) {
@@ -477,9 +492,12 @@ class Bmw extends utils.Adapter {
         }
         this.log.info('Adapter will retry in 3 minutes to get vehicles');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(() => {
-          this.getVehiclesv2();
-        }, 1000 * 60 * 3);
+        this.reLoginTimeout = setTimeout(
+          () => {
+            this.getVehiclesv2();
+          },
+          1000 * 60 * 3,
+        );
       });
     await this.sleep(5000);
   }
@@ -498,7 +516,8 @@ class Bmw extends utils.Adapter {
       headers['bmw-vin'] = vin;
       await this.requestClient({
         method: 'get',
-        url: 'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
+        url:
+          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
         headers: headers,
       })
         .then(async (res) => {
@@ -853,9 +872,12 @@ class Bmw extends utils.Adapter {
         error.response && this.log.error(JSON.stringify(error.response.data));
         this.log.error('Start relogin in 1min');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(() => {
-          this.login();
-        }, 1000 * 60 * 1);
+        this.reLoginTimeout = setTimeout(
+          () => {
+            this.login();
+          },
+          1000 * 60 * 1,
+        );
       });
   }
 
