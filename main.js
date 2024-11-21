@@ -771,8 +771,8 @@ class Bmw extends utils.Adapter {
                 session.id = session.id.split('_')[1] ? session.id.split('_')[1] : session.id;
                 session.timestamp = new Date(session.date).valueOf();
                 if (session.energyCharged.replace) {
-                  session.energy = session.energyCharged.replace('~', '').trim().split(' ')[0];
-                  session.unit = session.energyCharged.replace('~', '').trim().split(' ')[1];
+                  session.energy = session.energyCharged.replace('~', '').replace('<', '').trim().split(' ')[0];
+                  session.unit = session.energyCharged.replace('~', '').replace('<', '').trim().split(' ')[1];
                 }
                 if (session.subtitle.replace) {
                   //subtitle = Zuhause • 2h 16min • ~ 5,97 EUR
