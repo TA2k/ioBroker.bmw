@@ -485,7 +485,7 @@ class Bmw extends utils.Adapter {
             channelName: vehicleName,
           });
 
-          await this.updateChargingSessionv2(vehicle.vin);
+          await this.updateChargingSessionv2(vehicle.vin, 200);
         }
       })
       .catch((error) => {
@@ -674,7 +674,7 @@ class Bmw extends utils.Adapter {
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-  async updateChargingSessionv2(vin) {
+  async updateChargingSessionv2(vin, maxResults = 40) {
     if (this.nonChargingHistory[vin]) {
       return;
     }
@@ -708,7 +708,9 @@ class Bmw extends utils.Adapter {
         vin +
         '&next_token&date=' +
         dateFormatted +
-        '-01T00%3A00%3A00.000Z&maxResults=40&include_date_picker=true',
+        '-01T00%3A00%3A00.000Z&maxResults=' +
+        maxResults +
+        '&include_date_picker=true',
       path: '.chargingSessions.',
       name: 'chargingSessions',
     });
