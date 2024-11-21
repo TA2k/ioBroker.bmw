@@ -911,7 +911,7 @@ class Bmw extends utils.Adapter {
         return res.data;
       })
       .catch((error) => {
-        this.log.error('refresh token failed');
+        this.log.error('refresh token failed. Please delete bmw.0.auth.session and restart the adapter');
         this.log.error(error);
         error.response && this.log.error(JSON.stringify(error.response.data));
         this.log.error('Start relogin in 1min');
