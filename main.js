@@ -775,9 +775,15 @@ class Bmw extends utils.Adapter {
                   session.unit = session.energyCharged.replace('~', '').trim().split(' ')[1];
                 }
                 if (session.subtitle.replace) {
-                  const cleanedSubtitle = session.subtitle.replace('~', '').replace('•', '').replace('  ', ' ').replace('  ', ' ').trim();
-                  session.duration = cleanedSubtitle.split(' ')[1];
-                  session.cost = cleanedSubtitle.split(' ')[2];
+                  //subtitle = Zuhause • 2h 16min • ~ 5,97 EUR
+                  //remove all tildes
+                  let cleanedSubtitle = session.subtitle.replace(/~/g, '');
+                  //split array on dots
+                  cleanedSubtitle = cleanedSubtitle.split('•');
+                  // const cleanedSubtitle = session.subtitle.replace('~', '').replace('•', '').replace('  ', ' ').replace('  ', ' ').trim();
+                  session.duration = cleanedSubtitle[1].trim();
+                  session.cost = cleanedSubtitle[2].trim().split(' ')[0];
+                  session.currency = cleanedSubtitle[2].trim().split(' ')[1];
                 }
                 newSessions.push(session);
               } catch (error) {
@@ -785,6 +791,18 @@ class Bmw extends utils.Adapter {
               }
             }
             data.sessions = newSessions;
+            await this.extendObject(vin + element.path + dateFormatted + '.raw', {
+              type: 'state',
+              common: {
+                name: 'Raw Data as JSON',
+                type: 'string',
+                role: 'json',
+                write: false,
+                read: true,
+              },
+              native: {},
+            });
+            await this.setState(vin + element.path + dateFormatted + '.raw', JSON.stringify(data), true);
             await this.json2iob.parse(vin + element.path + dateFormatted, data, { preferedArrayName: 'date' });
             try {
               const datal = data.sessions[0];
