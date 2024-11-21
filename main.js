@@ -702,24 +702,27 @@ class Bmw extends utils.Adapter {
     const fullDate = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().replace('Z', '000');
 
     const urlArray = [];
-    urlArray.push({
-      url:
-        'https://cocoapi.bmwgroup.com/eadrax-chs/v2/charging-sessions?vin=' +
-        vin +
-        '&next_token&date=' +
-        dateFormatted +
-        '-01T00%3A00%3A00.000Z&maxResults=' +
-        maxResults +
-        '&include_date_picker=true',
-      path: '.chargingSessions.',
-      name: 'chargingSessions',
-    });
-
-    urlArray.push({
-      url: 'https://cocoapi.bmwgroup.com/eadrax-chs/v2/charging-statistics?vin=' + vin + '&currentDate=' + fullDate,
-      path: '.charging-statistics.',
-      name: 'charging statistics',
-    });
+    if (this.config.fetchChargeSessions) {
+      urlArray.push({
+        url:
+          'https://cocoapi.bmwgroup.com/eadrax-chs/v2/charging-sessions?vin=' +
+          vin +
+          '&next_token&date=' +
+          dateFormatted +
+          '-01T00%3A00%3A00.000Z&maxResults=' +
+          maxResults +
+          '&include_date_picker=true',
+        path: '.chargingSessions.',
+        name: 'chargingSessions',
+      });
+    }
+    if (this.config.fetchChargeStats) {
+      urlArray.push({
+        url: 'https://cocoapi.bmwgroup.com/eadrax-chs/v2/charging-statistics?vin=' + vin + '&currentDate=' + fullDate,
+        path: '.charging-statistics.',
+        name: 'charging statistics',
+      });
+    }
     for (const element of urlArray) {
       await this.sleep(10000);
       this.log.debug('update ' + vin + element.path);

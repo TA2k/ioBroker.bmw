@@ -125,7 +125,9 @@
     "interval": 5,
     "brand": "bmw",
     "ignorelist": "",
-    "captcha": ""
+    "captcha": "",
+    "fetchChargeStats": true,
+    "fetchChargeSessions": true
   },
   "objects": [],
   "instanceObjects": [
