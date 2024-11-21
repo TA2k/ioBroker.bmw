@@ -482,6 +482,7 @@ class Bmw extends utils.Adapter {
           this.json2iob.parse(vehicle.vin, vehicle, {
             forceIndex: true,
             descriptions: this.description,
+            channelName: vehicleName,
           });
 
           await this.updateChargingSessionv2(vehicle.vin);
