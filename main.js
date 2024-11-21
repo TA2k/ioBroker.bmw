@@ -686,7 +686,7 @@ class Bmw extends utils.Adapter {
     if (this.nonChargingHistory[vin]) {
       return;
     }
-    if (Date.now() - this.lastChargingSessionUpdate < 1000 * 60 * 60 * 6) {
+    if (Date.now() - this.lastChargingSessionUpdate < 1000 * 60 * 60 * 6 && !dateInput) {
       this.log.debug('updateChargingSessionv2 to early ' + vin);
       return;
     }
