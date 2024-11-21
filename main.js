@@ -778,9 +778,12 @@ class Bmw extends utils.Adapter {
                   //subtitle = Zuhause • 2h 16min • ~ 5,97 EUR
                   //remove all tildes
                   let cleanedSubtitle = session.subtitle.replace(/~/g, '');
+                  //remove all small than
+                  cleanedSubtitle = cleanedSubtitle.replace(/</g, '');
                   //split array on dots
                   cleanedSubtitle = cleanedSubtitle.split('•');
                   // const cleanedSubtitle = session.subtitle.replace('~', '').replace('•', '').replace('  ', ' ').replace('  ', ' ').trim();
+                  session.location = cleanedSubtitle[0].trim();
                   session.duration = cleanedSubtitle[1].trim();
                   session.cost = cleanedSubtitle[2].trim().split(' ')[0];
                   session.currency = cleanedSubtitle[2].trim().split(' ')[1];
