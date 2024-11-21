@@ -724,7 +724,7 @@ class Bmw extends utils.Adapter {
           dateFormatted +
           '-01T00%3A00%3A00.000Z&maxResults=' +
           maxResults +
-          '&include_date_picker=true',
+          '&include_date_picker=false',
         path: '.chargingSessions.',
         name: 'chargingSessions',
       });
