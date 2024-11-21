@@ -465,14 +465,22 @@ class Bmw extends utils.Adapter {
             { command: 'start-charging' },
             { command: 'stop-charging' },
             { command: 'force-refresh', name: 'Force Refresh' },
+            {
+              command: 'fetch-charges',
+              name: 'Fetch Charge Sessions/Statistics for month',
+              type: 'string',
+              role: 'text',
+              def: '2024-06',
+            },
           ];
           remoteArray.forEach((remote) => {
-            this.setObjectNotExists(vehicle.vin + '.remotev2.' + remote.command, {
+            this.extendObject(vehicle.vin + '.remotev2.' + remote.command, {
               type: 'state',
               common: {
                 name: remote.name || '',
                 type: remote.type || 'boolean',
                 role: remote.role || 'boolean',
+                def: remote.def == null ? false : remote.def,
                 write: true,
                 read: true,
               },
@@ -588,7 +596,7 @@ class Bmw extends utils.Adapter {
             },
             native: {},
           });
-          await this.setStateAsync(vin + '.servicedemands.json', JSON.stringify(res.data), true);
+          await this.setState(vin + '.servicedemands.json', JSON.stringify(res.data), true);
         })
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
@@ -674,7 +682,7 @@ class Bmw extends utils.Adapter {
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-  async updateChargingSessionv2(vin, maxResults = 40) {
+  async updateChargingSessionv2(vin, maxResults = 40, dateInput) {
     if (this.nonChargingHistory[vin]) {
       return;
     }
@@ -694,13 +702,18 @@ class Bmw extends utils.Adapter {
     };
 
     const d = new Date();
-    const dateFormatted =
+    let dateFormatted =
       d.getFullYear().toString() +
       '-' +
       ((d.getMonth() + 1).toString().length == 2 ? (d.getMonth() + 1).toString() : '0' + (d.getMonth() + 1).toString());
     // const day = d.getDate().toString().length == 2 ? d.getDate().toString() : "0" + d.getDate().toString();
-    const fullDate = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().replace('Z', '000');
+    let fullDate = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().replace('Z', '000');
 
+    if (dateInput) {
+      dateFormatted = dateInput;
+      const tempDate = new Date(dateInput + '-01T00:00:00.000Z');
+      fullDate = new Date(tempDate.getTime() - tempDate.getTimezoneOffset() * 60000).toISOString().replace('Z', '000');
+    }
     const urlArray = [];
     if (this.config.fetchChargeSessions) {
       urlArray.push({
@@ -934,6 +947,11 @@ class Bmw extends utils.Adapter {
         if (command === 'force-refresh') {
           this.log.info('force refresh');
           this.updateDevices();
+          return;
+        }
+        if (command === 'fetch-charges') {
+          this.log.info('fetch charges');
+          await this.updateChargingSessionv2(vin, 200, state.val);
           return;
         }
         const action = command.split('_')[1];
