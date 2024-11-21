@@ -428,14 +428,18 @@ class Bmw extends utils.Adapter {
             }
           }
           this.vinArray.push(vehicle.vin);
-          await this.extendObjectAsync(vehicle.vin, {
+          let vehicleName = vehicle.model;
+          if (!vehicleName && vehicle.attributes) {
+            vehicleName = vehicle.attributes.model;
+          }
+          await this.extendObject(vehicle.vin, {
             type: 'device',
             common: {
-              name: vehicle.model || vehicle.attributes?.model,
+              name: vehicleName,
             },
             native: {},
           });
-          await this.extendObjectAsync(vehicle.vin + '.state', {
+          await this.extendObject(vehicle.vin + '.state', {
             type: 'channel',
             common: {
               name: 'Current status of the car v4',
@@ -727,7 +731,7 @@ class Bmw extends utils.Adapter {
           if (data.chargingSessions) {
             data = data.chargingSessions;
           }
-          await this.extendObjectAsync(vin + element.path + dateFormatted, {
+          await this.extendObject(vin + element.path + dateFormatted, {
             type: 'channel',
             common: {
               name: element.name + ' of the car v2',
