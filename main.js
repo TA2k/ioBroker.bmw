@@ -541,8 +541,8 @@ class Bmw extends utils.Adapter {
       })
         .then(async (res) => {
           this.log.debug(JSON.stringify(res.data));
-          if (vehicle.state && vehicle.state.electricChargingState && !vehicle.state.electricChargingState.remainingChargingMinutes) {
-            vehicle.state.electricChargingState.remainingChargingMinutes = 0;
+          if (res.data.state && res.data.state.electricChargingState && !res.data.state.electricChargingState.remainingChargingMinutes) {
+            res.data.state.electricChargingState.remainingChargingMinutes = 0;
           }
           this.json2iob.parse(vin, res.data, { forceIndex: true, descriptions: this.description });
         })
