@@ -208,7 +208,7 @@ class Bmw extends utils.Adapter {
       await this.sleep(5000);
       this.log.info('Initial first update of the vehicles');
       await this.updateDevices();
-      this.log.info('Update Trips and Demands in 10 minutes');
+      this.log.info('First update of Trips and Demands in 10 minutes');
       this.setTimeout(
         async () => {
           await this.updateDemands();
@@ -498,16 +498,12 @@ class Bmw extends utils.Adapter {
               native: {},
             });
           });
-          if (vehicle.state && vehicle.state.electricChargingState && !vehicle.state.electricChargingState.remainingChargingMinutes) {
-            vehicle.state.electricChargingState.remainingChargingMinutes = 0;
-          }
+
           this.json2iob.parse(vehicle.vin, vehicle, {
             forceIndex: true,
             descriptions: this.description,
             channelName: vehicleName,
           });
-
-          await this.updateChargingSessionv2(vehicle.vin, 200);
         }
       })
       .catch((error) => {
