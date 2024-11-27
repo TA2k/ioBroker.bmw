@@ -105,7 +105,10 @@
             const responseElement = document.getElementById('captchaResponse');
 
             if (hCaptchaResponse) {
-              document.getElementById('captcha').value = JSON.stringify(hCaptchaResponse);
+              if (typeof hCaptchaResponse === 'object') {
+                hCaptchaResponse = JSON.stringify(hCaptchaResponse);
+              }
+              document.getElementById('captcha').value = hCaptchaResponse;
               //trigger change event
               var event = new Event('change');
               document.getElementById('captcha').dispatchEvent(event);
