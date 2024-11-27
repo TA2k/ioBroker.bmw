@@ -206,9 +206,17 @@ class Bmw extends utils.Adapter {
       await this.getVehiclesv2(true);
       await this.cleanObjects();
       await this.sleep(5000);
-      await this.updateDemands();
-      await this.sleep(5000);
-      await this.updateTrips();
+      this.log.info('Initial first update of the vehicles');
+      await this.updateDevices();
+      this.log.info('Update Trips and Demands in 10 minutes');
+      this.setTimeout(
+        async () => {
+          await this.updateDemands();
+          await this.sleep(5000);
+          await this.updateTrips();
+        },
+        1000 * 60 * 10,
+      );
       this.updateInterval = setInterval(
         async () => {
           await this.sleep(2000);
