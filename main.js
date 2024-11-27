@@ -1072,7 +1072,7 @@ class Bmw extends utils.Adapter {
           await this.updateDevices();
         }, 12 * 1000);
       } else {
-        const resultDict = { chargingStatus: 'charging', doorLockState: 'door' };
+        const resultDict = { chargingStatus: 'charging', combinedSecurityState: 'door', activity: 'climate-now' };
         const idArray = id.split('.');
         const stateName = idArray[idArray.length - 1];
         const vin = id.split('.')[2];
