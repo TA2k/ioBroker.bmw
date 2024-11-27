@@ -457,13 +457,16 @@ class Bmw extends utils.Adapter {
           const remoteArray = [
             { command: 'door-lock' },
             { command: 'door-unlock' },
+            { command: 'door', name: 'Door Lock True=Lock, False=Unlock' },
             { command: 'horn-blow' },
             { command: 'light-flash' },
             { command: 'vehicle-finder' },
             { command: 'climate-now_START' },
             { command: 'climate-now_STOP' },
+            { command: 'climate-now', name: 'Climate True=Start, False=Stop' },
             { command: 'start-charging' },
             { command: 'stop-charging' },
+            { command: 'charging', name: 'Charging True=Start, False=Stop' },
             { command: 'force-refresh', name: 'Force Refresh' },
             {
               command: 'fetch-charges',
@@ -487,6 +490,9 @@ class Bmw extends utils.Adapter {
               native: {},
             });
           });
+          if (vehicle.state && vehicle.state.electricChargingState && !vehicle.state.electricChargingState.remainingChargingMinutes) {
+            vehicle.state.electricChargingState.remainingChargingMinutes = 0;
+          }
           this.json2iob.parse(vehicle.vin, vehicle, {
             forceIndex: true,
             descriptions: this.description,
@@ -535,6 +541,9 @@ class Bmw extends utils.Adapter {
       })
         .then(async (res) => {
           this.log.debug(JSON.stringify(res.data));
+          if (vehicle.state && vehicle.state.electricChargingState && !vehicle.state.electricChargingState.remainingChargingMinutes) {
+            vehicle.state.electricChargingState.remainingChargingMinutes = 0;
+          }
           this.json2iob.parse(vin, res.data, { forceIndex: true, descriptions: this.description });
         })
         .catch(async (error) => {
@@ -975,6 +984,24 @@ class Bmw extends utils.Adapter {
           await this.updateChargingSessionv2(vin, 200, state.val);
           return;
         }
+        if (command === 'charging') {
+          command = 'start-charging';
+          if (!state.val) {
+            command = 'stop-charging';
+          }
+        }
+        if (command === 'climate-now') {
+          command = 'climate-now_START';
+          if (!state.val) {
+            command = 'climate-now_STOP';
+          }
+        }
+        if (command === 'door') {
+          command = 'door-lock';
+          if (!state.val) {
+            command = 'door-unlock';
+          }
+        }
         const action = command.split('_')[1];
         command = command.split('_')[0];
 
@@ -986,8 +1013,9 @@ class Bmw extends utils.Adapter {
           host: 'cocoapi.bmwgroup.com',
           '24-hour-format': 'true',
           'Content-Type': 'text/plain',
+          'bmw-vin': vin,
         };
-        let url = 'https://cocoapi.bmwgroup.com/eadrax-vrccs/v3/presentation/remote-commands/' + vin + '/' + command;
+        let url = 'https://cocoapi.bmwgroup.com/eadrax-vrccs/v4/presentation/remote-commands/' + command;
         if (action) {
           url += '?action=' + action;
         }
@@ -999,6 +1027,33 @@ class Bmw extends utils.Adapter {
         })
           .then((res) => {
             this.log.debug(JSON.stringify(res.data));
+            const eventId = res.data.eventId;
+            this.log.debug('Check Status of event in 10sec' + eventId);
+            this.setTimeout(() => {
+              headers['bmw-vin'] = vin;
+              this.requestClient({
+                method: 'post',
+                url: 'https://cocoapi.bmwgroup.com/eadrax-vrccs/v4/presentation/remote-commands/eventStatus?eventId=' + eventId,
+                headers: headers,
+              })
+                .then((res) => {
+                  this.log.debug(JSON.stringify(res.data));
+                  if (res.data.rsEventStatus === 'EXECUTED') {
+                    this.log.info('Remote command executed');
+                  } else {
+                    this.log.error('Remote command failed ' + res.data.rsEventStatus);
+                    this.log.info(JSON.stringify(res.data));
+                  }
+                })
+                .catch((error) => {
+                  this.log.error('Remote command status failed');
+                  this.log.error(error);
+                  if (error.response) {
+                    this.log.error(JSON.stringify(error.response.data));
+                  }
+                });
+            }, 10 * 1000);
+
             return res.data;
           })
           .catch((error) => {
@@ -1011,34 +1066,34 @@ class Bmw extends utils.Adapter {
         this.refreshTimeout = setTimeout(async () => {
           this.log.info('Refresh values');
           await this.updateDevices();
-        }, 10 * 1000);
+        }, 12 * 1000);
       } else {
-        // const resultDict = { chargingStatus: "CHARGE_NOW", doorLockState: "DOOR_LOCK" };
-        // const idArray = id.split(".");
-        // const stateName = idArray[idArray.length - 1];
+        const resultDict = { chargingStatus: 'charging', doorLockState: 'door' };
+        const idArray = id.split('.');
+        const stateName = idArray[idArray.length - 1];
         const vin = id.split('.')[2];
-        // if (resultDict[stateName]) {
-        //     let value = true;
-        //     if (!state.val || state.val === "INVALID" || state.val === "NOT_CHARGING" || state.val === "ERROR" || state.val === "UNLOCKED") {
-        //         value = false;
-        //     }
-        //     await this.setStateAsync(vin + ".remote." + resultDict[stateName], value, true);
-        // }
-
-        if (id.indexOf('.chargingStatus') !== -1 && state.val !== 'CHARGING') {
-          await this.setObjectNotExistsAsync(vin + '.status.chargingTimeRemaining', {
-            type: 'state',
-            common: {
-              name: 'chargingTimeRemaining',
-              role: 'value',
-              type: 'number',
-              write: false,
-              read: true,
-            },
-            native: {},
-          });
-          this.setState(vin + '.status.chargingTimeRemaining', 0, true);
+        if (resultDict[stateName]) {
+          let value = true;
+          if (!state.val || state.val === 'INVALID' || state.val === 'NOT_CHARGING' || state.val === 'ERROR' || state.val === 'UNLOCKED') {
+            value = false;
+          }
+          await this.setState(vin + '.remotev2.' + resultDict[stateName], value, true);
         }
+
+        // if (id.indexOf('.chargingStatus') !== -1 && state.val !== 'CHARGING') {
+        //   await this.setObjectNotExistsAsync(vin + '.status.chargingTimeRemaining', {
+        //     type: 'state',
+        //     common: {
+        //       name: 'chargingTimeRemaining',
+        //       role: 'value',
+        //       type: 'number',
+        //       write: false,
+        //       read: true,
+        //     },
+        //     native: {},
+        //   });
+        //   this.setState(vin + '.status.chargingTimeRemaining', 0, true);
+        // }
       }
     }
   }
