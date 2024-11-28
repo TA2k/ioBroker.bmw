@@ -1032,7 +1032,7 @@ class Bmw extends utils.Adapter {
           .then((res) => {
             this.log.debug(JSON.stringify(res.data));
             const eventId = res.data.eventId;
-            this.log.debug('Check Status of event in 10sec' + eventId);
+            this.log.debug('Check Status of event in 10sec');
             this.setTimeout(() => {
               headers['bmw-vin'] = vin;
               this.requestClient({
