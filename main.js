@@ -970,7 +970,7 @@ class Bmw extends utils.Adapter {
             },
             native: {},
           });
-          await this.setState(vin + '.images.' + view, 'data:image/jpeg;base64,' + base64, true);
+          await this.setState(vin + '.images.' + view, 'data:image/png;base64,' + base64, true);
         })
         .catch((error) => {
           this.log.error('fetch images failed ' + view);
