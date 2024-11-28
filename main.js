@@ -1034,12 +1034,17 @@ class Bmw extends utils.Adapter {
             retries: 3,
             // only 403 rate limit
             retryCondition: (error) => {
+              this.log.debug(error);
+              error.response && this.log.debug(JSON.stringify(error.response.data));
               return error.response && error.response.status === 403;
             },
             retryDelay: () => {
               return 5000;
             },
-            onRetry: () => {
+            onRetry: (retryCount, error) => {
+              this.log.debug('Retry ' + retryCount);
+              this.log.debug(error);
+              error.response && this.log.debug(JSON.stringify(error.response.data));
               this.log.warn('Rate Limit exceeded, retry in 5 seconds');
             },
             onMaxRetryTimesExceeded: () => {
