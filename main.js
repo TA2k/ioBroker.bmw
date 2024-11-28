@@ -463,17 +463,17 @@ class Bmw extends utils.Adapter {
           });
 
           const remoteArray = [
-            { command: 'door-lock' },
-            { command: 'door-unlock' },
+            { command: 'door-lock', name: 'Lock Doors (Not updated)' },
+            { command: 'door-unlock', name: 'Unlock Doors (Not updated)' },
             { command: 'door', name: 'Door Lock True=Lock, False=Unlock' },
-            { command: 'horn-blow' },
-            { command: 'light-flash' },
-            { command: 'vehicle-finder' },
-            { command: 'climate-now_START' },
-            { command: 'climate-now_STOP' },
+            { command: 'horn-blow', name: 'Horn Blow' },
+            { command: 'light-flash', name: 'Light Flash' },
+            { command: 'vehicle-finder', name: 'Trigger Vehicle Finder' },
+            { command: 'climate-now_START', name: 'Start Climate (Not updated)' },
+            { command: 'climate-now_STOP', name: 'Stop Climate (Not updated)' },
             { command: 'climate-now', name: 'Climate True=Start, False=Stop' },
-            { command: 'start-charging' },
-            { command: 'stop-charging' },
+            { command: 'start-charging', name: 'Start Charging (Not updated)' },
+            { command: 'stop-charging', name: 'Stop Charging (Not updated)' },
             { command: 'charging', name: 'Charging True=Start, False=Stop' },
             { command: 'force-refresh', name: 'Force Refresh' },
             {
@@ -1070,7 +1070,14 @@ class Bmw extends utils.Adapter {
         const vin = id.split('.')[2];
         if (resultDict[stateName]) {
           let value = true;
-          if (!state.val || state.val === 'INVALID' || state.val === 'NOT_CHARGING' || state.val === 'ERROR' || state.val === 'UNLOCKED') {
+          if (
+            !state.val ||
+            state.val === 'INVALID' ||
+            state.val === 'INACTIVE' ||
+            state.val === 'NOT_CHARGING' ||
+            state.val === 'ERROR' ||
+            state.val === 'UNLOCKED'
+          ) {
             value = false;
           }
           await this.setState(vin + '.remotev2.' + resultDict[stateName], value, true);
