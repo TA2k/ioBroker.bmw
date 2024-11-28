@@ -1061,6 +1061,7 @@ class Bmw extends utils.Adapter {
                 if (res === 'EXECUTED') {
                   this.log.info('Remote command executed');
                 } else {
+                  this.log.info('Event is not finished it is: ' + res);
                   await this.sleep(10000);
                   this.checkEventStatus(eventId, headers).then((res) => {
                     if (res === 'EXECUTED') {
