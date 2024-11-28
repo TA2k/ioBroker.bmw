@@ -953,9 +953,11 @@ class Bmw extends utils.Adapter {
           toCrop: true,
         },
         headers: headers,
+        responseType: 'arraybuffer',
       })
         .then(async (res) => {
           //save base64 image to state
+          const base64 = Buffer.from(res.data, 'binary').toString('base64');
           await this.setObjectNotExistsAsync(vin + '.images.' + view, {
             type: 'state',
             common: {
@@ -967,7 +969,7 @@ class Bmw extends utils.Adapter {
             },
             native: {},
           });
-          await this.setState(vin + '.images.' + view, 'data:image/png;' + res.data.image, true);
+          await this.setState(vin + '.images.' + view, 'data:image/png;' + base64, true);
         })
         .catch((error) => {
           this.log.error('fetch images failed ' + view);
