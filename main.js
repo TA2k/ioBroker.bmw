@@ -169,7 +169,12 @@ class Bmw extends utils.Adapter {
       withCredentials: true,
       httpsAgent: new HttpsCookieAgent({ cookies: { jar: this.cookieJar } }),
     });
-    axiosRetry(this.requestClient, { retries: 0 });
+    axiosRetry(this.requestClient, {
+      retries: 0,
+      retryDelay: () => {
+        return 5000;
+      },
+    });
   }
 
   /**
