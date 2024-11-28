@@ -18,6 +18,7 @@
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.2",
     "axios": "^1.7.7",
+    "axios-retry": "^4.5.0",
     "http-cookie-agent": "^6.0.6",
     "json-bigint": "^1.0.0",
     "json2iob": "^2.6.12",

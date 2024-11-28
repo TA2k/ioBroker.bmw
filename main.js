@@ -14,6 +14,7 @@ const crypto = require('crypto');
 const qs = require('qs');
 const Json2iob = require('json2iob');
 const tough = require('tough-cookie');
+const axiosRetry = require('axios-retry').default;
 class Bmw extends utils.Adapter {
   /**
    * @param {Partial<utils.AdapterOptions>} [options={}]
@@ -168,6 +169,7 @@ class Bmw extends utils.Adapter {
       withCredentials: true,
       httpsAgent: new HttpsCookieAgent({ cookies: { jar: this.cookieJar } }),
     });
+    axiosRetry(this.requestClient, { retries: 0 });
   }
 
   /**
@@ -1028,6 +1030,22 @@ class Bmw extends utils.Adapter {
           method: 'post',
           url: url,
           headers: headers,
+          'axios-retry': {
+            retries: 3,
+            // only 403 rate limit
+            retryCondition: (error) => {
+              return error.response && error.response.status === 403;
+            },
+            retryDelay: () => {
+              return 5000;
+            },
+            onRetry: () => {
+              this.log.warn('Rate Limit exceeded, retry in 5 seconds');
+            },
+            onMaxRetryTimesExceeded: () => {
+              this.log.error('3 Retries failed');
+            },
+          },
         })
           .then((res) => {
             this.log.debug(JSON.stringify(res.data));
