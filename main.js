@@ -1034,28 +1034,20 @@ class Bmw extends utils.Adapter {
             const eventId = res.data.eventId;
             this.log.debug('Check Status of event in 10sec');
             this.setTimeout(() => {
-              headers['bmw-vin'] = vin;
-              this.requestClient({
-                method: 'post',
-                url: 'https://cocoapi.bmwgroup.com/eadrax-vrccs/v4/presentation/remote-commands/eventStatus?eventId=' + eventId,
-                headers: headers,
-              })
-                .then((res) => {
-                  this.log.debug(JSON.stringify(res.data));
-                  if (res.data.rsEventStatus === 'EXECUTED') {
-                    this.log.info('Remote command executed');
-                  } else {
-                    this.log.error('Remote command failed ' + res.data.rsEventStatus);
-                    this.log.info(JSON.stringify(res.data));
-                  }
-                })
-                .catch((error) => {
-                  this.log.error('Remote command status failed');
-                  this.log.error(error);
-                  if (error.response) {
-                    this.log.error(JSON.stringify(error.response.data));
-                  }
-                });
+              this.checkEventStatus(eventId, headers).then(async (res) => {
+                if (res === 'EXECUTED') {
+                  this.log.info('Remote command executed');
+                } else {
+                  await this.sleep(10000);
+                  this.checkEventStatus(eventId, headers).then((res) => {
+                    if (res === 'EXECUTED') {
+                      this.log.info('Remote command executed');
+                    } else {
+                      this.log.error('Remote command failed ' + res);
+                    }
+                  });
+                }
+              });
             }, 10 * 1000);
 
             return res.data;
@@ -1099,6 +1091,25 @@ class Bmw extends utils.Adapter {
         //   this.setState(vin + '.status.chargingTimeRemaining', 0, true);
         // }
       }
+    }
+  }
+
+  async checkEventStatus(eventId, headers) {
+    try {
+      const res = await this.requestClient({
+        method: 'post',
+        url: 'https://cocoapi.bmwgroup.com/eadrax-vrccs/v4/presentation/remote-commands/eventStatus?eventId=' + eventId,
+        headers: headers,
+      });
+      this.log.debug(JSON.stringify(res.data));
+      return res.data.rsEventStatus;
+    } catch (error) {
+      this.log.error('Remote command status failed');
+      this.log.error(error);
+      if (error.response) {
+        this.log.error(JSON.stringify(error.response.data));
+      }
+      return 'Failed';
     }
   }
 }
