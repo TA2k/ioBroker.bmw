@@ -556,6 +556,18 @@ class Bmw extends utils.Adapter {
             res.data.state.electricChargingState.remainingChargingMinutes = 0;
           }
           this.json2iob.parse(vin, res.data, { forceIndex: true, descriptions: this.description });
+          await this.extendObject(vin + '.state.rawJSON', {
+            type: 'state',
+            common: {
+              name: 'Raw Data as JSON',
+              type: 'string',
+              role: 'json',
+              write: false,
+              read: true,
+            },
+            native: {},
+          });
+          this.setState(vin + '.state.rawJSON', JSON.stringify(res.data), true);
         })
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
