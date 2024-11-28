@@ -1036,20 +1036,17 @@ class Bmw extends utils.Adapter {
           url: url,
           headers: headers,
           'axios-retry': {
-            retries: 3,
+            retries: 5,
             // only 403 rate limit
             retryCondition: (error) => {
               this.log.debug(error);
               error.response && this.log.debug(JSON.stringify(error.response.data));
               return error.response && error.response.status === 403;
             },
-            retryDelay: () => {
-              return 5000;
-            },
             onRetry: (retryCount, error) => {
-              this.log.debug('Retry ' + retryCount);
+              this.log.info('Retry ' + retryCount);
               this.log.debug(error);
-              error.response && this.log.debug(JSON.stringify(error.response.data));
+              error.response && this.log.info(JSON.stringify(error.response.data));
               this.log.warn('Rate Limit exceeded, retry in 5 seconds');
             },
             onMaxRetryTimesExceeded: () => {
@@ -1144,6 +1141,9 @@ class Bmw extends utils.Adapter {
       this.log.error(error);
       if (error.response) {
         this.log.error(JSON.stringify(error.response.data));
+        if (error.response.status === 403) {
+          return 'Rate Limit exceeded';
+        }
       }
       return 'Failed';
     }
