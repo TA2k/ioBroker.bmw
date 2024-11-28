@@ -483,6 +483,7 @@ class Bmw extends utils.Adapter {
             { command: 'stop-charging', name: 'Stop Charging (Not updated)' },
             { command: 'charging', name: 'Charging True=Start, False=Stop' },
             { command: 'force-refresh', name: 'Force Refresh' },
+            { command: 'fetch-images', name: 'Fetch Images of the car in the image folder' },
             {
               command: 'fetch-charges',
               name: 'Fetch Charge Sessions/Statistics for month',
@@ -920,7 +921,62 @@ class Bmw extends utils.Adapter {
       ':00';
     return date_format_str;
   }
-
+  async fetchImages(vin) {
+    const viewsArray = [
+      'FrontView',
+      'RearView',
+      'FrontLeft',
+      'FrontRight',
+      'FrontRight',
+      'SideViewLeft',
+      'Dashboard',
+      'DriverDoor',
+      'RearView',
+    ];
+    const headers = {
+      'user-agent': this.userAgentDart,
+      'x-user-agent': this.xuserAgent.replace(';brand;', `;${this.config.brand};`),
+      authorization: 'Bearer ' + this.session.access_token,
+      'accept-language': 'de-DE',
+      '24-hour-format': 'true',
+      'bmw-vin': vin,
+      accept: 'image/png',
+      'bmw-app-vehicle-type': 'connected',
+    };
+    for (const view of viewsArray) {
+      this.log.info('Fetch image from ' + view);
+      await this.requestClient({
+        method: 'get',
+        url: 'https://cocoapi.bmwgroup.com/eadrax-ics/v5/presentation/vehicles/images',
+        params: {
+          carView: view,
+          toCrop: true,
+        },
+        headers: headers,
+      })
+        .then(async (res) => {
+          //save base64 image to state
+          await this.setObjectNotExistsAsync(vin + '.images.' + view, {
+            type: 'state',
+            common: {
+              name: view,
+              type: 'string',
+              role: 'state',
+              read: true,
+              write: false,
+            },
+            native: {},
+          });
+          await this.setState(vin + '.images.' + view, 'data:image/png;' + res.data.image, true);
+        })
+        .catch((error) => {
+          this.log.error('fetch images failed ' + view);
+          this.log.error(error);
+          error.response && this.log.error(JSON.stringify(error.response.data));
+        });
+      await this.sleep(5000);
+    }
+  }
   async refreshToken() {
     this.log.debug('refresh token');
     await this.requestClient({
@@ -1000,6 +1056,11 @@ class Bmw extends utils.Adapter {
         if (command === 'force-refresh') {
           this.log.info('force refresh');
           this.updateDevices();
+          return;
+        }
+        if (command === 'fetch-images') {
+          this.log.info('fetch images');
+          await this.fetchImages();
           return;
         }
         if (command === 'fetch-charges') {
