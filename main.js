@@ -945,7 +945,7 @@ class Bmw extends utils.Adapter {
       'bmw-app-vehicle-type': 'connected',
     };
     for (const view of viewsArray) {
-      this.log.info('Fetch image from ' + view);
+      this.log.info('Fetch image from ' + view + 'to bmw.0.' + vin + '.images.' + view);
       await this.requestClient({
         method: 'get',
         url: 'https://cocoapi.bmwgroup.com/eadrax-ics/v5/presentation/vehicles/images',
