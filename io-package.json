@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.8.4",
+    "version": "2.9.0",
     "news": {
+      "2.9.0": {
+        "en": "added new remotes as switch and updated values\nadded retry logic for remotes",
+        "de": "neue remotes als switch und mit aktualisierten Werte hinzugefügt\nzusätzliche retry-logik für remotes hinzufgefügt",
+        "ru": "добавлены новые пульты в качестве переключателя и обновленных значений\nдобавленная ретри-логика для пультов",
+        "pt": "adicionado novos controles remotos como interruptor e valores atualizados\nadicionado lógica de retração para remotos",
+        "nl": "nieuwe remotes toegevoegd als switch en bijgewerkte waarden\ntoegevoegd retry logica voor remotes",
+        "fr": "ajout de nouvelles télécommandes comme valeurs de commutation et de mise à jour\nretry logique ajoutée pour les télécommandes",
+        "it": "aggiunto nuovi remoti come switch e valori aggiornati\naggiunto retry logica per i remoti",
+        "es": "nuevos mandos como conmutación y valores actualizados\nlógica de retry añadido para los remotos",
+        "pl": "dodano nowe piloty jako przełącznik i zaktualizowane wartości\ndodano logikę retry dla pilotów",
+        "uk": "додано нові пульти як перемикач і оновлені значення\nдодана логіка для пультів",
+        "zh-cn": "作为切换和更新值添加新远程\n为远程添加重试逻辑"
+      },
       "2.8.4": {
         "en": "improved charging sessios parsing\nadded remote to fetch charging session from a specific month\nadd raw JSON of charging session for export",
         "de": "verbesserte charging sessios Import\nRemote hinzugefügt, um charging sessios aus einem bestimmten Monat abzurufen\nRohes JSON der charging sessios für den Export hinzugefügt",
@@ -62,10 +75,6 @@
       "2.7.2": {
         "en": "Move Rate Limit messages to debug",
         "de": "Rate Limit Nachrichten in debug verschoben"
-      },
-      "2.7.0": {
-        "en": "Improve rate limit handling",
-        "de": "Rate Limit Handling verbessert"
       }
     },
     "titleLang": {
