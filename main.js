@@ -1060,7 +1060,7 @@ class Bmw extends utils.Adapter {
         }
         if (command === 'fetch-images') {
           this.log.info('fetch images');
-          await this.fetchImages();
+          await this.fetchImages(vin);
           return;
         }
         if (command === 'fetch-charges') {
