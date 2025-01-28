@@ -140,6 +140,8 @@
   "native": {
     "username": "",
     "password": "",
+    "musername": "",
+    "mpassword": "",
     "interval": 5,
     "brand": "bmw",
     "ignorelist": "",

@@ -207,6 +207,20 @@ class Bmw extends utils.Adapter {
 
       await this.login();
     }
+    if (this.config.musername && this.config.mpassword) {
+      const msessionState = await this.getStateAsync('auth.session');
+      if (msessionState && msessionState.val) {
+        this.msession = JSON.parse(msessionState.val);
+        this.log.debug(JSON.stringify(this.msession));
+        await this.refreshToken(true);
+      } else {
+        if (!this.config.captcha) {
+          this.log.error('Please generate a captcha in the instance settings to login the m user');
+          return;
+        }
+        await this.login(true);
+      }
+    }
 
     if (this.session.access_token) {
       this.log.info(`Start getting ${this.config.brand} vehicles`);
@@ -244,12 +258,21 @@ class Bmw extends utils.Adapter {
         async () => {
           await this.refreshToken();
           await this.sleep(5000);
+          if (this.config.musername && this.config.mpassword) {
+            await this.refreshToken(true);
+          }
         },
         (this.session.expires_in - 123) * 1000,
       );
     }
   }
-  async login() {
+  async login(loginSecondUser) {
+    let username = this.config.username;
+    let password = this.config.password;
+    if (loginSecondUser) {
+      username = this.config.musername;
+      password = this.config.mpassword;
+    }
     const headers = {
       Accept: 'application/json, text/plain, */*',
       'User-Agent':
@@ -268,8 +291,8 @@ class Bmw extends utils.Adapter {
       nonce: 'login_nonce',
       code_challenge_method: 'S256',
       code_challenge: codeChallenge,
-      username: this.config.username,
-      password: this.config.password,
+      username: username,
+      password: password,
       grant_type: 'authorization_code',
     };
 
@@ -364,7 +387,7 @@ class Bmw extends utils.Adapter {
     })
       .then(async (res) => {
         this.log.debug(JSON.stringify(res.data));
-        this.session = res.data;
+
         await this.extendObject('auth', {
           type: 'channel',
           common: {
@@ -383,7 +406,23 @@ class Bmw extends utils.Adapter {
           },
           native: {},
         });
-
+        if (loginSecondUser) {
+          this.msession = res.data;
+          await this.extendObject('auth.msession', {
+            type: 'state',
+            common: {
+              name: 'MSession Token',
+              type: 'string',
+              role: 'value',
+              read: true,
+              write: false,
+            },
+            native: {},
+          });
+          await this.setState('auth.msession', JSON.stringify(this.msession), true);
+        } else {
+          this.session = res.data;
+        }
         this.setState('auth.session', JSON.stringify(this.session), true);
         this.setState('info.connection', true, true);
         return res.data;
@@ -980,8 +1019,12 @@ class Bmw extends utils.Adapter {
       await this.sleep(5000);
     }
   }
-  async refreshToken() {
+  async refreshToken(useSecondUser) {
     this.log.debug('refresh token');
+    let refresh_token = this.session.refresh_token;
+    if (useSecondUser) {
+      refresh_token = this.msession.refresh_token;
+    }
     await this.requestClient({
       method: 'post',
       url: 'https://customer.bmwgroup.com/gcdm/oauth/token',
@@ -991,11 +1034,17 @@ class Bmw extends utils.Adapter {
         Accept: '*/*',
         Authorization: 'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
       },
-      data: 'redirect_uri=com.bmw.connected://oauth&refresh_token=' + this.session.refresh_token + '&grant_type=refresh_token',
+      data: 'redirect_uri=com.bmw.connected://oauth&refresh_token=' + refresh_token + '&grant_type=refresh_token',
     })
       .then((res) => {
         this.log.debug(JSON.stringify(res.data));
-        this.session = res.data;
+        if (useSecondUser) {
+          this.msession = res.data;
+
+          this.setState('auth.msession', JSON.stringify(this.msession), true);
+        } else {
+          this.session = res.data;
+        }
 
         this.setState('auth.session', JSON.stringify(this.session), true);
         this.setState('info.connection', true, true);
@@ -1091,11 +1140,15 @@ class Bmw extends utils.Adapter {
         }
         const action = command.split('_')[1];
         command = command.split('_')[0];
-
+        let access_token = this.session.access_token;
+        if (this.msession) {
+          this.log.debug('Use second user for remote command');
+          access_token = this.msession.access_token;
+        }
         const headers = {
           'user-agent': this.userAgentDart,
           'x-user-agent': this.xuserAgent.replace(';brand;', `;${this.config.brand};`),
-          authorization: 'Bearer ' + this.session.access_token,
+          authorization: 'Bearer ' + access_token,
           'accept-language': 'de-DE',
           host: 'cocoapi.bmwgroup.com',
           '24-hour-format': 'true',
