@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.9.0",
+    "version": "2.9.1",
     "news": {
+      "2.9.1": {
+        "en": "fix Remote Controls\nadd Mitbenutzer Login for remote controls",
+        "de": "remote Controls reparieren\nmitbenutzer Login für Fernbedienungen hinzufügen",
+        "ru": "починить удаленные управления\nдобавить логин Mitbenutzer для дистанционного управления",
+        "pt": "corrigir controles remotos\nadicionar Mitbenutzer Login para controles remotos",
+        "nl": "fix afstandsbedieningen\nmitbenutzer Login toevoegen voor afstandsbedieningen",
+        "fr": "correction des télécommandes\najouter Mitbenutzer Login pour les télécommandes",
+        "it": "correzione di controlli remoti\naggiungere Mitbenutzer Login per i comandi remoti",
+        "es": "controles remotos de fijación\nañadir Mitbenutzer Login para controles remotos",
+        "pl": "naprawić zdalne sterowanie\ndodaj Mitbenutzer Login do zdalnego sterowania",
+        "uk": "виправити дистанційні керування\nдодати Mitbenutzer Увійти для дистанційного керування",
+        "zh-cn": "修复远程控制\n添加远程控制的 Mitbenutzer 登录"
+      },
       "2.9.0": {
         "en": "added new remotes as switch and updated values\nadded retry logic for remotes",
         "de": "neue remotes als switch und mit aktualisierten Werte hinzugefügt\nzusätzliche retry-logik für remotes hinzufgefügt",
@@ -71,10 +84,6 @@
       "2.8.0": {
         "en": "Add support service demand and trip api",
         "de": "Support für Service und Trips API hinzugefügt"
-      },
-      "2.7.2": {
-        "en": "Move Rate Limit messages to debug",
-        "de": "Rate Limit Nachrichten in debug verschoben"
       }
     },
     "titleLang": {
@@ -103,8 +112,12 @@
       "uk": "Adapter for BMW",
       "zh-cn": "宝马适配器"
     },
-    "authors": ["TA2k <tombox2020@gmail.com>"],
-    "keywords": ["BMW"],
+    "authors": [
+      "TA2k <tombox2020@gmail.com>"
+    ],
+    "keywords": [
+      "BMW"
+    ],
     "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "main.js",
@@ -135,8 +148,12 @@
       }
     ]
   },
-  "encryptedNative": ["password"],
-  "protectedNative": ["password"],
+  "encryptedNative": [
+    "password"
+  ],
+  "protectedNative": [
+    "password"
+  ],
   "native": {
     "username": "",
     "password": "",
