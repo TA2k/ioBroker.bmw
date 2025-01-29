@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.9.1",
+    "version": "2.9.2",
     "news": {
+      "2.9.2": {
+        "en": "fix Remote Controls\nadd Mitbenutzer Login for remote controls",
+        "de": "remote Controls reparieren\nmitbenutzer Login für Fernbedienungen hinzufügen",
+        "ru": "починить удаленные управления\nдобавить логин Mitbenutzer для дистанционного управления",
+        "pt": "corrigir controles remotos\nadicionar Mitbenutzer Login para controles remotos",
+        "nl": "fix afstandsbedieningen\nmitbenutzer Login toevoegen voor afstandsbedieningen",
+        "fr": "correction des télécommandes\najouter Mitbenutzer Login pour les télécommandes",
+        "it": "correzione di controlli remoti\naggiungere Mitbenutzer Login per i comandi remoti",
+        "es": "controles remotos de fijación\nañadir Mitbenutzer Login para controles remotos",
+        "pl": "naprawić zdalne sterowanie\ndodaj Mitbenutzer Login do zdalnego sterowania",
+        "uk": "виправити дистанційні керування\nдодати Mitbenutzer Увійти для дистанційного керування",
+        "zh-cn": "修复远程控制\n添加远程控制的 Mitbenutzer 登录"
+      },
       "2.9.1": {
         "en": "fix Remote Controls\nadd Mitbenutzer Login for remote controls",
         "de": "remote Controls reparieren\nmitbenutzer Login für Fernbedienungen hinzufügen",
@@ -80,10 +93,6 @@
         "pl": "naprawianie zdalnych poleceń",
         "uk": "фіксувати віддалені команди",
         "zh-cn": "修正远程命令"
-      },
-      "2.8.0": {
-        "en": "Add support service demand and trip api",
-        "de": "Support für Service und Trips API hinzugefügt"
       }
     },
     "titleLang": {

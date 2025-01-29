@@ -1268,10 +1268,10 @@ class Bmw extends utils.Adapter {
       this.log.debug(JSON.stringify(res.data));
       return res.data.rsEventStatus;
     } catch (error) {
-      this.log.error('Remote command status failed');
-      this.log.error(error);
+      this.log.warn('Cannot Fetch the status of the sent command. Status is Unknown');
+      this.log.warn(error);
       if (error.response) {
-        this.log.error(JSON.stringify(error.response.data));
+        this.log.warn(JSON.stringify(error.response.data));
         if (error.response.status === 403) {
           return 'Rate Limit exceeded';
         }
