@@ -25,7 +25,7 @@ bmw.0.VIN.properties
 bmw.0.VIN.remotev2
 
 ## Changelog
-### 2.9.2 (2025-01-29)
+### 2.9.3 (2025-01-29)
 
 - fix Remote Controls
 - add Mitbenutzer Login for remote controls

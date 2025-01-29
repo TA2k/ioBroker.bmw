@@ -1199,8 +1199,10 @@ class Bmw extends utils.Adapter {
                       this.log.info('Remote command executed');
                     } else if (res === 'RUNNING') {
                       this.log.info('Remote command is still running');
+                    } else if (res === 'UNKNOWN') {
+                      this.log.debug('Remote command is unknown');
                     } else {
-                      this.log.error('Remote command failed ' + res);
+                      this.log.warn('Remote command failed ' + res);
                     }
                   });
                 }
@@ -1268,12 +1270,12 @@ class Bmw extends utils.Adapter {
       this.log.debug(JSON.stringify(res.data));
       return res.data.rsEventStatus;
     } catch (error) {
-      this.log.warn('Cannot Fetch the status of the sent command. Status is Unknown');
-      this.log.warn(error);
+      this.log.info('Cannot Fetch the status of the sent command. Status is Unknown');
+      this.log.info(error);
       if (error.response) {
-        this.log.warn(JSON.stringify(error.response.data));
+        this.log.info(JSON.stringify(error.response.data));
         if (error.response.status === 403) {
-          return 'Rate Limit exceeded';
+          return 'UNKNOWN';
         }
       }
       return 'Failed';
