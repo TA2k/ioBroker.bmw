@@ -208,7 +208,7 @@ class Bmw extends utils.Adapter {
       await this.login();
     }
     if (this.config.musername && this.config.mpassword) {
-      const msessionState = await this.getStateAsync('auth.session');
+      const msessionState = await this.getStateAsync('auth.msession');
       if (msessionState && msessionState.val) {
         this.msession = JSON.parse(msessionState.val);
         this.log.debug(JSON.stringify(this.msession));
