@@ -212,12 +212,14 @@ class Bmw extends utils.Adapter {
       if (msessionState && msessionState.val) {
         this.msession = JSON.parse(msessionState.val);
         this.log.debug(JSON.stringify(this.msession));
+        this.log.info('Session found for M user. If the login fails please delete bmw.0.auth.msession and restart the adapter');
         await this.refreshToken(true);
       } else {
         if (!this.config.captcha) {
           this.log.error('Please generate a captcha in the instance settings to login the m user');
           return;
         }
+        this.log.info('Start login for second user');
         await this.login(true);
       }
     }
@@ -230,40 +232,28 @@ class Bmw extends utils.Adapter {
       this.log.info('Initial first update of the vehicles');
       await this.updateDevices();
       this.log.info('First update of Trips and Demands in 10 minutes');
-      this.setTimeout(
-        async () => {
-          await this.updateDemands();
-          await this.sleep(5000);
-          await this.updateTrips();
-        },
-        1000 * 60 * 10,
-      );
-      this.updateInterval = setInterval(
-        async () => {
-          await this.sleep(2000);
-          await this.updateDevices();
-        },
-        this.config.interval * 60 * 1000,
-      );
-      this.demandInterval = setInterval(
-        async () => {
-          await this.sleep(2000);
-          await this.updateDemands();
-          await this.sleep(5000);
-          await this.updateTrips();
-        },
-        24 * 60 * 60 * 1000,
-      );
-      this.refreshTokenInterval = setInterval(
-        async () => {
-          await this.refreshToken();
-          await this.sleep(5000);
-          if (this.config.musername && this.config.mpassword) {
-            await this.refreshToken(true);
-          }
-        },
-        (this.session.expires_in - 123) * 1000,
-      );
+      this.setTimeout(async () => {
+        await this.updateDemands();
+        await this.sleep(5000);
+        await this.updateTrips();
+      }, 1000 * 60 * 10);
+      this.updateInterval = setInterval(async () => {
+        await this.sleep(2000);
+        await this.updateDevices();
+      }, this.config.interval * 60 * 1000);
+      this.demandInterval = setInterval(async () => {
+        await this.sleep(2000);
+        await this.updateDemands();
+        await this.sleep(5000);
+        await this.updateTrips();
+      }, 24 * 60 * 60 * 1000);
+      this.refreshTokenInterval = setInterval(async () => {
+        await this.refreshToken();
+        await this.sleep(5000);
+        if (this.config.musername && this.config.mpassword) {
+          await this.refreshToken(true);
+        }
+      }, (this.session.expires_in - 123) * 1000);
     }
   }
   async login(loginSecondUser) {
@@ -319,15 +309,12 @@ class Bmw extends utils.Adapter {
           this.log.error('Start relogin in 5min');
 
           this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-          this.reLoginTimeout = setTimeout(
-            async () => {
-              //get adapter settings and set captcha to null
-              const adapterSettings = await this.getForeignObjectAsync('system.adapter.' + this.namespace);
-              adapterSettings.native.captcha = null;
-              await this.setForeignObjectAsync('system.adapter.' + this.namespace, adapterSettings);
-            },
-            5000 * 60 * 1,
-          );
+          this.reLoginTimeout = setTimeout(async () => {
+            //get adapter settings and set captcha to null
+            const adapterSettings = await this.getForeignObjectAsync('system.adapter.' + this.namespace);
+            adapterSettings.native.captcha = null;
+            await this.setForeignObjectAsync('system.adapter.' + this.namespace, adapterSettings);
+          }, 5000 * 60 * 1);
         }
         if (error.response && error.response.status === 400) {
           this.log.error('Please check username and password');
@@ -562,12 +549,9 @@ class Bmw extends utils.Adapter {
         }
         this.log.info('Adapter will retry in 3 minutes to get vehicles');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.getVehiclesv2();
-          },
-          1000 * 60 * 3,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.getVehiclesv2();
+        }, 1000 * 60 * 3);
       });
     await this.sleep(5000);
   }
@@ -586,8 +570,7 @@ class Bmw extends utils.Adapter {
       headers['bmw-vin'] = vin;
       await this.requestClient({
         method: 'get',
-        url:
-          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
+        url: 'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
         headers: headers,
       })
         .then(async (res) => {
@@ -1056,12 +1039,9 @@ class Bmw extends utils.Adapter {
         error.response && this.log.error(JSON.stringify(error.response.data));
         this.log.error('Start relogin in 1min');
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.login();
-          },
-          1000 * 60 * 1,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.login();
+        }, 1000 * 60 * 1);
       });
   }
 
