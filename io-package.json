@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.9.3",
+    "version": "2.9.4",
     "news": {
+      "2.9.4": {
+        "en": "fix for Mitbenutzer Feature",
+        "de": "fix für Mitbenutzer Feature",
+        "ru": "обсуждение Mitbenutzer Feature",
+        "pt": "correção para recurso Mitbenutzer",
+        "nl": "fix voor Mitbenutzer Feature",
+        "fr": "correction pour la fonctionnalité Mitbenutzer",
+        "it": "fix per la funzione Mitbenutzer",
+        "es": "fijado para Mitbenutzer Feature",
+        "pl": "fix dla Mitbenutzer Feature",
+        "uk": "фіксатор для функції Mitbenutzer",
+        "zh-cn": "用于 Mitbenutzer 特性的固定"
+      },
       "2.9.3": {
         "en": "fix Remote Controls\nadd Mitbenutzer Login for remote controls",
         "de": "remote Controls reparieren\nmitbenutzer Login für Fernbedienungen hinzufügen",
@@ -16,7 +29,6 @@
         "uk": "виправити дистанційні керування\nдодати Mitbenutzer Увійти для дистанційного керування",
         "zh-cn": "修复远程控制\n添加远程控制的 Mitbenutzer 登录"
       },
-
       "2.9.0": {
         "en": "added new remotes as switch and updated values\nadded retry logic for remotes",
         "de": "neue remotes als switch und mit aktualisierten Werte hinzugefügt\nzusätzliche retry-logik für remotes hinzufgefügt",
@@ -96,8 +108,12 @@
       "uk": "Adapter for BMW",
       "zh-cn": "宝马适配器"
     },
-    "authors": ["TA2k <tombox2020@gmail.com>"],
-    "keywords": ["BMW"],
+    "authors": [
+      "TA2k <tombox2020@gmail.com>"
+    ],
+    "keywords": [
+      "BMW"
+    ],
     "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "main.js",
@@ -128,8 +144,12 @@
       }
     ]
   },
-  "encryptedNative": ["password"],
-  "protectedNative": ["password"],
+  "encryptedNative": [
+    "password"
+  ],
+  "protectedNative": [
+    "password"
+  ],
   "native": {
     "username": "",
     "password": "",

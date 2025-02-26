@@ -1216,8 +1216,15 @@ class Bmw extends utils.Adapter {
           })
           .catch((error) => {
             this.log.error('Remote command failed');
+
             this.log.error(error);
             if (error.response) {
+              //check for 403 quota exceeded
+              if (error.response.status === 403) {
+                this.log.warn(
+                  'Rate Limit exceeded, think about to use the second user Mitbenutzer feature in the adapter settings to send remote commands',
+                );
+              }
               this.log.error(JSON.stringify(error.response.data));
             }
           });
