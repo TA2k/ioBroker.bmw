@@ -586,8 +586,7 @@ class Bmw extends utils.Adapter {
       headers['bmw-vin'] = vin;
       await this.requestClient({
         method: 'get',
-        url:
-          `https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=${Date.now()}&tireGuardMode=ENABLED`,
+        url: `https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=${Date.now()}&tireGuardMode=ENABLED`,
         headers: headers,
       })
         .then(async (res) => {
@@ -1047,7 +1046,7 @@ class Bmw extends utils.Adapter {
         return res.data;
       })
       .catch((error) => {
-        this.log.error(`Refresh token failed. Please delete bmw.0.auth.session and restart the adapter`);
+        this.log.error('Refresh token failed. Please delete the Object DP "bmw.0.auth.session" and restart the adapter');
         this.log.error(error);
         error.response && this.log.error(JSON.stringify(error.response.data));
         this.log.error(`Start relogin in 1min`);
