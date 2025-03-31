@@ -535,9 +535,9 @@ class Bmw extends utils.Adapter {
             this.extendObject(`${vehicle.vin}.remotev2.${remote.command}`, {
               type: 'state',
               common: {
-                name: remote.name || "",
-                type: remote.type || "boolean",
-                role: remote.role || "boolean",
+                name: remote.name || '',
+                type: remote.type || 'boolean',
+                role: remote.role || 'boolean',
                 def: remote.def == null ? false : remote.def,
                 write: true,
                 read: true,
