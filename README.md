@@ -30,6 +30,7 @@ bmw.0.VIN.remotev2
 
 - (hombach) update axios
 - (hombach) fixing issues detected by repository checker (#88)
+- (hombach) some small code cleanups/optimizations
 
 ### 2.9.4 (2025-02-26)
 

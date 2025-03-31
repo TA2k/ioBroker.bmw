@@ -1,9 +1,5 @@
 'use strict';
 
-/*
- * Created with @iobroker/create-adapter v1.34.1
- */
-
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require('@iobroker/adapter-core');
@@ -194,7 +190,7 @@ class Bmw extends utils.Adapter {
       return;
     }
     const sessionState = await this.getStateAsync('auth.session');
-    if (sessionState && sessionState.val) {
+    if (sessionState?.val && typeof sessionState.val === 'string') {
       this.session = JSON.parse(sessionState.val);
       this.log.info('Session found. If the login fails please delete bmw.0.auth.session and restart the adapter');
       this.log.debug(JSON.stringify(this.session));
@@ -209,7 +205,7 @@ class Bmw extends utils.Adapter {
     }
     if (this.config.musername && this.config.mpassword) {
       const msessionState = await this.getStateAsync('auth.msession');
-      if (msessionState && msessionState.val) {
+      if (msessionState?.val && typeof msessionState.val === 'string') {
         this.msession = JSON.parse(msessionState.val);
         this.log.debug(JSON.stringify(this.msession));
         this.log.info('Session found for M user. If the login fails please delete bmw.0.auth.msession and restart the adapter');
@@ -386,7 +382,7 @@ class Bmw extends utils.Adapter {
         'Accept-Language': 'de-de',
         Authorization: 'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
       },
-      data: 'code=' + code + '&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code&code_verifier=' + code_verifier,
+      data: `code=${code}&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code&code_verifier=${code_verifier}`,
     })
       .then(async (res) => {
         this.log.debug(JSON.stringify(res.data));
@@ -463,7 +459,7 @@ class Bmw extends utils.Adapter {
     this.log.debug('getVehiclesv2');
     await this.requestClient({
       method: 'get',
-      url: 'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
+      url: `https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles?apptimezone=120&appDateTime=${Date.now()}&tireGuardMode=ENABLED`,
       headers: headers,
     })
       .then(async (res) => {
@@ -535,7 +531,7 @@ class Bmw extends utils.Adapter {
             },
           ];
           remoteArray.forEach((remote) => {
-            this.extendObject(vehicle.vin + '.remotev2.' + remote.command, {
+            this.extendObject(`${vehicle.vin}.remotev2.${remote.command}`, {
               type: 'state',
               common: {
                 name: remote.name || '',
@@ -590,7 +586,7 @@ class Bmw extends utils.Adapter {
       await this.requestClient({
         method: 'get',
         url:
-          'https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=' + Date.now() + '&tireGuardMode=ENABLED',
+          `https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=${Date.now()}&tireGuardMode=ENABLED`,
         headers: headers,
       })
         .then(async (res) => {
@@ -610,7 +606,7 @@ class Bmw extends utils.Adapter {
             },
             native: {},
           });
-          this.setState(vin + '.state.rawJSON', JSON.stringify(res.data), true);
+          this.setState(`${vin}.state.rawJSON`, JSON.stringify(res.data), true);
         })
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
