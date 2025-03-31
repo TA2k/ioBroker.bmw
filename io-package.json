@@ -119,7 +119,6 @@
 		  "type": "free"
 		},
     "platform": "Javascript/Node.js",
-    "main": "main.js",
     "icon": "bmw.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/TA2k/ioBroker.bmw/master/admin/bmw.png",
