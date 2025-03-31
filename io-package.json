@@ -128,7 +128,9 @@
     "compact": true,
     "connectionType": "cloud",
     "dataSource": "poll",
-    "materialize": true,
+		"adminUI": {
+		  "config": "materialize"
+		},
     "plugins": {
       "sentry": {
         "dsn": "https://f976d718acc2489fb0e1991d4c8d26a0@sentry.iobroker.net/148"
