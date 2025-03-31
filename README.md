@@ -25,6 +25,12 @@ bmw.0.VIN.properties
 bmw.0.VIN.remotev2
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+
+- (hombach) update axios
+- (hombach) fixing issues detected by repository checker (#88)
+
 ### 2.9.4 (2025-02-26)
 
 - fix for Mitbenutzer Feature
