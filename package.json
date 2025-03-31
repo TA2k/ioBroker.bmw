@@ -9,7 +9,9 @@
   "homepage": "https://github.com/TA2k/ioBroker.bmw",
   "license": "MIT",
   "keywords": [
-    "BMW"
+    "ioBroker",
+    "BMW",
+    "Car"
   ],
   "repository": {
     "type": "git",
