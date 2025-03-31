@@ -25,6 +25,13 @@ bmw.0.VIN.properties
 bmw.0.VIN.remotev2
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+
+- (hombach) update axios
+- (hombach) fixing issues detected by repository checker (#88)
+- (hombach) some small code cleanups/modernisations
+
 ### 2.9.4 (2025-02-26)
 
 - fix for Mitbenutzer Feature
@@ -89,7 +96,7 @@ bmw.0.VIN.remotev2
 
 MIT License
 
-Copyright (c) 2021-2030 TA2k <tombox2020@gmail.com>
+Copyright (c) 2021-2025 TA2k <tombox2020@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

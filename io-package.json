@@ -114,20 +114,25 @@
     "keywords": [
       "BMW"
     ],
-    "license": "MIT",
+		"licenseInformation": {
+		  "license": "MIT",
+		  "type": "free"
+		},
     "platform": "Javascript/Node.js",
-    "main": "main.js",
     "icon": "bmw.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/TA2k/ioBroker.bmw/master/admin/bmw.png",
     "readme": "https://github.com/TA2k/ioBroker.bmw/blob/master/README.md",
     "loglevel": "info",
+    "tier": 2,
     "mode": "daemon",
     "type": "vehicle",
     "compact": true,
     "connectionType": "cloud",
     "dataSource": "poll",
-    "materialize": true,
+		"adminUI": {
+		  "config": "materialize"
+		},
     "plugins": {
       "sentry": {
         "dsn": "https://f976d718acc2489fb0e1991d4c8d26a0@sentry.iobroker.net/148"
@@ -135,12 +140,12 @@
     },
     "dependencies": [
       {
-        "js-controller": ">=3.0.0"
+        "js-controller": ">=5.0.19"
       }
     ],
     "globalDependencies": [
       {
-        "admin": ">=4.0.9"
+        "admin": ">=6.0.0"
       }
     ]
   },
