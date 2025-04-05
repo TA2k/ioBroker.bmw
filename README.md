@@ -1,4 +1,4 @@
-![Logo](admin/bmw.png)
+<img src="admin/bmw.png" alt="Logo" width="200">
 
 # ioBroker.bmw
 
@@ -47,6 +47,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 - (hombach) fixing issues detected by repository checker (#88)
 - (hombach) some small code cleanups/modernisations
 - (hombach) add/translate description
+- (hombach) update logo
 
 ### 2.9.4 (2025-02-26)
 

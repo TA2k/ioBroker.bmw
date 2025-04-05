@@ -919,7 +919,6 @@ class Bmw extends utils.Adapter {
   async cleanObjects() {
     for (const vin of this.vinArray) {
       const remoteState = await this.getObjectAsync(`${vin}.properties`);
-
       if (remoteState) {
         this.log.debug(`clean old states ${vin}`);
         await this.delObjectAsync(`${vin}.statusv1`, { recursive: true });
@@ -938,9 +937,9 @@ class Bmw extends utils.Adapter {
       }
     }
   }
+
   getDate() {
     const d = new Date();
-
     const date_format_str =
       d.getFullYear().toString() +
       '-' +
@@ -954,6 +953,7 @@ class Bmw extends utils.Adapter {
       ':00';
     return date_format_str;
   }
+
   async fetchImages(vin) {
     const viewsArray = [
       'FrontView',
@@ -1030,20 +1030,20 @@ class Bmw extends utils.Adapter {
       },
       data: `redirect_uri=com.bmw.connected://oauth&refresh_token=${refresh_token}&grant_type=refresh_token`,
     })
+
       .then((res) => {
         this.log.debug(JSON.stringify(res.data));
         if (useSecondUser) {
           this.msession = res.data;
-
           this.setState(`auth.msession`, JSON.stringify(this.msession), true);
         } else {
           this.session = res.data;
         }
-
         this.setState(`auth.session`, JSON.stringify(this.session), true);
         this.setState(`info.connection`, true, true);
         return res.data;
       })
+
       .catch((error) => {
         this.log.error(`Refresh token failed. Please delete the Object DP "bmw.0.auth.session" and restart the adapter`);
         this.log.error(error);
@@ -1190,7 +1190,7 @@ class Bmw extends utils.Adapter {
                   await this.sleep(10000);
                   this.checkEventStatus(eventId, headers).then((res) => {
                     if (res === 'EXECUTED') {
-                      this.log.info(`Remote command executed`);
+                      this.log.info(`Remote command successfully executed`);
                     } else if (res === 'RUNNING') {
                       this.log.info(`Remote command is still running`);
                     } else if (res === 'UNKNOWN') {
