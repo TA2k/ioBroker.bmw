@@ -1,4 +1,9 @@
 ![Logo](admin/bmw.png)
+<img src="admin/bmw.png" alt="Logo" width="100"/>
+
+![Logo](<img src="admin/bmw.png" alt="Logo" width="100"/>)
+
+
 
 # ioBroker.bmw
 
