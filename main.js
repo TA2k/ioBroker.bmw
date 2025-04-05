@@ -176,16 +176,15 @@ class Bmw extends utils.Adapter {
    * Is called when databases are connected and adapter received configuration.
    */
   async onReady() {
-    // Reset the connection indicator during startup
     this.setState('info.connection', false, true);
     if (this.config.interval < 0.5) {
-      this.log.info('Set interval to minimum 0.5');
+      this.log.info(`Set interval to minimum 0.5`);
       this.config.interval = 0.5;
     }
 
     this.subscribeStates('*');
     if (!this.config.username || !this.config.password) {
-      this.log.error('Please set username and password');
+      this.log.error(`Please set username and password`);
       return;
     }
     const sessionState = await this.getStateAsync('auth.session');
@@ -306,15 +305,15 @@ class Bmw extends utils.Adapter {
         return res.data;
       })
       .catch(async (error) => {
-        this.log.error('Login failed');
+        this.log.error(`Login failed`);
         this.log.error(error);
         if (error.response) {
           this.log.error(JSON.stringify(error.response.data));
         }
         if (error.response && error.response.status === 401) {
-          this.log.error('Please check username and password or generate a new captcha in the instance settings');
-          this.log.error('Please wait 5 minutes before trying again');
-          this.log.error('Start relogin in 5min');
+          this.log.error(`Please check username and password or generate a new captcha in the instance settings`);
+          this.log.error(`Please wait 5 minutes before trying again`);
+          this.log.error(`Start relogin in 5 minutes`);
 
           this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
           this.reLoginTimeout = setTimeout(
@@ -428,7 +427,7 @@ class Bmw extends utils.Adapter {
         return res.data;
       })
       .catch((error) => {
-        this.log.error('Login step 3 failed');
+        this.log.error(`Login step 3 failed`);
         this.log.error(error);
         if (error.response) {
           this.log.error(JSON.stringify(error.response.data));
@@ -451,7 +450,7 @@ class Bmw extends utils.Adapter {
     const brand = this.config.brand;
     const headers = {
       'user-agent': this.userAgentDart,
-      'x-user-agent': this.xuserAgent.replace(';brand;', `;${brand};`),
+      'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
       authorization: 'Bearer ' + this.session.access_token,
       'accept-language': 'de-DE',
       host: 'cocoapi.bmwgroup.com',
@@ -474,7 +473,7 @@ class Bmw extends utils.Adapter {
         }
         for (const vehicle of res.data) {
           if (this.config.ignorelist) {
-            this.log.info('Ignorelist found');
+            this.log.info(`Ignorelist found`);
             const ignoreListArray = this.config.ignorelist.replace(/\s/g, '').split(',');
             if (ignoreListArray.includes(vehicle.vin)) {
               this.log.info('Ignore ' + vehicle.vin);
@@ -493,14 +492,14 @@ class Bmw extends utils.Adapter {
             },
             native: {},
           });
-          await this.extendObject(vehicle.vin + '.state', {
+          await this.extendObject(`${vehicle.vin}.state`, {
             type: 'channel',
             common: {
-              name: 'Current status of the car v4',
+              name: 'Current state of the car v4',
             },
             native: {},
           });
-          await this.setObjectNotExistsAsync(vehicle.vin + '.remotev2', {
+          await this.setObjectNotExistsAsync(`${vehicle.vin}.remotev2`, {
             type: 'channel',
             common: {
               name: 'Remote Controls',
@@ -554,13 +553,13 @@ class Bmw extends utils.Adapter {
         }
       })
       .catch((error) => {
-        this.log.error('getvehicles v2 failed');
+        this.log.error(`getvehicles v2 failed`);
         this.log.error(error);
         error.response && this.log.error(JSON.stringify(error.response.data));
         if (error.response && (error.response.status === 403 || error.response.status === 429)) {
-          this.log.warn('Rate Limit exceeded, please wait 5 minutes');
+          this.log.warn(`Rate limit exceeded, please wait 5 minutes`);
         }
-        this.log.info('Adapter will retry in 3 minutes to get vehicles');
+        this.log.info(`Adapter will retry in 3 minutes to get vehicles`);
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
         this.reLoginTimeout = setTimeout(
           () => {
@@ -582,7 +581,7 @@ class Bmw extends utils.Adapter {
       '24-hour-format': 'true',
     };
     for (const vin of this.vinArray) {
-      this.log.debug('update ' + vin);
+      this.log.debug(`update ${vin}`);
       headers['bmw-vin'] = vin;
       await this.requestClient({
         method: 'get',
@@ -610,7 +609,7 @@ class Bmw extends utils.Adapter {
         })
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
-            this.log.debug(`${error.response.data.message} - Retry in 5 seconds`);
+            this.log.debug(`${error.response.data.message} - retrying in 5 seconds`);
             await this.sleep(5000);
             await this.updateDevices();
             return;
@@ -620,9 +619,9 @@ class Bmw extends utils.Adapter {
             return;
           }
           if (error.response && error.response.status >= 500) {
-            this.log.error('BMW server is not available');
+            this.log.error(`BMW server is not available`);
           }
-          this.log.error('update failed');
+          this.log.error(`update failed`);
           this.log.error(error);
           error.response && this.log.error(JSON.stringify(error.response.data));
         });
@@ -634,8 +633,8 @@ class Bmw extends utils.Adapter {
     const brand = this.config.brand;
     const headers = {
       'user-agent': this.userAgentDart,
-      'x-user-agent': this.xuserAgent.replace(';brand;', `;${brand};`),
-      authorization: 'Bearer ' + this.session.access_token,
+      'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
+      authorization: `Bearer ${this.session.access_token}`,
       'accept-language': 'de-DE',
       host: 'cocoapi.bmwgroup.com',
       '24-hour-format': 'true',
@@ -671,7 +670,7 @@ class Bmw extends utils.Adapter {
         })
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
-            this.log.debug(`${error.response.data.message} Retry in 15 minutes`);
+            this.log.debug(`${error.response.data.message} retrying in 15 minutes`);
             await this.sleep(1000 * 60 * 15);
             await this.updateDemands();
             return;
@@ -681,9 +680,9 @@ class Bmw extends utils.Adapter {
             return;
           }
           if (error.response && error.response.status >= 500) {
-            this.log.error('BMW server is not available');
+            this.log.error(`BMW server is not available`);
           }
-          this.log.error('update demand failed');
+          this.log.error(`update demand failed`);
           this.log.error(error);
           error.response && this.log.error(JSON.stringify(error.response.data));
         });
@@ -731,7 +730,7 @@ class Bmw extends utils.Adapter {
         })
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
-            this.log.debug(`${error.response.data.message} Retry in 15 minutes`);
+            this.log.debug(`${error.response.data.message} - retrying in 15 minutes`);
             await this.sleep(1000 * 60 * 15);
             await this.updateTrips();
             return;
@@ -741,9 +740,9 @@ class Bmw extends utils.Adapter {
             return;
           }
           if (error.response && error.response.status >= 500) {
-            this.log.error('BMW Server is not available');
+            this.log.error(`BMW server is not available`);
           }
-          this.log.error('update trip failed');
+          this.log.error(`update trip failed`);
           this.log.error(error);
           error.response && this.log.error(JSON.stringify(error.response.data));
         });
@@ -1046,10 +1045,10 @@ class Bmw extends utils.Adapter {
         return res.data;
       })
       .catch((error) => {
-        this.log.error('Refresh token failed. Please delete the Object DP "bmw.0.auth.session" and restart the adapter');
+        this.log.error(`Refresh token failed. Please delete the Object DP "bmw.0.auth.session" and restart the adapter`);
         this.log.error(error);
         error.response && this.log.error(JSON.stringify(error.response.data));
-        this.log.error(`Start relogin in 1min`);
+        this.log.error(`Start relogin in 1 min`);
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
         this.reLoginTimeout = setTimeout(
           () => {
@@ -1094,7 +1093,7 @@ class Bmw extends utils.Adapter {
   async onStateChange(id, state) {
     if (state) {
       if (!state.ack) {
-        if (id.indexOf('.remotev2.') === -1) {
+        if (id.indexOf(`.remotev2.`) === -1) {
           this.log.warn(`Please use remotev2 to control`);
           return;
         }
@@ -1245,7 +1244,7 @@ class Bmw extends utils.Adapter {
         }
 
         // if (id.indexOf('.chargingStatus') !== -1 && state.val !== 'CHARGING') {
-        //   await this.setObjectNotExistsAsync(vin + '.status.chargingTimeRemaining', {
+        //   await this.setObjectNotExistsAsync(`${vin}.status.chargingTimeRemaining`, {
         //     type: 'state',
         //     common: {
         //       name: 'chargingTimeRemaining',
@@ -1256,7 +1255,7 @@ class Bmw extends utils.Adapter {
         //     },
         //     native: {},
         //   });
-        //   this.setState(vin + '.status.chargingTimeRemaining', 0, true);
+        //   this.setState(`${vin}.status.chargingTimeRemaining`, 0, true);
         // }
       }
     }
