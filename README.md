@@ -1,4 +1,4 @@
-![Logo](admin/bmw.png)
+<img src="admin/bmw.png" alt="Logo" width="200">
 
 # ioBroker.bmw
 
