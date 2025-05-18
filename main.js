@@ -272,8 +272,7 @@ class Bmw extends utils.Adapter {
     }
     const headers = {
       Accept: 'application/json, text/plain, */*',
-      'User-Agent':
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Mobile/15E148 Safari/604.1',
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Mobile/15E148 Safari/604.1',
       'Accept-Language': 'de-de',
       'Content-Type': 'application/x-www-form-urlencoded',
       hcaptchatoken: this.config.captcha,
@@ -319,13 +318,13 @@ class Bmw extends utils.Adapter {
           this.reLoginTimeout = setTimeout(
             async () => {
               //get adapter settings and set captcha to null
-              const adapterSettings = await this.getForeignObjectAsync('system.adapter.' + this.namespace);
+              const adapterSettings = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
               if (adapterSettings && adapterSettings.native) {
                 adapterSettings.native.captcha = null;
-                await this.setForeignObjectAsync('system.adapter.' + this.namespace, adapterSettings);
+                await this.setForeignObjectAsync(`system.adapter.${this.namespace}`, adapterSettings);
               }
             },
-            5000 * 60 * 1,
+            5 * 60 * 1000,
           );
         }
         if (error.response && error.response.status === 400) {
@@ -527,7 +526,7 @@ class Bmw extends utils.Adapter {
               name: 'Fetch Charge Sessions/Statistics for month',
               type: 'string',
               role: 'text',
-              def: '2024-06',
+              def: '2025-04',
             },
           ];
           remoteArray.forEach((remote) => {
@@ -565,7 +564,7 @@ class Bmw extends utils.Adapter {
           () => {
             this.getVehiclesv2();
           },
-          1000 * 60 * 3,
+          3 * 60 * 1000,
         );
       });
     await this.sleep(5000);
@@ -671,7 +670,7 @@ class Bmw extends utils.Adapter {
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
             this.log.debug(`${error.response.data.message} retrying in 15 minutes`);
-            await this.sleep(1000 * 60 * 15);
+            await this.sleep(15 * 60000);
             await this.updateDemands();
             return;
           }
@@ -731,7 +730,7 @@ class Bmw extends utils.Adapter {
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
             this.log.debug(`${error.response.data.message} - retrying in 15 minutes`);
-            await this.sleep(1000 * 60 * 15);
+            await this.sleep(15 * 60000);
             await this.updateTrips();
             return;
           }
@@ -883,7 +882,7 @@ class Bmw extends utils.Adapter {
                 datal.unit = datal.energyCharged.replace('~', '').trim().split(' ')[1];
               }
               datal.id = 'latest';
-              await this.setObjectNotExistsAsync(vin + element.path + 'latest', {
+              await this.setObjectNotExistsAsync(`${vin}${element.path}latest`, {
                 type: 'channel',
                 common: {
                   name: `${element.name}latest of the car v2`,
@@ -1054,10 +1053,11 @@ class Bmw extends utils.Adapter {
           () => {
             this.login();
           },
-          1000 * 60 * 1,
+          1* 60000,
         );
       });
   }
+
 
   /**
    * Is called when adapter shuts down - callback has to be called under any circumstances!
@@ -1084,6 +1084,7 @@ class Bmw extends utils.Adapter {
       callback();
     }
   }
+
 
   /**
    * Is called if a subscribed state changes

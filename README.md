@@ -40,6 +40,11 @@ Remote control of your BMW is available under `bmw.0.VIN.remotev2`. Supported ac
 This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://github.com/TA2k/ioBroker.bmw)
 
 ## Changelog
+
+### WiP
+
+- (hombach) some small code cleanups/modernisations
+
 ### 2.9.5 (2025-05-18)
 
 - (hombach) update axios
