@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.9.4",
+    "version": "2.9.5",
     "news": {
+      "2.9.5": {
+        "en": "update axios\nfixing issues detected by repository checker (#88)\nsome small code cleanups/modernisations\nadd/translate description\nupdate logo",
+        "de": "axios\nproblembehebung durch repository checker (#88)\neinige kleine code-reinigungen/modernisierungen\nbeschreibung hinzufügen/übersetzen\nupdate-logo",
+        "ru": "обновление axios\nисправление проблем, обнаруженных с помощью проверки репозитория (#88)\nнебольшая очистка кода / модернизация\nдобавить/перевести описание\nобновление логотипа",
+        "pt": "axios de atualização\nproblemas de fixação detectados pelo verificador de repositório (#88)\nalgumas pequenas limpezas de código/modernizações\nadd/translate description\natualização do logotipo",
+        "nl": "axios bijwerken\nvastleggen van problemen gedetecteerd door repository checker (#88)\nenkele kleine code opruimingen/modernisaties\nbeschrijving toevoegen/vertalen\nlogo bijwerken",
+        "fr": "mettre à jour axios\ncorrection des problèmes détectés par le contrôleur du dépôt (#88)\nquelques petits nettoyages/modernisations de code\najouter/transférer la description\nmettre à jour le logo",
+        "it": "aggiornamento assio\nrisolvere i problemi rilevati da repository checker (#88)\nalcune piccole pulizia del codice/modernizzazioni\naggiungere/tradurre la descrizione\nlogo aggiornamento",
+        "es": "actualización axios\nproblemas de fijación detectados por repositorio (#88)\nalgunas pequeñas limpiezas/modernizaciones de código\nadd/translate description\nactualización del logo",
+        "pl": "aktualizacja axios\nproblemy z ustawianiem wykryte przez kontroler repozytorium (# 88)\nniektóre małe czystki kodu / modernizacje\ndodaj / przetłumacz opis\naktualizacja logo",
+        "uk": "оновлення axios\nфіксація питань, виявлених репозиторійною перевіркою (#88)\nдеякі невеликі очищення коду / модернізації\nопис\nоновлення логотипу",
+        "zh-cn": "更新轴线\n修复仓库检查器检测到的问题(#88)\n一些小代码清理/现代化\n添加/翻译说明\n更新标志"
+      },
       "2.9.4": {
         "en": "fix for Mitbenutzer Feature",
         "de": "fix für Mitbenutzer Feature",
@@ -114,10 +127,10 @@
     "keywords": [
       "BMW"
     ],
-		"licenseInformation": {
-		  "license": "MIT",
-		  "type": "free"
-		},
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
     "platform": "Javascript/Node.js",
     "icon": "bmw.png",
     "enabled": true,
@@ -130,9 +143,9 @@
     "compact": true,
     "connectionType": "cloud",
     "dataSource": "poll",
-		"adminUI": {
-		  "config": "materialize"
-		},
+    "adminUI": {
+      "config": "materialize"
+    },
     "plugins": {
       "sentry": {
         "dsn": "https://f976d718acc2489fb0e1991d4c8d26a0@sentry.iobroker.net/148"
