@@ -14,8 +14,6 @@
 ![GitHub issues](https://img.shields.io/github/issues/TA2k/iobroker.bmw?logo=github&style=flat-square)
 
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/TA2k/iobroker.bmw/test-and-release.yml?branch=master&logo=github&style=flat-square)
-[![CodeQL](https://github.com/TA2k/ioBroker.bmw/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/TA2k/ioBroker.bmw/actions/workflows/codeql-analysis.yml)
-[![Appveyor-CI](https://ci.appveyor.com/api/projects/status/github/TA2k/ioBroker.bmw?branch=master&svg=true)](https://ci.appveyor.com/project/TA2k/iobroker-bmw)
 [![SNYK Known Vulnerabilities](https://snyk.io/test/github/TA2k/ioBroker.bmw/badge.svg)](https://snyk.io/test/github/TA2k/ioBroker.bmw)
 
 ## Versions
@@ -25,20 +23,6 @@
 ![Installed](https://iobroker.live/badges/bmw-installed.svg)
 
 [![NPM](https://nodei.co/npm/iobroker.bmw.png?downloads=true)](https://nodei.co/npm/iobroker.bmw/)
-
-
-
-
-
-[![NPM version](https://img.shields.io/npm/v/iobroker.bmw.svg)](https://www.npmjs.com/package/iobroker.bmw)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.bmw.svg)](https://www.npmjs.com/package/iobroker.bmw)
-![Number of Installations (latest)](https://iobroker.live/badges/bmw-installed.svg)
-![Number of Installations (stable)](https://iobroker.live/badges/bmw-stable.svg)
-[![Dependency Status](https://img.shields.io/david/TA2k/iobroker.bmw.svg)](https://david-dm.org/TA2k/iobroker.bmw)
-
-[![NPM](https://nodei.co/npm/iobroker.bmw.png?downloads=true)](https://nodei.co/npm/iobroker.bmw/)
-
-**Tests:** ![Test and Release](https://github.com/TA2k/ioBroker.bmw/workflows/Test%20and%20Release/badge.svg)
 
 # BMW Adapter for ioBroker
 
