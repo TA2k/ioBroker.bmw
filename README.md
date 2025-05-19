@@ -4,6 +4,34 @@
 
 [![NPM version](https://img.shields.io/npm/v/iobroker.bmw.svg)](https://www.npmjs.com/package/iobroker.bmw)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.bmw.svg)](https://www.npmjs.com/package/iobroker.bmw)
+![node-lts](https://img.shields.io/node/v-lts/iobroker.bmw?style=flat-square)
+![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/iobroker.bmw?label=npm%20dependencies&style=flat-square)
+
+![GitHub](https://img.shields.io/github/license/TA2k/iobroker.bmw?style=flat-square)
+![GitHub repo size](https://img.shields.io/github/repo-size/TA2k/iobroker.bmw?logo=github&style=flat-square)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/TA2k/iobroker.bmw?logo=github&style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/TA2k/iobroker.bmw?logo=github&style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/TA2k/iobroker.bmw?logo=github&style=flat-square)
+
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/TA2k/iobroker.bmw/test-and-release.yml?branch=master&logo=github&style=flat-square)
+[![CodeQL](https://github.com/TA2k/ioBroker.bmw/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/TA2k/ioBroker.bmw/actions/workflows/codeql-analysis.yml)
+[![Appveyor-CI](https://ci.appveyor.com/api/projects/status/github/TA2k/ioBroker.bmw?branch=master&svg=true)](https://ci.appveyor.com/project/TA2k/iobroker-bmw)
+[![SNYK Known Vulnerabilities](https://snyk.io/test/github/TA2k/ioBroker.bmw/badge.svg)](https://snyk.io/test/github/TA2k/ioBroker.bmw)
+
+## Versions
+
+![Beta](https://img.shields.io/npm/v/iobroker.bmw.svg?color=red&label=beta)
+![Stable](https://iobroker.live/badges/bmw-stable.svg)
+![Installed](https://iobroker.live/badges/bmw-installed.svg)
+
+[![NPM](https://nodei.co/npm/iobroker.bmw.png?downloads=true)](https://nodei.co/npm/iobroker.bmw/)
+
+
+
+
+
+[![NPM version](https://img.shields.io/npm/v/iobroker.bmw.svg)](https://www.npmjs.com/package/iobroker.bmw)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.bmw.svg)](https://www.npmjs.com/package/iobroker.bmw)
 ![Number of Installations (latest)](https://iobroker.live/badges/bmw-installed.svg)
 ![Number of Installations (stable)](https://iobroker.live/badges/bmw-stable.svg)
 [![Dependency Status](https://img.shields.io/david/TA2k/iobroker.bmw.svg)](https://david-dm.org/TA2k/iobroker.bmw)
@@ -46,7 +74,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 - BREAKING: Dropped support for Node.js 18 (#88)
 - (hombach) BREAKING: Dropped support for js-controller 5 (#111)
 - (hombach) BREAKING: Dropped support for admin 6 (#111)
-- (hombach) some small code cleanups/modernisations
+- (hombach) bump dependencies
 
 ### 2.9.5 (2025-05-18)
 
@@ -62,13 +90,13 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ### 2.9.3 (2025-01-29)
 
-- fix Remote Controls
+- fix remote controls
 - add Mitbenutzer Login for remote controls
 
 ### 2.9.0 (2024-11-28)
 
 - added new remotes as switch and updated values
-- added retry logice for remotes
+- added retry logic for remotes
 
 ### 2.8.4 (2024-11-21)
 
