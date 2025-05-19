@@ -158,6 +158,7 @@ class Bmw extends utils.Adapter {
       windowDriverFront: 'Fenster Fahrerseite',
       windowPassengerFront: 'Fenster Beifahrerseite',
     };
+    // @ts-ignore
     this.cookieJar = new tough.CookieJar(null, { ignoreError: true });
 
     this.requestClient = axios.create({
@@ -233,14 +234,14 @@ class Bmw extends utils.Adapter {
           await this.sleep(5000);
           await this.updateTrips();
         },
-        1000 * 60 * 10,
+        10 * 60000,
       );
       this.updateInterval = setInterval(
         async () => {
           await this.sleep(2000);
           await this.updateDevices();
         },
-        this.config.interval * 60 * 1000,
+        this.config.interval * 60000,
       );
       this.demandInterval = setInterval(
         async () => {
@@ -263,6 +264,7 @@ class Bmw extends utils.Adapter {
       );
     }
   }
+
   async login(loginSecondUser) {
     let username = this.config.username;
     let password = this.config.password;
@@ -339,8 +341,11 @@ class Bmw extends utils.Adapter {
       return;
     }
 
+    // @ts-ignore
     delete data.username;
+    // @ts-ignore
     delete data.password;
+    // @ts-ignore
     delete data.grant_type;
     data.authorization = qs.parse(authUrl.redirect_to).authorization;
     const code = await this.requestClient({
@@ -433,6 +438,7 @@ class Bmw extends utils.Adapter {
         }
       });
   }
+
   getCodeChallenge() {
     let hash = '';
     let result = '';
@@ -530,6 +536,7 @@ class Bmw extends utils.Adapter {
             },
           ];
           remoteArray.forEach((remote) => {
+            // @ts-ignore
             this.extendObject(`${vehicle.vin}.remotev2.${remote.command}`, {
               type: 'state',
               common: {
@@ -564,17 +571,18 @@ class Bmw extends utils.Adapter {
           () => {
             this.getVehiclesv2();
           },
-          3 * 60 * 1000,
+          3 * 60000,
         );
       });
     await this.sleep(5000);
   }
+
   async updateDevices() {
     const brand = this.config.brand;
     const headers = {
       'user-agent': this.userAgentDart,
       'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
-      authorization: 'Bearer ' + this.session.access_token,
+      authorization: `Bearer ${this.session.access_token}`,
       'accept-language': 'de-DE',
       host: 'cocoapi.bmwgroup.com',
       '24-hour-format': 'true',
@@ -628,6 +636,7 @@ class Bmw extends utils.Adapter {
       await this.sleep(10000);
     }
   }
+
   async updateDemands() {
     const brand = this.config.brand;
     const headers = {
@@ -688,12 +697,13 @@ class Bmw extends utils.Adapter {
       await this.sleep(10000);
     }
   }
+
   async updateTrips() {
     const brand = this.config.brand;
     const headers = {
       'user-agent': this.userAgentDart,
       'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
-      authorization: 'Bearer ' + this.session.access_token,
+      authorization: `Bearer ${this.session.access_token}`,
       'accept-language': 'de-DE',
       host: 'cocoapi.bmwgroup.com',
       '24-hour-format': 'true',
@@ -748,9 +758,11 @@ class Bmw extends utils.Adapter {
       await this.sleep(10000);
     }
   }
+
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
   async updateChargingSessionv2(vin, maxResults = 40, dateInput) {
     if (this.nonChargingHistory[vin]) {
       return;
@@ -764,7 +776,7 @@ class Bmw extends utils.Adapter {
     const headers = {
       'user-agent': this.userAgentDart,
       'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${this.config.brand};`),
-      authorization: 'Bearer ' + this.session.access_token,
+      authorization: `Bearer ${this.session.access_token}`,
       'accept-language': 'de-DE',
       '24-hour-format': 'true',
       'bmw-vin': vin,
@@ -1012,6 +1024,7 @@ class Bmw extends utils.Adapter {
       await this.sleep(5000);
     }
   }
+
   async refreshToken(useSecondUser) {
     this.log.debug(`refresh token`);
     let refresh_token = this.session.refresh_token;
@@ -1283,6 +1296,7 @@ class Bmw extends utils.Adapter {
       return 'Failed';
     }
   }
+
 }
 
 if (require.main !== module) {
