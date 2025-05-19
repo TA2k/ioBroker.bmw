@@ -41,8 +41,11 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ## Changelog
 
-### WiP
+### **WORK IN PROGRESS**
 
+- BREAKING: Dropped support for Node.js 18 (#88)
+- (hombach) BREAKING: Dropped support for js-controller 5 (#111)
+- (hombach) BREAKING: Dropped support for admin 6 (#111)
 - (hombach) some small code cleanups/modernisations
 
 ### 2.9.5 (2025-05-18)
