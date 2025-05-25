@@ -163,10 +163,12 @@
     ]
   },
   "encryptedNative": [
-    "password"
+    "password",
+    "mpassword"
   ],
   "protectedNative": [
-    "password"
+    "password",
+    "mpassword"
   ],
   "native": {
     "username": "",

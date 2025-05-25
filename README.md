@@ -57,7 +57,8 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 - BREAKING: Dropped support for Node.js 18 (#88)
 - (hombach) BREAKING: Dropped support for js-controller 5 (#111)
-- (hombach) BREAKING: Dropped support for admin 6 (#111)
+- (hombach) BREAKING: change to admin 7.4.10 as recommended by ioBroker (#111)
+- (hombach) encrypt and protect second user password - has to be reentered (#111)
 - (hombach) bump dependencies
 
 ### 2.9.5 (2025-05-18)
