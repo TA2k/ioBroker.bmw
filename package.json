@@ -18,13 +18,13 @@
     "url": "https://github.com/TA2k/ioBroker.bmw"
   },
   "engines": {
-    "node": ">= 20"
+    "node": ">= 20.9.0"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3",
     "axios": "^1.9.0",
     "axios-retry": "^4.5.0",
-    "http-cookie-agent": "^6.0.8",
+    "http-cookie-agent": "^7.0.1",
     "json-bigint": "^1.0.0",
     "json2iob": "^2.6.17",
     "qs": "^6.14.0",

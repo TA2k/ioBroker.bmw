@@ -158,6 +158,7 @@ class Bmw extends utils.Adapter {
       windowDriverFront: 'Fenster Fahrerseite',
       windowPassengerFront: 'Fenster Beifahrerseite',
     };
+    // @ts-ignore
     this.cookieJar = new tough.CookieJar(null, { ignoreError: true });
 
     this.requestClient = axios.create({
@@ -233,14 +234,14 @@ class Bmw extends utils.Adapter {
           await this.sleep(5000);
           await this.updateTrips();
         },
-        1000 * 60 * 10,
+        10 * 60000,
       );
       this.updateInterval = setInterval(
         async () => {
           await this.sleep(2000);
           await this.updateDevices();
         },
-        this.config.interval * 60 * 1000,
+        this.config.interval * 60000,
       );
       this.demandInterval = setInterval(
         async () => {
@@ -263,6 +264,7 @@ class Bmw extends utils.Adapter {
       );
     }
   }
+
   async login(loginSecondUser) {
     let username = this.config.username;
     let password = this.config.password;
@@ -272,8 +274,7 @@ class Bmw extends utils.Adapter {
     }
     const headers = {
       Accept: 'application/json, text/plain, */*',
-      'User-Agent':
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Mobile/15E148 Safari/604.1',
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Mobile/15E148 Safari/604.1',
       'Accept-Language': 'de-de',
       'Content-Type': 'application/x-www-form-urlencoded',
       hcaptchatoken: this.config.captcha,
@@ -319,13 +320,13 @@ class Bmw extends utils.Adapter {
           this.reLoginTimeout = setTimeout(
             async () => {
               //get adapter settings and set captcha to null
-              const adapterSettings = await this.getForeignObjectAsync('system.adapter.' + this.namespace);
+              const adapterSettings = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
               if (adapterSettings && adapterSettings.native) {
                 adapterSettings.native.captcha = null;
-                await this.setForeignObjectAsync('system.adapter.' + this.namespace, adapterSettings);
+                await this.setForeignObjectAsync(`system.adapter.${this.namespace}`, adapterSettings);
               }
             },
-            5000 * 60 * 1,
+            5 * 60 * 1000,
           );
         }
         if (error.response && error.response.status === 400) {
@@ -340,8 +341,11 @@ class Bmw extends utils.Adapter {
       return;
     }
 
+    // @ts-ignore
     delete data.username;
+    // @ts-ignore
     delete data.password;
+    // @ts-ignore
     delete data.grant_type;
     data.authorization = qs.parse(authUrl.redirect_to).authorization;
     const code = await this.requestClient({
@@ -434,6 +438,7 @@ class Bmw extends utils.Adapter {
         }
       });
   }
+
   getCodeChallenge() {
     let hash = '';
     let result = '';
@@ -527,10 +532,11 @@ class Bmw extends utils.Adapter {
               name: 'Fetch Charge Sessions/Statistics for month',
               type: 'string',
               role: 'text',
-              def: '2024-06',
+              def: '2025-04',
             },
           ];
           remoteArray.forEach((remote) => {
+            // @ts-ignore
             this.extendObject(`${vehicle.vin}.remotev2.${remote.command}`, {
               type: 'state',
               common: {
@@ -565,17 +571,18 @@ class Bmw extends utils.Adapter {
           () => {
             this.getVehiclesv2();
           },
-          1000 * 60 * 3,
+          3 * 60000,
         );
       });
     await this.sleep(5000);
   }
+
   async updateDevices() {
     const brand = this.config.brand;
     const headers = {
       'user-agent': this.userAgentDart,
       'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
-      authorization: 'Bearer ' + this.session.access_token,
+      authorization: `Bearer ${this.session.access_token}`,
       'accept-language': 'de-DE',
       host: 'cocoapi.bmwgroup.com',
       '24-hour-format': 'true',
@@ -629,6 +636,7 @@ class Bmw extends utils.Adapter {
       await this.sleep(10000);
     }
   }
+
   async updateDemands() {
     const brand = this.config.brand;
     const headers = {
@@ -671,7 +679,7 @@ class Bmw extends utils.Adapter {
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
             this.log.debug(`${error.response.data.message} retrying in 15 minutes`);
-            await this.sleep(1000 * 60 * 15);
+            await this.sleep(15 * 60000);
             await this.updateDemands();
             return;
           }
@@ -689,12 +697,13 @@ class Bmw extends utils.Adapter {
       await this.sleep(10000);
     }
   }
+
   async updateTrips() {
     const brand = this.config.brand;
     const headers = {
       'user-agent': this.userAgentDart,
       'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
-      authorization: 'Bearer ' + this.session.access_token,
+      authorization: `Bearer ${this.session.access_token}`,
       'accept-language': 'de-DE',
       host: 'cocoapi.bmwgroup.com',
       '24-hour-format': 'true',
@@ -731,7 +740,7 @@ class Bmw extends utils.Adapter {
         .catch(async (error) => {
           if (error.response && error.response.status === 429) {
             this.log.debug(`${error.response.data.message} - retrying in 15 minutes`);
-            await this.sleep(1000 * 60 * 15);
+            await this.sleep(15 * 60000);
             await this.updateTrips();
             return;
           }
@@ -749,9 +758,11 @@ class Bmw extends utils.Adapter {
       await this.sleep(10000);
     }
   }
+
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
   async updateChargingSessionv2(vin, maxResults = 40, dateInput) {
     if (this.nonChargingHistory[vin]) {
       return;
@@ -765,7 +776,7 @@ class Bmw extends utils.Adapter {
     const headers = {
       'user-agent': this.userAgentDart,
       'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${this.config.brand};`),
-      authorization: 'Bearer ' + this.session.access_token,
+      authorization: `Bearer ${this.session.access_token}`,
       'accept-language': 'de-DE',
       '24-hour-format': 'true',
       'bmw-vin': vin,
@@ -883,7 +894,7 @@ class Bmw extends utils.Adapter {
                 datal.unit = datal.energyCharged.replace('~', '').trim().split(' ')[1];
               }
               datal.id = 'latest';
-              await this.setObjectNotExistsAsync(vin + element.path + 'latest', {
+              await this.setObjectNotExistsAsync(`${vin}${element.path}latest`, {
                 type: 'channel',
                 common: {
                   name: `${element.name}latest of the car v2`,
@@ -1013,6 +1024,7 @@ class Bmw extends utils.Adapter {
       await this.sleep(5000);
     }
   }
+
   async refreshToken(useSecondUser) {
     this.log.debug(`refresh token`);
     let refresh_token = this.session.refresh_token;
@@ -1054,10 +1066,11 @@ class Bmw extends utils.Adapter {
           () => {
             this.login();
           },
-          1000 * 60 * 1,
+          1* 60000,
         );
       });
   }
+
 
   /**
    * Is called when adapter shuts down - callback has to be called under any circumstances!
@@ -1084,6 +1097,7 @@ class Bmw extends utils.Adapter {
       callback();
     }
   }
+
 
   /**
    * Is called if a subscribed state changes
@@ -1282,6 +1296,7 @@ class Bmw extends utils.Adapter {
       return 'Failed';
     }
   }
+
 }
 
 if (require.main !== module) {
