@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "2.9.5",
+    "version": "3.0.0",
     "news": {
+      "3.0.0": {
+        "en": "BREAKING: Dropped support for Node.js 18 (#88)\nBREAKING: Dropped support for js-controller 5 (#111)\nBREAKING: change to admin 7.4.10 as recommended by ioBroker (#111)\nencrypt and protect second user password - has to be reentered (#111)\nbump dependencies",
+        "de": "BREAKING: Unterstützung für Node.js 18 (#88) eingestellt\nBREAKING: Unterstützung für js-controller 5 (#111) eingestellt\nBREAKING: Wechsel zu admin 7.4.10 wie von ioBroker empfohlen (#111)\nzweites Benutzerpasswort verschlüsseln und schützen - muss erneut eingegeben werden (#111)\nAbhängigkeiten aktualisiert",
+        "ru": "Отказ от поддержки Node.js 18 (#88)\nОтказ от поддержки js-контроллера 5 (#111)\nBREAKING: изменение на админ 7.4.10 в соответствии с рекомендациями ioBroker (#111)\nшифровать и защищать пароль второго пользователя - должен быть повторно введен (#111)\nбамп зависимости",
+        "pt": "BREAKING: Suporte suspenso para Node.js 18 (# 88)\nBREAKING: Suporte suspenso para o js-controller 5 (# 111)\nBREAKING: mudança para admin 7.4.10 conforme recomendado pelo ioBroker (# 111)\ncriptografar e proteger a segunda senha do usuário - tem que ser reentrada (# 111)\ndependências de colisão",
+        "nl": "BREAKING: Gestopte ondersteuning voor Node.js 18 (#88)\nBreaking: Dropped support for js-controller 5 (#111)\nBREAKING: overstappen op admin 7.4.10 zoals aanbevolen door ioBroker (#111)\ntweede gebruikerswachtwoord versleutelen en beschermen - moet opnieuw worden ingevoerd (#111)\nbump afhankelijkheden",
+        "fr": "Soutien abandonné pour Node.js 18 (#88)\nSoutien abandonné pour le contrôleur de js 5 (#111)\nBREAKING: changement à l'administrateur 7.4.10 recommandé par ioBroker (#111)\nchiffrer et protéger le mot de passe du deuxième utilisateur - doit être réintroduit (#111)\ndépendances des bosses",
+        "it": "BREAKING: Supporto a goccia per Node.js 18 (#88)\nBREAKING: Supporto a goccia per js-controller 5 (#111)\nBREAKING: cambiamento a admin 7.4.10 come raccomandato da ioBroker (#111)\ncrittografare e proteggere la seconda password dell'utente - deve essere riattivata (#111)\nindipendenza urto",
+        "es": "BREAKING: Soporte abandonado para Node.js 18 (#88)\nBREAKING: Soporte desechado para js-controller 5 (#111)\nBREAKING: cambio a admin 7.4.10 según lo recomendado por ioBroker (#111)\nencriptar y proteger la segunda contraseña de usuario - tiene que ser reiniciado (#111)\ndependencia de los gastos",
+        "pl": "BREAKING: Upuszczone wsparcie dla Node.js 18 (# 88)\nBREAKING: Utracone wsparcie dla kontrolera js- 5 (# 111)\nBREAKING: zmiana na admin 7.4.10 zgodnie z zaleceniami jOBrokera (# 111)\nszyfrowanie i ochrona hasła drugiego użytkownika - należy ponownie wprowadzić (# 111)\nuzależnienia od guza",
+        "uk": "BREAKING: Dropped підтримка для Node.js 18 (#88)\nBREAKING: Dropped підтримка для js-controller 5 (#111)\nBREAKING: зміни до адміністратора 7.4.10, як рекомендовано ioBroker (#111)\nзашифрувати і захистити другий пароль користувача - повинен бути повторний (#111)\nbump залежності",
+        "zh-cn": "对节点18(#88)的支持下降\n中断 : js 控制器 5 已放弃支持 (# 111)\n根据ioBroker的建议(# 111) 改为admin 7.4.10\n加密和保护第二个用户密码 - 必须重新输入( # 111)\n意外依赖"
+      },
       "2.9.5": {
         "en": "update axios\nfixing issues detected by repository checker (#88)\nsome small code cleanups/modernisations\nadd/translate description\nupdate logo",
         "de": "axios\nproblembehebung durch repository checker (#88)\neinige kleine code-reinigungen/modernisierungen\nbeschreibung hinzufügen/übersetzen\nupdate-logo",
@@ -80,19 +93,6 @@
         "pl": "login stały",
         "uk": "логін",
         "zh-cn": "登录已固定"
-      },
-      "2.8.2": {
-        "en": "fix error getvehicles v2 failed",
-        "de": "fehlerbehebung v2 versagt",
-        "ru": "ошибка фиксации",
-        "pt": "corrigir erro getvehicles v2 falhou",
-        "nl": "fix error get vehicles v2 is mislukt",
-        "fr": "erreur de correction getvéhicules v2 échoué",
-        "it": "errore di correzione getvehicles v2 guasto",
-        "es": "error de corrección getvehicles v2 fallado",
-        "pl": "naprawić błąd getvehicles v2 nie powiodło się",
-        "uk": "виправлення помилок getvehicles v2 не вдалося",
-        "zh-cn": "修补错误获得车辆 v2 失败"
       }
     },
     "titleLang": {
@@ -121,12 +121,8 @@
       "uk": "Adapter for BMW",
       "zh-cn": "宝马适配器"
     },
-    "authors": [
-      "TA2k <tombox2020@gmail.com>"
-    ],
-    "keywords": [
-      "BMW"
-    ],
+    "authors": ["TA2k <tombox2020@gmail.com>"],
+    "keywords": ["BMW"],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"
@@ -162,14 +158,8 @@
       }
     ]
   },
-  "encryptedNative": [
-    "password",
-    "mpassword"
-  ],
-  "protectedNative": [
-    "password",
-    "mpassword"
-  ],
+  "encryptedNative": ["password", "mpassword"],
+  "protectedNative": ["password", "mpassword"],
   "native": {
     "username": "",
     "password": "",
