@@ -8,13 +8,13 @@ updates:
 # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     schedule:
-      interval: "weekly"
+      interval: "monthly"
 
 # Maintain dependencies for npm
   - package-ecosystem: "npm"
     directory: "/"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     schedule:
-      interval: "weekly"
+      interval: "monthly"
