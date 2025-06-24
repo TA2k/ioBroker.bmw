@@ -227,22 +227,16 @@ class Bmw extends utils.Adapter {
       this.log.info(`Initial first update of the vehicles`);
       await this.updateDevices();
       this.log.info(`First update of Trips and Demands in 10 minutes`);
-      this.setTimeout(
-        async () => {
-          this.log.info(`First update of Trips and Demands 10min after Adapter Start`);
-          await this.updateDemands();
-          await this.sleep(5000);
-          await this.updateTrips();
-        },
-        10 * 60000,
-      );
-      this.updateInterval = setInterval(
-        async () => {
-          await this.sleep(2000);
-          await this.updateDevices();
-        },
-        this.config.interval * 60000,
-      );
+      this.setTimeout(async () => {
+        this.log.info(`First update of Trips and Demands 10min after Adapter Start`);
+        await this.updateDemands();
+        await this.sleep(5000);
+        await this.updateTrips();
+      }, 10 * 60000);
+      this.updateInterval = setInterval(async () => {
+        await this.sleep(2000);
+        await this.updateDevices();
+      }, this.config.interval * 60000);
       this.demandInterval = setInterval(
         async () => {
           await this.sleep(2000);
@@ -274,7 +268,8 @@ class Bmw extends utils.Adapter {
     }
     const headers = {
       Accept: 'application/json, text/plain, */*',
-      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Mobile/15E148 Safari/604.1',
+      'User-Agent':
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Mobile/15E148 Safari/604.1',
       'Accept-Language': 'de-de',
       'Content-Type': 'application/x-www-form-urlencoded',
       hcaptchatoken: this.config.captcha,
@@ -567,12 +562,9 @@ class Bmw extends utils.Adapter {
         }
         this.log.info(`Adapter will retry in 3 minutes to get vehicles`);
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.getVehiclesv2();
-          },
-          3 * 60000,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.getVehiclesv2();
+        }, 3 * 60000);
       });
     await this.sleep(5000);
   }
@@ -626,11 +618,11 @@ class Bmw extends utils.Adapter {
             return;
           }
           if (error.response && error.response.status >= 500) {
-            this.log.error(`BMW server is not available`);
+            this.log.warn(`BMW server is not available`);
           }
-          this.log.error(`update failed`);
-          this.log.error(error);
-          error.response && this.log.error(JSON.stringify(error.response.data));
+          this.log.warn(`update failed`);
+          this.log.warn(error);
+          error.response && this.log.warn(JSON.stringify(error.response.data));
         });
       await this.updateChargingSessionv2(vin);
       await this.sleep(10000);
@@ -1062,15 +1054,11 @@ class Bmw extends utils.Adapter {
         error.response && this.log.error(JSON.stringify(error.response.data));
         this.log.error(`Start relogin in 1 min`);
         this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-        this.reLoginTimeout = setTimeout(
-          () => {
-            this.login();
-          },
-          1* 60000,
-        );
+        this.reLoginTimeout = setTimeout(() => {
+          this.login();
+        }, 1 * 60000);
       });
   }
-
 
   /**
    * Is called when adapter shuts down - callback has to be called under any circumstances!
@@ -1097,7 +1085,6 @@ class Bmw extends utils.Adapter {
       callback();
     }
   }
-
 
   /**
    * Is called if a subscribed state changes
@@ -1296,7 +1283,6 @@ class Bmw extends utils.Adapter {
       return 'Failed';
     }
   }
-
 }
 
 if (require.main !== module) {
