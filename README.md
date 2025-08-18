@@ -53,6 +53,10 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ## Changelog
 
+### **WORK IN PROGRESS**
+
+- (hombach) bump dependencies
+
 ### 3.0.0 (2025-06-10)
 
 - BREAKING: Dropped support for Node.js 18 (#88)
