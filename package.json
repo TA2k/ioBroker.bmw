@@ -21,7 +21,7 @@
     "node": ">= 20.9.0"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.2.3",
+    "@iobroker/adapter-core": "^3.3.2",
     "axios": "^1.10.0",
     "axios-retry": "^4.5.0",
     "http-cookie-agent": "^7.0.2",
