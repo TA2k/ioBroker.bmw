@@ -56,6 +56,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 ### **WORK IN PROGRESS**
 
 - (hombach) change to recommended stable admin 7.6.17 (#159)
+- (hombach) fix form-data vulnerability
 - (hombach) code cleanups
 - (hombach) bump adapter-core
 - (hombach) bump dependencies
