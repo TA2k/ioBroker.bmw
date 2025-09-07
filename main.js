@@ -863,7 +863,7 @@ class Bmw extends utils.Adapter {
 								}
 								newSessions.push(session);
 							} catch (error) {
-								this.log.debug(error);
+								this.log.debug(error.message);
 							}
 						}
 						data.sessions = newSessions;
@@ -1159,13 +1159,16 @@ class Bmw extends utils.Adapter {
 						retries: 5,
 						// only 403 rate limit
 						retryCondition: error => {
-							this.log.debug(error);
-							error.response && this.log.debug(JSON.stringify(error.response.data));
-							return error.response && error.response.status === 403;
+							this.log.debug(error.message);
+							if (error.response) {
+								this.log.debug(JSON.stringify(error.response.data));
+								return error.response.status === 403;
+							}
+							return false;
 						},
 						onRetry: (retryCount, error) => {
 							this.log.info(`Retry ${retryCount}`);
-							this.log.debug(error);
+							this.log.debug(error.message);
 							error.response && this.log.info(JSON.stringify(error.response.data));
 							this.log.warn(`Rate Limit exceeded, retry in 5 seconds`);
 						},
