@@ -57,8 +57,7 @@ _Note: The available fields and remote capabilities vary based on your BMW model
 This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://github.com/TA2k/ioBroker.bmw)
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 3.0.1 (2025-09-27)
 
 - (hombach) change to recommended stable admin 7.6.17 (#159)
 - (hombach) migrate to iobroker/eslint-config (#146)

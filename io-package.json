@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "news": {
+      "3.0.1": {
+        "en": "change to recommended stable admin 7.6.17 (#159)\nmigrate to iobroker/eslint-config (#146)\nfix form-data vulnerability\ncode cleanups\nupdate axios\nbump adapter-core\nfix issues detected by repository checker (#170)\nbump dependencies",
+        "de": "admin 7.6.17 (#159) zu empfehlen\nmigrieren zu iobroker/eslint-config (#146)\nfehler bei formdaten beheben\ncode-reinigung\naxios\nstoßadapter-kern\nfehler, die durch repository checker erkannt werden (#170)\nbumpabhängigkeiten",
+        "ru": "изменение на рекомендуемый стабильный админ 7.6.17 (#159)\niobroker/eslint-config (#146)\nисправление уязвимости форм-данных\nочистка кода\nобновление axios\nбамперный адаптер\nисправление проблем, обнаруженных с помощью проверки репозитория (#170)\nбамп зависимости",
+        "pt": "alteração para o administrador estável recomendado 7.6.17 (# 159)\nmigrar para iobroker/eslint-config (# 146)\ncorrigir vulnerabilidade de forma-dados\nlimpeza de código\natualizar axios\nnúcleo do adaptador de colisão\ncorrigir problemas detectados pelo verificador de repositórios (# 170)\ndependências de colisão",
+        "nl": "verandering in de aanbevolen stabiele toediening 7.6.17 (#159)\nmigreren naar iobroker/eslint-config (#146)\nfix vorm-data kwetsbaarheid\ncode opruimen\naxios bijwerken\nbump adapter-core\nfix problemen gedetecteerd door repository checker (#170)\nbump afhankelijkheden",
+        "fr": "changement à l'administration stable recommandée 7.6.17 (#159)\nmigrer vers iobroker/eslint-config (#146)\ncorriger la vulnérabilité des formulaires-données\nnettoyage du code\nmettre à jour axios\nadaptateur-cœur de bosse\ncorrection des problèmes détectés par le contrôleur du dépôt (#170)\ndépendances des bosses",
+        "it": "cambiamento a admin stabile raccomandata 7.6.17 (#159)\nmigrare a iobroker/eslint-config (#146)\ncorrezione della vulnerabilità form-data\npulizia del codice\naggiornamento assio\nadattatore paraurti-core\nrisolvere i problemi rilevati da repository checker (#170)\nindipendenza urto",
+        "es": "cambio al administrador estable recomendado 7.6.17 (#159)\nmigrar a iobroker/eslint-config (#146)\narreglar la vulnerabilidad de la forma-data\nlimpieza de códigos\nactualización axios\nadaptador de parachoques\nsolucionar problemas detectados por repositorio (#170)\ndependencia de los gastos",
+        "pl": "zmiana na zalecane stabilne admin 7.6.17 (# 159)\nmigrate to iobroker / eslint- config (# 146)\nustaw wrażliwość format- data\nczyszczenie kodu\naktualizacja axios\nadapter guza-rdzeń\nnaprawianie problemów wykrytych przez sprawdzacz repozytorium (# 170)\nuzależnienia od guza",
+        "uk": "змінити для рекомендованого стабільного адміністратора 7.6.17 (#159)\nmigrate до iobroker/eslint-config (#146)\nвиправити вразливість даних\nочищення коду\nоновлення axios\nbump адаптер-core\nвиправлено проблеми, виявлених репозиторійною перевіркою (#170)\nbump залежності",
+        "zh-cn": "改为建议的稳定管理7.6.17 (# 159)\n迁移到 iobus/slint- config (# 146)\n固定窗体数据脆弱性\n代码清理\n更新轴线\n缓冲适配器核心\n通过仓库检查器检测到的固定问题(# 170)\n意外依赖"
+      },
       "3.0.0": {
         "en": "BREAKING: Dropped support for Node.js 18 (#88)\nBREAKING: Dropped support for js-controller 5 (#111)\nBREAKING: change to admin 7.4.10 as recommended by ioBroker (#111)\nencrypt and protect second user password - has to be reentered (#111)\nbump dependencies",
         "de": "BREAKING: Unterstützung für Node.js 18 (#88) eingestellt\nBREAKING: Unterstützung für js-controller 5 (#111) eingestellt\nBREAKING: Wechsel zu admin 7.4.10 wie von ioBroker empfohlen (#111)\nzweites Benutzerpasswort verschlüsseln und schützen - muss erneut eingegeben werden (#111)\nAbhängigkeiten aktualisiert",
@@ -80,19 +93,6 @@
         "pl": "ulepszona sesja pobierania opłat\ndodaj zdalny do pobierania sesji ładowania z określonego miesiąca\ndodać surowy JSON sesji pobierania opłat za eksport",
         "uk": "поліпшення зарядки сеансу\nдодати дистанційне сеанс зарядки fetch з конкретного місяця\nдодати сиру JSON на зарядку для експорту",
         "zh-cn": "改进充值会话解析\n添加远程以获取特定月的充电会话\n添加用于导出的充电会话的原始 JSON"
-      },
-      "2.8.3": {
-        "en": "login fixed",
-        "de": "Anmeldung gefixt",
-        "ru": "фиксированный",
-        "pt": "login fixo",
-        "nl": "login vast",
-        "fr": "login corrigé",
-        "it": "login fisso",
-        "es": "login fijo",
-        "pl": "login stały",
-        "uk": "логін",
-        "zh-cn": "登录已固定"
       }
     },
     "titleLang": {
@@ -121,8 +121,12 @@
       "uk": "Adapter for BMW",
       "zh-cn": "宝马适配器"
     },
-    "authors": ["TA2k <tombox2020@gmail.com>"],
-    "keywords": ["BMW"],
+    "authors": [
+      "TA2k <tombox2020@gmail.com>"
+    ],
+    "keywords": [
+      "BMW"
+    ],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"
@@ -158,8 +162,14 @@
       }
     ]
   },
-  "encryptedNative": ["password", "mpassword"],
-  "protectedNative": ["password", "mpassword"],
+  "encryptedNative": [
+    "password",
+    "mpassword"
+  ],
+  "protectedNative": [
+    "password",
+    "mpassword"
+  ],
   "native": {
     "username": "",
     "password": "",
