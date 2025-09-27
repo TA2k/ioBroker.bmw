@@ -29,10 +29,12 @@
 This adapter seamlessly integrates BMW vehicles into ioBroker, enabling you to monitor and control your BMW directly within the ioBroker platform. It fetches and updates data for all BMW models linked to your BMW account through the official BMW app, providing vehicle properties and supporting remote commands.
 
 ## Features
+
 - Retrieves and updates BMW vehicle data from the BMW ConnectedDrive service.
 - Enables remote commands for your BMW under `bmw.0.VIN.remotev2`.
 
 ## Login Process
+
 1. In the instance options, input your BMW account login credentials and complete the CAPTCHA/reCAPTCHA verification if prompted.
 2. Select your vehicle type.
 3. As the API quota is limited, you may disable certain statistics fetching to optimize usage.
@@ -41,14 +43,17 @@ This adapter seamlessly integrates BMW vehicles into ioBroker, enabling you to m
 6. Initial data may appear after a brief delay or following the vehicle’s first activity (e.g., a drive).
 
 ## Data Structure
+
 Vehicle-specific data is accessible under `bmw.0.VIN.properties`, where `VIN` represents the Vehicle Identification Number of your BMW.
 
 ## Remote Commands
+
 Remote control of your BMW is available under `bmw.0.VIN.remotev2`. Supported actions may include locking/unlocking doors, activating climate control, or triggering other vehicle functions, depending on your BMW model and ConnectedDrive features.
 
-*Note: The available fields and remote capabilities vary based on your BMW model and the ConnectedDrive API.*
+_Note: The available fields and remote capabilities vary based on your BMW model and the ConnectedDrive API._
 
 ## Source
+
 This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://github.com/TA2k/ioBroker.bmw)
 
 ## Changelog
@@ -61,6 +66,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 - (hombach) code cleanups
 - (hombach) update axios
 - (hombach) bump adapter-core
+- (hombach) fix issues detected by repository checker (#170)
 - (hombach) bump dependencies
 
 ### 3.0.0 (2025-06-10)
