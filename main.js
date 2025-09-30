@@ -24,7 +24,7 @@ class Bmw extends utils.Adapter {
 		this.on('unload', this.onUnload.bind(this));
 		this.userAgent = 'My%20BMW/8932 CFNetwork/978.0.7 Darwin/18.7.0';
 		this.userAgentDart = 'Dart/3.3 (dart:io)';
-		this.xuserAgent = 'android(AP2A.240605.024);brand;4.99.9(96892);row';
+		this.xuserAgent = `android(${this.generateBuildString()});brand;5.7.2(96893);row`;
 		this.updateInterval;
 		this.reLoginTimeout;
 		this.refreshTokenInterval;
@@ -432,6 +432,16 @@ class Bmw extends utils.Adapter {
 					this.log.error(JSON.stringify(error.response.data));
 				}
 			});
+	}
+
+	generateBuildString() {
+		// Generate 6-digit numeric component
+		const numeric = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+		
+		// Generate 3-digit build number
+		const buildNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+		
+		return `AP2A.${numeric}.${buildNum}`;
 	}
 
 	getCodeChallenge() {
