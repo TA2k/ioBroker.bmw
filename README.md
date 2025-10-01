@@ -61,24 +61,36 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 
 ### 1. BMW ConnectedDrive Portal Setup
 
-1. Visit the BMW ConnectedDrive portal: **https://www.bmw.de/de-de/mybmw/vehicle-overview**
-2. Navigate to the **CarData** section
-3. Generate a new **Client ID**
+1. Visit the BMW ConnectedDrive portal: **https://customer.bmwgroup.com/**
+2. Navigate to the **BMW CarData** section (you'll see various service categories)
+
+![BMW Portal Overview](img/bmw-portal-overview.png)
+
+3. Click on **"CarData Client erstellen"** (Create CarData Client) button
 4. **Subscribe to both services:**
    - CarData API
    - CarData Streaming
-     **CRITICAL**: Click one service and wait 20seconds if you see a error message click again
 
-### 2. ⚠️ CRITICAL: Data Descriptors Configuration
+![CarData Client Setup](img/cardata-client-setup.png)
 
-**YOU MUST MANUALLY SELECT ALL 244 DATA POINTS**
+**CRITICAL**: Click one service and wait 20 seconds if you see an error message, then click again
 
-After creating your Client ID:
+### 2. ⚠️ CRITICAL: CarData Streaming Configuration
 
-1. Go to **CarData > Data Descriptors**
-2. **Select ALL categories** (Vehicle Status, Charging, Trip Data, etc.)
-3. **Manually check ALL 244 individual data points**
-4. Save your configuration
+**YOU MUST CONFIGURE CARDATA STREAMING AND SELECT ALL 244 DATA POINTS**
+
+After creating your Client ID, configure streaming:
+
+1. In the CarData section, look for **"CARDATA STREAMING"**
+2. You should see the configuration status as **"ready"**
+3. Note the **"Letztes Konfigurationsupdate"** (Last Configuration Update) timestamp
+
+![CarData Streaming Setup](img/cardata-streaming-setup.png)
+
+4. Click **"Datenauswahl ändern"** (Change Data Selection) button
+5. **Select ALL categories** (Vehicle Status, Charging, Trip Data, etc.)
+6. **Manually check ALL 244 individual data points**
+7. Save your configuration by clicking **"Stream löschen"** if needed to reset, then reconfigure
 
 **Without selecting all data points, MQTT streaming will not provide complete data!**
 
@@ -213,7 +225,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ## Changelog
 
-### 4.0.1 (2025-10-01)
+### 4.0.0 (2025-10-01)
 
 - **BREAKING:** Complete migration to BMW CarData API with OAuth2 Device Flow authentication
 - **BREAKING:** Removed username/password authentication (deprecated by BMW)
