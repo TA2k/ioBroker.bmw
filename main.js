@@ -732,22 +732,6 @@ class Bmw extends utils.Adapter {
 					this.log.debug(`Subscribed to MQTT topic: ${topic}`);
 				}
 			});
-			const vin = "WBY11HH070CS80663";
-			this.mqtt.subscribe(vin, (err) => {
-				if (err) {
-					this.log.error('MQTT subscription failed: ' + err.message);
-				} else {
-					this.log.debug(`Subscribed to MQTT topic: ${vin}`);
-				}
-			});
-			const uservin = `${this.config.cardataStreamingUsername}/WBY11HH070CS80663`;
-			this.mqtt.subscribe(uservin, (err) => {
-				if (err) {
-					this.log.error('MQTT subscription failed: ' + err.message);
-				} else {
-					this.log.debug(`Subscribed to MQTT topic: ${uservin}`);
-				}
-			});
 		});
 
 		this.mqtt.on('message', (topic, message) => {
@@ -778,10 +762,10 @@ class Bmw extends utils.Adapter {
 			const topicParts = topic.split('/');
 
 			if (topicParts.length >= 2) {
-				const gcid = topicParts[0];
+				const entityId = topicParts[0];
 				const vin = topicParts[1];
 
-				if (gcid === this.config.cardataStreamingUsername && data.vin && data.data) {
+				if (data.vin && data.data) {
 					this.log.debug(`MQTT: ${vin} - ${Object.keys(data.data).length} data points`);
 
 					// Ensure VIN is in our array
