@@ -330,29 +330,6 @@ class Bmw extends utils.Adapter {
 		}
 	}
 
-	generateBuildString() {
-		// Generate 6-digit numeric component
-		const numeric = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-		
-		// Generate 3-digit build number
-		const buildNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-		
-		return `AP2A.${numeric}.${buildNum}`;
-	}
-
-	getCodeChallenge() {
-		let hash = '';
-		let result = '';
-		const chars = '0123456789abcdef';
-		result = '';
-		for (let i = 64; i > 0; --i) {
-			result += chars[Math.floor(Math.random() * chars.length)];
-		}
-		hash = crypto.createHash('sha256').update(result).digest('base64');
-		hash = hash.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-
-		return [result, hash];
-	}
 
 	async getVehiclesv2(firstStart) {
 		const headers = {
@@ -431,42 +408,89 @@ class Bmw extends utils.Adapter {
 
 	// Fetch ALL available API endpoints for each vehicle
 	async fetchAllVehicleData(vin, headers) {
+		// Create main folder structure
+		await this.extendObject(`${vin}.api`, {
+			type: 'channel',
+			common: {
+				name: 'API Data (Periodic Updates)',
+			},
+			native: {},
+		});
+
+		await this.extendObject(`${vin}.stream`, {
+			type: 'channel',
+			common: {
+				name: 'Stream Data (Real-time MQTT)',
+			},
+			native: {},
+		});
+
+		// Define available API endpoints with config mapping
 		const apiEndpoints = [
 			{
 				name: 'basicData',
+				configKey: 'fetchBasicData',
 				url: `/customers/vehicles/${vin}/basicData`,
 				channel: 'Basic Information'
 			},
 			{
 				name: 'chargingHistory',
+				configKey: 'fetchChargingHistory',
 				url: `/customers/vehicles/${vin}/chargingHistory`,
 				channel: 'Charging History'
 			},
 			{
-				name: 'image',
-				url: `/customers/vehicles/${vin}/image`,
-				channel: 'Vehicle Image'
+				name: 'chargingProfile',
+				configKey: 'fetchChargingProfile',
+				url: `/customers/vehicles/${vin}/chargingProfile`,
+				channel: 'Charging Profile'
 			},
 			{
-				name: 'locationBasedChargingSettings',
-				url: `/customers/vehicles/${vin}/locationBasedChargingSettings`,
-				channel: 'Location Charging Settings'
+				name: 'chargingSessions',
+				configKey: 'fetchChargingSessions',
+				url: `/customers/vehicles/${vin}/chargingSessions`,
+				channel: 'Charging Sessions'
 			},
 			{
-				name: 'smartMaintenanceTyreDiagnosis',
-				url: `/customers/vehicles/${vin}/smartMaintenanceTyreDiagnosis`,
-				channel: 'Tyre Diagnosis'
+				name: 'climateNow',
+				configKey: 'fetchClimateNow',
+				url: `/customers/vehicles/${vin}/climateNow`,
+				channel: 'Climate Control'
 			},
 			{
-				name: 'telematicData',
-				url: `/customers/vehicles/${vin}/telematicData`,
-				channel: 'Telematic Data'
+				name: 'destinationInformation',
+				configKey: 'fetchDestinationInformation',
+				url: `/customers/vehicles/${vin}/destinationInformation`,
+				channel: 'Destination Information'
+			},
+			{
+				name: 'location',
+				configKey: 'fetchLocation',
+				url: `/customers/vehicles/${vin}/location`,
+				channel: 'Vehicle Location'
+			},
+			{
+				name: 'statistics',
+				configKey: 'fetchStatistics',
+				url: `/customers/vehicles/${vin}/statistics`,
+				channel: 'Statistics'
+			},
+			{
+				name: 'vehicleState',
+				configKey: 'fetchVehicleState',
+				url: `/customers/vehicles/${vin}/vehicleState`,
+				channel: 'Vehicle State'
 			}
 		];
 
-		this.log.info(`Fetching all available data for ${vin}...`);
+		// Filter endpoints based on user configuration
+		const enabledEndpoints = apiEndpoints.filter(endpoint =>
+			this.config[endpoint.configKey] === true
+		);
 
-		for (const endpoint of apiEndpoints) {
+		this.log.info(`Fetching ${enabledEndpoints.length} configured API endpoints for ${vin}...`);
+
+		for (const endpoint of enabledEndpoints) {
 			if (!this.checkQuota()) {
 				this.log.warn(`Skipping ${endpoint.name} for ${vin} - API quota exhausted`);
 				break;
@@ -480,8 +504,8 @@ class Bmw extends utils.Adapter {
 					headers: headers
 				});
 
-				// Store data with json2iob (no conversion needed!)
-				await this.json2iob.parse(`${vin}.${endpoint.name}`, response.data, {
+				// Store data in api/ folder with json2iob
+				await this.json2iob.parse(`${vin}.api.${endpoint.name}`, response.data, {
 					channelName: endpoint.channel,
 					descriptions: this.description,
 					forceIndex: true
@@ -545,357 +569,13 @@ class Bmw extends utils.Adapter {
 		return false;
 	}
 
-	async updateDevices() {
-		const brand = this.config.brand;
-		const headers = {
-			'user-agent': this.userAgentDart,
-			'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
-			authorization: `Bearer ${this.session.access_token}`,
-			'accept-language': 'de-DE',
-			host: 'cocoapi.bmwgroup.com',
-			'24-hour-format': 'true',
-		};
-		for (const vin of this.vinArray) {
-			this.log.debug(`update ${vin}`);
-			headers['bmw-vin'] = vin;
-			await this.requestClient({
-				method: 'get',
-				url: `https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles/state?apptimezone=120&appDateTime=${Date.now()}&tireGuardMode=ENABLED`,
-				headers: headers,
-			})
-				.then(async res => {
-					this.log.debug(JSON.stringify(res.data));
-					if (
-						res.data.state &&
-						res.data.state.electricChargingState &&
-						!res.data.state.electricChargingState.remainingChargingMinutes
-					) {
-						res.data.state.electricChargingState.remainingChargingMinutes = 0;
-					}
-					this.json2iob.parse(vin, res.data, { forceIndex: true, descriptions: this.description });
-					await this.extendObject(`${vin}.state.rawJSON`, {
-						type: 'state',
-						common: {
-							name: 'Raw Data as JSON',
-							type: 'string',
-							role: 'json',
-							write: false,
-							read: true,
-						},
-						native: {},
-					});
-					this.setState(`${vin}.state.rawJSON`, JSON.stringify(res.data), true);
-				})
-				.catch(async error => {
-					if (error.response && error.response.status === 429) {
-						this.log.debug(`${error.response.data.message} - retrying in 5 seconds`);
-						await this.sleep(5000);
-						await this.updateDevices();
-						return;
-					}
-					if (error.response && error.response.status === 403) {
-						this.log.warn(error.response.data.message);
-						return;
-					}
-					if (error.response && error.response.status >= 500) {
-						this.log.warn(`BMW server is not available`);
-					}
-					this.log.warn(`update failed`);
-					this.log.warn(error);
-					error.response && this.log.warn(JSON.stringify(error.response.data));
-				});
-			await this.updateChargingSessionv2(vin);
-			await this.sleep(10000);
-		}
-	}
 
-	async updateDemands() {
-		const brand = this.config.brand;
-		const headers = {
-			'user-agent': this.userAgentDart,
-			'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
-			authorization: `Bearer ${this.session.access_token}`,
-			'accept-language': 'de-DE',
-			host: 'cocoapi.bmwgroup.com',
-			'24-hour-format': 'true',
-		};
-		for (const vin of this.vinArray) {
-			this.log.debug(`update demands ${vin}`);
-			headers['bmw-vin'] = vin;
-			await this.requestClient({
-				method: 'get',
-				url: 'https://cocoapi.bmwgroup.com/eadrax-slcs/v1/demands',
-				headers: headers,
-			})
-				.then(async res => {
-					this.log.debug(JSON.stringify(res.data));
-					await this.json2iob.parse(`${vin}.servicedemands`, res.data, {
-						channelName: 'Service Demands',
-						forceIndex: true,
-						descriptions: this.description,
-						deleteBeforeUpdate: true,
-					});
-					await this.setObjectNotExistsAsync(`${vin}.servicedemands.json`, {
-						type: 'state',
-						common: {
-							name: 'Service Demands JSON',
-							type: 'string',
-							role: 'json',
-							write: false,
-							read: true,
-						},
-						native: {},
-					});
-					await this.setState(`${vin}.servicedemands.json`, JSON.stringify(res.data), true);
-				})
-				.catch(async error => {
-					if (error.response && error.response.status === 429) {
-						this.log.debug(`${error.response.data.message} retrying in 15 minutes`);
-						await this.sleep(15 * 60000);
-						await this.updateDemands();
-						return;
-					}
-					if (error.response && error.response.status === 403) {
-						this.log.warn(error.response.data.message);
-						return;
-					}
-					if (error.response && error.response.status >= 500) {
-						this.log.error(`BMW server is not available`);
-					}
-					this.log.error(`update demand failed`);
-					this.log.error(error);
-					error.response && this.log.error(JSON.stringify(error.response.data));
-				});
-			await this.sleep(10000);
-		}
-	}
 
-	async updateTrips() {
-		const brand = this.config.brand;
-		const headers = {
-			'user-agent': this.userAgentDart,
-			'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
-			authorization: `Bearer ${this.session.access_token}`,
-			'accept-language': 'de-DE',
-			host: 'cocoapi.bmwgroup.com',
-			'24-hour-format': 'true',
-			'x-gcid': this.session.gcid,
-		};
-		for (const vin of this.vinArray) {
-			this.log.debug(`update trips ${vin}`);
-			headers['bmw-vin'] = vin;
-			await this.requestClient({
-				method: 'get',
-				url: `https://cocoapi.bmwgroup.com/eadrax-suscs/v1/vehicles/sustainability/widget`,
-				headers: headers,
-			})
-				.then(async res => {
-					this.log.debug(JSON.stringify(res.data));
-					await this.json2iob.parse(`${vin}.trips`, res.data, {
-						channelName: 'Trip History',
-						forceIndex: true,
-						descriptions: this.description,
-					});
-					await this.setObjectNotExistsAsync(`${vin}.trips.json`, {
-						type: 'state',
-						common: {
-							name: 'Trip History JSON',
-							type: 'string',
-							role: 'json',
-							write: false,
-							read: true,
-						},
-						native: {},
-					});
-					await this.setStateAsync(`${vin}.trips.json`, JSON.stringify(res.data), true);
-				})
-				.catch(async error => {
-					if (error.response && error.response.status === 429) {
-						this.log.debug(`${error.response.data.message} - retrying in 15 minutes`);
-						await this.sleep(15 * 60000);
-						await this.updateTrips();
-						return;
-					}
-					if (error.response && error.response.status === 403) {
-						this.log.warn(error.response.data.message);
-						return;
-					}
-					if (error.response && error.response.status >= 500) {
-						this.log.error(`BMW server is not available`);
-					}
-					this.log.error(`update trip failed`);
-					this.log.error(error);
-					error.response && this.log.error(JSON.stringify(error.response.data));
-				});
-			await this.sleep(10000);
-		}
-	}
 
 	sleep(ms) {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
-	async updateChargingSessionv2(vin, maxResults = 40, dateInput) {
-		if (this.nonChargingHistory[vin]) {
-			return;
-		}
-		if (Date.now() - this.lastChargingSessionUpdate < 1000 * 60 * 60 * 6 && !dateInput) {
-			this.log.debug(`updateChargingSessionv2 to early ${vin}`);
-			return;
-		}
-		await this.sleep(10000);
-		this.lastChargingSessionUpdate = Date.now();
-		const headers = {
-			'user-agent': this.userAgentDart,
-			'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${this.config.brand};`),
-			authorization: `Bearer ${this.session.access_token}`,
-			'accept-language': 'de-DE',
-			'24-hour-format': 'true',
-			'bmw-vin': vin,
-		};
-
-		const d = new Date();
-		let dateFormatted = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
-		// const day = d.getDate().toString().length == 2 ? d.getDate().toString() : "0" + d.getDate().toString();
-		let fullDate = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().replace('Z', '000');
-
-		if (dateInput) {
-			dateFormatted = dateInput;
-			const tempDate = new Date(`${dateInput}-01T00:00:00.000Z`);
-			fullDate = new Date(tempDate.getTime() - tempDate.getTimezoneOffset() * 60000).toISOString().replace('Z', '000');
-		}
-		const urlArray = [];
-		if (this.config.fetchChargeSessions) {
-			urlArray.push({
-				url:
-					`https://cocoapi.bmwgroup.com/eadrax-chs/v2/charging-sessions?vin=${vin}` +
-					`&next_token&date=${dateFormatted}` +
-					`-01T00%3A00%3A00.000Z&maxResults=${maxResults}` +
-					`&include_date_picker=false`,
-				path: '.chargingSessions.',
-				name: 'chargingSessions',
-			});
-		}
-		if (this.config.fetchChargeStats) {
-			urlArray.push({
-				url: `https://cocoapi.bmwgroup.com/eadrax-chs/v2/charging-statistics?vin=${vin}&currentDate=${fullDate}`,
-				path: '.charging-statistics.',
-				name: 'charging statistics',
-			});
-		}
-		for (const element of urlArray) {
-			await this.sleep(10000);
-			this.log.debug(`update ${vin}${element.path}`);
-			await this.requestClient({
-				method: 'get',
-				url: element.url,
-				headers: headers,
-			})
-				.then(async res => {
-					this.log.debug(JSON.stringify(res.data));
-					let data = res.data;
-					if (data.chargingSessions) {
-						data = data.chargingSessions;
-					}
-					await this.extendObject(vin + element.path + dateFormatted, {
-						type: 'channel',
-						common: {
-							name: `${element.name} of the car v2`,
-						},
-						native: {},
-					});
-					if (element.name === 'chargingSessions' && data.sessions?.length > 0) {
-						data.totalEnergy = data.total.replace('~', '').trim().split(' ')[0];
-						data.totalUnit = data.total.replace('~', '').trim().split(' ')[1];
-						data.totalCost = [];
-						for (const current of data.costsGroupedByCurrency) {
-							data.totalCost.push(current.replace('~', '').trim().split(' ')[0]);
-						}
-						const newSessions = [];
-						for (const session of data.sessions) {
-							try {
-								session.date = session.id.split('_')[0];
-								session.id = session.id.split('_')[1] ? session.id.split('_')[1] : session.id;
-								session.timestamp = new Date(session.date).valueOf();
-								if (session.energyCharged.replace) {
-									session.energy = session.energyCharged.replace('~', '').replace('<', '').trim().split(' ')[0];
-									session.unit = session.energyCharged.replace('~', '').replace('<', '').trim().split(' ')[1];
-								}
-								if (session.subtitle.replace) {
-									//subtitle = Zuhause • 2h 16min • ~ 5,97 EUR
-									//remove all tildes
-									let cleanedSubtitle = session.subtitle.replace(/~/g, '');
-									//remove all small than
-									cleanedSubtitle = cleanedSubtitle.replace(/</g, '');
-									//split array on dots
-									cleanedSubtitle = cleanedSubtitle.split('•');
-									// const cleanedSubtitle = session.subtitle.replace('~', '').replace('•', '').replace('  ', ' ').replace('  ', ' ').trim();
-									session.location = cleanedSubtitle[0].trim();
-									session.duration = cleanedSubtitle[1].trim();
-									session.cost = cleanedSubtitle[2].trim().split(' ')[0];
-									session.currency = cleanedSubtitle[2].trim().split(' ')[1];
-								}
-								newSessions.push(session);
-							} catch (error) {
-								this.log.debug(error.message);
-							}
-						}
-						data.sessions = newSessions;
-						await this.extendObject(`${vin}${element.path}${dateFormatted}.raw`, {
-							type: 'state',
-							common: {
-								name: 'Raw Data as JSON',
-								type: 'string',
-								role: 'json',
-								write: false,
-								read: true,
-							},
-							native: {},
-						});
-						await this.setState(`${vin}${element.path}${dateFormatted}.raw`, JSON.stringify(data), true);
-						await this.json2iob.parse(`${vin}${element.path}${dateFormatted}`, data, { preferedArrayName: 'date' });
-						try {
-							const datal = data.sessions[0];
-							datal._date = datal.id.split('_')[0];
-							datal._id = datal.id.split('_')[1];
-							datal.timestamp = new Date(datal._date).valueOf();
-							if (datal.energyCharged.replace) {
-								datal.energy = datal.energyCharged.replace('~', '').trim().split(' ')[0];
-								datal.unit = datal.energyCharged.replace('~', '').trim().split(' ')[1];
-							}
-							datal.id = 'latest';
-							await this.setObjectNotExistsAsync(`${vin}${element.path}latest`, {
-								type: 'channel',
-								common: {
-									name: `${element.name}latest of the car v2`,
-								},
-								native: {},
-							});
-							await this.json2iob.parse(`${vin}${element.path}latest`, datal);
-						} catch (error) {
-							this.log.debug(error);
-						}
-					}
-				})
-				.catch(error => {
-					if (error.response && error.response.status === 403) {
-						this.log.debug(`${error.response.data.message} Retry in 5 seconds`);
-						return;
-					}
-					if (error.response) {
-						this.log.info(`No charging session available. Ignore ${vin} until restart`);
-						this.nonChargingHistory[vin] = true;
-						this.log.debug(error);
-						error.response && this.log.debug(JSON.stringify(error.response.data));
-						return;
-					}
-					this.log.error(`updateChargingSessionv2 failed`);
-					this.log.error(element.url);
-					this.log.error(error);
-					error.response && this.log.error(JSON.stringify(error.response.data));
-				});
-		}
-	}
 
 	async cleanObjects(vin) {
 
@@ -945,71 +625,6 @@ class Bmw extends utils.Adapter {
 		}
 	}
 
-	getDate() {
-		const d = new Date();
-		const date_format_str = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}T${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:00`;
-		return date_format_str;
-	}
-
-	async fetchImages(vin) {
-		const viewsArray = [
-			'FrontView',
-			'RearView',
-			'FrontLeft',
-			'FrontRight',
-			'RearLeft',
-			'RearRight',
-			'SideViewLeft',
-			'Dashboard',
-			'DriverDoor',
-			'RearView',
-		];
-		const headers = {
-			'user-agent': this.userAgentDart,
-			'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${this.config.brand};`),
-			authorization: `'Bearer ${this.session.access_token}`,
-			'accept-language': 'de-DE',
-			'24-hour-format': 'true',
-			'bmw-vin': vin,
-			accept: 'image/png',
-			'bmw-app-vehicle-type': 'connected',
-		};
-		for (const view of viewsArray) {
-			this.log.info(`Fetch image from ${view} to bmw.0.${vin}.images.${view}`);
-			await this.requestClient({
-				method: 'get',
-				url: `https://cocoapi.bmwgroup.com/eadrax-ics/v5/presentation/vehicles/images`,
-				params: {
-					carView: view,
-					toCrop: true,
-				},
-				headers: headers,
-				responseType: 'arraybuffer',
-			})
-				.then(async res => {
-					//save base64 image to state
-					const base64 = Buffer.from(res.data, 'binary').toString('base64');
-					await this.setObjectNotExistsAsync(`${vin}.images.${view}`, {
-						type: 'state',
-						common: {
-							name: view,
-							type: 'string',
-							role: 'state',
-							read: true,
-							write: false,
-						},
-						native: {},
-					});
-					await this.setState(`${vin}.images.${view}`, `data:image/png;base64,${base64}`, true);
-				})
-				.catch(error => {
-					this.log.error(`fetch images failed ${view}`);
-					this.log.error(error);
-					error.response && this.log.error(JSON.stringify(error.response.data));
-				});
-			await this.sleep(5000);
-		}
-	}
 
 	async refreshToken() {
 		if (!this.session.refresh_token) {
@@ -1143,13 +758,14 @@ class Bmw extends utils.Adapter {
 	async handleMQTTMessage(topic, message) {
 		try {
 			const data = JSON.parse(message.toString());
+			this.log.debug(`MQTT message on ${topic}: ${JSON.stringify(data)}`);
 			const topicParts = topic.split('/');
 
 			if (topicParts.length >= 2) {
 				const gcid = topicParts[0];
 				const vin = topicParts[1];
 
-				if (gcid === this.session.gcid && data.vin && data.data) {
+				if (gcid === this.config.cardataStreamingUsername && data.vin && data.data) {
 					this.log.debug(`MQTT: ${vin} - ${Object.keys(data.data).length} data points`);
 
 					// Ensure VIN is in our array
@@ -1164,11 +780,20 @@ class Bmw extends utils.Adapter {
 						native: {}
 					});
 
-					// Process data with json2iob (no conversion needed!)
-					await this.json2iob.parse(vin, data.data, {
+					// Ensure stream folder exists
+					await this.extendObject(`${vin}.stream`, {
+						type: 'channel',
+						common: {
+							name: 'Stream Data (Real-time MQTT)',
+						},
+						native: {},
+					});
+
+					// Process data in stream/ folder with json2iob
+					await this.json2iob.parse(`${vin}.stream`, data.data, {
 						forceIndex: true,
 						descriptions: this.description,
-						channelName: 'MQTT Stream'
+						channelName: 'MQTT Stream Data'
 					});
 
 					// Add metadata
@@ -1227,27 +852,6 @@ class Bmw extends utils.Adapter {
 		}
 	}
 
-	async checkEventStatus(eventId, headers) {
-		try {
-			const res = await this.requestClient({
-				method: 'post',
-				url: `https://cocoapi.bmwgroup.com/eadrax-vrccs/v4/presentation/remote-commands/eventStatus?eventId=${eventId}`,
-				headers: headers,
-			});
-			this.log.debug(JSON.stringify(res.data));
-			return res.data.rsEventStatus;
-		} catch (error) {
-			this.log.info(`Cannot Fetch the status of the sent command. Status is Unknown`);
-			this.log.info(error);
-			if (error.response) {
-				this.log.info(JSON.stringify(error.response.data));
-				if (error.response.status === 403) {
-					return 'UNKNOWN';
-				}
-			}
-			return 'Failed';
-		}
-	}
 }
 
 if (require.main !== module) {

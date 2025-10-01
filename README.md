@@ -26,31 +26,172 @@
 
 # BMW Adapter for ioBroker
 
-This adapter seamlessly integrates BMW vehicles into ioBroker, enabling you to monitor and control your BMW directly within the ioBroker platform. It fetches and updates data for all BMW models linked to your BMW account through the official BMW app, providing vehicle properties and supporting remote commands.
+This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API with OAuth2 authentication and real-time MQTT streaming. It provides comprehensive vehicle data monitoring for all BMW models linked to your BMW account.
 
 ## Features
 
-- Retrieves and updates BMW vehicle data from the BMW ConnectedDrive service.
-- Enables remote commands for your BMW under `bmw.0.VIN.remotev2`.
+- **OAuth2 Device Flow Authentication** - Secure authentication without storing credentials
+- **Real-time MQTT Streaming** - Instant updates when vehicle data changes
+- **Comprehensive Data Coverage** - Access to all CarData API endpoints including:
+  - Basic vehicle information
+  - Charging history and sessions
+  - Trip data and efficiency metrics
+  - Service demands and vehicle status
+  - Location and navigation data
+- **API Quota Management** - Intelligent handling of 50 API calls per 24-hour limit
+- **Automatic State Cleanup** - Removes old vehicle data when vehicles are no longer available
 
-## Login Process
+## ⚠️ Breaking Changes in v4.0
 
-1. In the instance options, input your BMW account login credentials and complete the CAPTCHA/reCAPTCHA verification if prompted.
-2. Select your vehicle type.
-3. As the API quota is limited, you may disable certain statistics fetching to optimize usage.
-4. Set an update interval that aligns with your data needs—some trial and error may be required to stay within the maximum quota.
-5. To increase the quota, you can optionally add a second user account.
-6. Initial data may appear after a brief delay or following the vehicle’s first activity (e.g., a drive).
+**REMOVED:**
+- Username/password login (replaced with OAuth2)
+- All remote controls (lock/unlock, climate, charging) - CarData API is read-only
+- Second user support
+- CAPTCHA requirements
+
+**ADDED:**
+- OAuth2 Device Flow authentication
+- Real-time MQTT streaming
+- 50 API calls per 24h quota management
+- Comprehensive data from all CarData endpoints
+
+## Setup Instructions
+
+### 1. BMW ConnectedDrive Portal Setup
+
+1. Visit the BMW ConnectedDrive portal: **https://customer.bmwgroup.com/**
+2. Navigate to the **CarData** section
+3. Generate a new **Client ID**
+4. **Subscribe to both services:**
+   - CarData API
+   - CarData Streaming
+  **CRITICAL**: Click one service and wait 20seconds if you see a error message click again
+
+### 2. ⚠️ CRITICAL: Data Descriptors Configuration
+
+**YOU MUST MANUALLY SELECT ALL 244 DATA POINTS**
+
+After creating your Client ID:
+1. Go to **CarData > Data Descriptors**
+2. **Select ALL categories** (Vehicle Status, Charging, Trip Data, etc.)
+3. **Manually check ALL 244 individual data points**
+4. Save your configuration
+
+**Without selecting all data points, MQTT streaming will not provide complete data!**
+
+### 3. Adapter Configuration
+
+1. Enter your **Client ID** in the adapter settings
+2. Enter your **CarData Streaming Username** (found in BMW portal under CarData > Streaming section)
+3. Select your vehicle **brand** (BMW, Mini, Toyota Supra)
+4. Set **update interval** (minimum 10 minutes due to API quota)
+5. **Configure API Endpoints** - Select which data to fetch:
+   - **Basic Data** ✅ - Essential vehicle information (recommended)
+   - **Charging History** ✅ - Charging sessions and history (recommended)
+   - **Vehicle State** ✅ - Current vehicle status (recommended)
+   - **Charging Profile** - Charging preferences and profiles
+   - **Charging Sessions** - Detailed charging session data
+   - **Climate Now** - Current climate control status
+   - **Destination Information** - Navigation and destination data
+   - **Location** - GPS position and location services
+   - **Statistics** - Driving statistics and analytics
+6. Configure **VIN ignore list** if needed
+
+**💡 Tip:** Only enable endpoints you actually need to conserve your 50 API calls per 24-hour quota. MQTT streaming provides real-time data without using quota.
+
+### 4. Authentication Process
+
+1. Start the adapter
+2. Check the logs for the OAuth2 authorization URL
+3. Visit the URL and login with your BMW account
+4. Authorize the application
+5. The adapter will automatically continue after authorization
 
 ## Data Structure
 
-Vehicle-specific data is accessible under `bmw.0.VIN.properties`, where `VIN` represents the Vehicle Identification Number of your BMW.
+Vehicle data is organized under `bmw.0.VIN.*` where `VIN` represents your Vehicle Identification Number:
+
+### Main Folder Structure
+
+- **`bmw.0.VIN.api.*`** - API Data (Periodic Updates)
+  - Data fetched via BMW CarData REST API
+  - Uses API quota (50 calls per 24 hours)
+  - Updated based on configured interval
+  - Only includes endpoints you've enabled in settings
+
+- **`bmw.0.VIN.stream.*`** - Stream Data (Real-time MQTT)
+  - Data received via real-time MQTT streaming
+  - No API quota consumption
+  - Instant updates when vehicle data changes
+  - Includes all 244 configured data points
+
+### Available API Endpoints (Configurable)
+
+You can enable/disable these endpoints in adapter settings:
+
+- `bmw.0.VIN.api.basicData.*` - Vehicle information, model, brand, series ✅ **(Default: Enabled)**
+- `bmw.0.VIN.api.chargingHistory.*` - Charging sessions and history ✅ **(Default: Enabled)**
+- `bmw.0.VIN.api.chargingProfile.*` - Charging preferences and profiles
+- `bmw.0.VIN.api.chargingSessions.*` - Detailed charging session data
+- `bmw.0.VIN.api.climateNow.*` - Climate control status
+- `bmw.0.VIN.api.destinationInformation.*` - Navigation and destination data
+- `bmw.0.VIN.api.location.*` - GPS position and location services
+- `bmw.0.VIN.api.statistics.*` - Driving statistics and analytics
+- `bmw.0.VIN.api.vehicleState.*` - Current vehicle status and conditions ✅ **(Default: Enabled)**
+
+### Metadata
+
+- `bmw.0.VIN.lastUpdate` - Timestamp of last data update
+- `bmw.0.VIN.dataSource` - Data source indicator ("mqtt" for real-time updates)
+
+## Real-time Updates
+
+The adapter receives real-time updates via MQTT streaming when:
+- Vehicle status changes (doors, windows, lights)
+- Charging status updates
+- Location changes during driving
+- Climate control activation
+- Service notifications
 
 ## Remote Commands
 
-Remote control of your BMW is available under `bmw.0.VIN.remotev2`. Supported actions may include locking/unlocking doors, activating climate control, or triggering other vehicle functions, depending on your BMW model and ConnectedDrive features.
+⚠️ **Remote controls have been removed in v4.0** as the BMW CarData API is read-only and does not support vehicle commands. For remote control functionality, you would need to use BMW's official mobile app.
 
-_Note: The available fields and remote capabilities vary based on your BMW model and the ConnectedDrive API._
+## Troubleshooting
+
+### Authentication Issues (400 Bad Request)
+If you encounter authentication errors:
+1. Verify CarData API is activated for your Client ID
+2. Ensure CarData Streaming is enabled
+3. Check that all 244 data points are selected
+4. Consider regenerating your Client ID
+
+### No MQTT Data
+If you're not receiving real-time updates:
+1. Verify CarData Streaming is subscribed and active
+2. Ensure all data descriptors (244 points) are selected
+3. Check that your vehicle supports CarData streaming
+4. Restart the adapter after descriptor configuration changes
+
+### API Quota Exceeded
+The adapter manages the 50 API calls per 24-hour limit automatically:
+- **Disable unnecessary API endpoints** in adapter settings to reduce quota usage
+- Increase update interval if you hit quota limits frequently
+- MQTT streaming doesn't count against API quota and provides real-time data
+- Each enabled API endpoint uses one quota call per update interval
+
+### Missing Data in API Folder
+If you're not seeing expected data in `VIN.api.*`:
+1. Check if the corresponding endpoint is enabled in adapter settings
+2. Verify you haven't exceeded API quota (check adapter logs)
+3. Some endpoints may not be available for all vehicle types
+4. Check adapter logs for specific endpoint errors (404, 403, etc.)
+
+### Understanding Data Sources
+- **`VIN.api.*`** - Updated periodically based on interval and enabled endpoints
+- **`VIN.stream.*`** - Updated in real-time via MQTT when vehicle data changes
+- **`VIN.dataSource`** - Shows "mqtt" when real-time data is being received
+- **`VIN.lastUpdate`** - Timestamp of most recent data update
 
 ## Source
 
