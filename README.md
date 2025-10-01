@@ -189,7 +189,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ## Changelog
 
-### 4.0.4 (2025-10-01)
+### 4.0.5 (2025-10-01)
 
 - **BREAKING:** Complete migration to BMW CarData API with OAuth2 Device Flow authentication
 - **BREAKING:** Removed username/password authentication (deprecated by BMW)
