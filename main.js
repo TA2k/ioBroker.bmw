@@ -73,6 +73,15 @@ class Bmw extends utils.Adapter {
 		// Initialize API quota tracking
 		this.apiCalls = [];
 
+		// Restore quota states from saved values (or use defaults if first run)
+		const quotaUsedState = await this.getStateAsync('info.apiQuotaUsed');
+		const quotaRemainingState = await this.getStateAsync('info.apiQuotaRemaining');
+
+		this.currentUsed = quotaUsedState?.val || 0;
+		this.currentRemaining = quotaRemainingState?.val || 50;
+
+		this.log.debug(`Restored quota states: ${this.currentUsed} used, ${this.currentRemaining} remaining`);
+
 		// Try to restore stored session
 		const sessionState = await this.getStateAsync('cardataauth.session');
 		if (sessionState?.val && typeof sessionState.val === 'string') {
@@ -108,23 +117,27 @@ class Bmw extends utils.Adapter {
 			if (this.vinArray.length > 0) {
 				this.log.info(`Setting up periodic updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`);
 				this.updateInterval = setInterval(async () => {
-					// Simple periodic data refresh - MQTT provides real-time updates
+					// Update quota states (expired calls removed automatically)
+					this.updateQuotaStates();
+
+					// Periodic API data refresh - MQTT provides real-time updates
+					const headers = {
+						'Authorization': `Bearer ${this.session.access_token}`,
+						'x-version': 'v1',
+						'Accept': 'application/json'
+					};
+
 					for (const vin of this.vinArray) {
-						if (this.checkQuota()) {
-							this.log.debug(`Periodic API refresh for ${vin}`);
-							// Could add specific periodic API calls here if needed
-							break; // Only one call per interval to conserve quota
-						} else {
-							this.log.debug('Skipping periodic API call - quota exhausted');
-							break;
-						}
+						this.log.debug(`Periodic API refresh for ${vin}`);
+						await this.fetchAllVehicleData(vin, headers);
+						break; // Only one vehicle per interval to conserve quota
 					}
 				}, this.config.interval * 60 * 1000);
 			}
 
 			this.log.info('BMW CarData adapter startup complete');
 			this.log.info('MQTT streaming: enabled');
-			this.log.info(`API quota: ${50 - this.apiCalls.length}/50 calls remaining`);
+			this.log.info(`API quota: ${this.currentRemaining - this.apiCalls.length}/50 calls remaining`);
 		} else {
 			this.log.error('BMW CarData authentication failed');
 		}
@@ -554,22 +567,31 @@ class Bmw extends utils.Adapter {
 		await this.setState(`${vin}.lastUpdate`, new Date().toISOString(), true);
 	}
 
-	checkQuota() {
+	updateQuotaStates() {
 		const now = Date.now();
 		if (!this.apiCalls) this.apiCalls = [];
 
 		// Remove calls older than 24h
 		this.apiCalls = this.apiCalls.filter(time => now - time < 24 * 60 * 60 * 1000);
 
-		const used = this.apiCalls.length;
-		const remaining = 50 - used;
+		this.currentUsed = this.currentUsed + this.apiCalls.length;
+		this.currentRemaining = this.currentRemaining - this.currentUsed;
 
 		// Update quota states
-		this.setState('info.apiQuotaUsed', used, true);
-		this.setState('info.apiQuotaRemaining', remaining, true);
+		this.setState('info.apiQuotaUsed', this.currentUsed, true);
+		this.setState('info.apiQuotaRemaining', this.currentRemaining, true);
+
+		return { used, remaining };
+	}
+
+	checkQuota() {
+		const { used, remaining } = this.updateQuotaStates();
 
 		if (remaining > 0) {
-			this.apiCalls.push(now);
+			this.apiCalls.push(Date.now());
+			// Update states again after adding the call
+			this.setState('info.apiQuotaUsed', used + 1, true);
+			this.setState('info.apiQuotaRemaining', remaining - 1, true);
 			return true;
 		}
 

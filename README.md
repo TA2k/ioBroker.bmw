@@ -141,8 +141,8 @@ You can enable/disable these endpoints in adapter settings:
 
 ### Metadata
 
-- `bmw.0.VIN.lastUpdate` - Timestamp of last data update
-- `bmw.0.VIN.dataSource` - Data source indicator ("mqtt" for real-time updates)
+- `bmw.0.VIN.lastUpdate` - Timestamp of last data update (API or MQTT)
+- `bmw.0.VIN.lastStreamUpdate` - Timestamp of last MQTT stream update
 
 ## Real-time Updates
 
@@ -190,14 +190,33 @@ If you're not seeing expected data in `VIN.api.*`:
 ### Understanding Data Sources
 - **`VIN.api.*`** - Updated periodically based on interval and enabled endpoints
 - **`VIN.stream.*`** - Updated in real-time via MQTT when vehicle data changes
-- **`VIN.dataSource`** - Shows "mqtt" when real-time data is being received
-- **`VIN.lastUpdate`** - Timestamp of most recent data update
+- **`VIN.lastUpdate`** - Timestamp of most recent data update (API or MQTT)
+- **`VIN.lastStreamUpdate`** - Timestamp of most recent MQTT stream update
 
 ## Source
 
 This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://github.com/TA2k/ioBroker.bmw)
 
 ## Changelog
+### 4.0.0 (2025-10-01)
+
+- **BREAKING:** Complete migration to BMW CarData API with OAuth2 Device Flow authentication
+- **BREAKING:** Removed username/password authentication (deprecated by BMW)
+- **BREAKING:** Removed all remote control functionality (CarData API is read-only)
+- **BREAKING:** Removed second user support and CAPTCHA requirements
+- **NEW:** Real-time MQTT streaming for instant vehicle data updates
+- **NEW:** OAuth2 Device Code Flow authentication with PKCE
+- **NEW:** API quota management system (50 calls per 24 hours)
+- **NEW:** Configurable API endpoint selection to manage quota usage
+- **NEW:** Organized folder structure: api/ for periodic updates, stream/ for real-time data
+- **NEW:** Enhanced state management with proper object creation
+- **NEW:** Modern JSON-based configuration interface (jsonConfig.json)
+- **NEW:** Comprehensive setup documentation with BMW portal integration
+- **FIXED:** MQTT message processing logic for correct data validation
+- **FIXED:** State creation issues preventing "no existing object" errors
+- **IMPROVED:** Removed unused dependencies (cookie handling, legacy auth)
+- **IMPROVED:** Enhanced error handling with specific guidance for common issues
+
 ### 3.0.1 (2025-09-27)
 
 - (hombach) change to recommended stable admin 7.6.17 (#159)
