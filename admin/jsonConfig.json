@@ -174,8 +174,8 @@
         "zh-cn": "更新间隔（分钟）"
       },
       "help": {
-        "en": "API polling interval for not important data.. Minimum 10 minutes due to quota limits (50 calls per 24h). MQTT provides real-time data.",
-        "de": "API-Abfrageintervall für nicht relevante Information. Minimum 10 Minuten aufgrund Quota-Limits (50 Aufrufe pro 24h). MQTT liefert Echtzeitdaten.",
+        "en": "API polling interval for not important static data.. Minimum 10 minutes due to quota limits (50 calls per 24h). MQTT provides real-time data.",
+        "de": "API-Abfrageintervall für nicht relevante statische Information. Minimum 10 Minuten aufgrund Quota-Limits (50 Aufrufe pro 24h). MQTT liefert Echtzeitdaten.",
         "ru": "Интервал опроса API. Минимум 10 минут из-за лимитов квот (50 вызовов за 24ч). MQTT предоставляет данные в реальном времени.",
         "pt": "Intervalo de polling da API. Mínimo 10 minutos devido aos limites de quota (50 chamadas por 24h). MQTT fornece dados em tempo real.",
         "nl": "API polling interval. Minimum 10 minuten vanwege quota limieten (50 oproepen per 24u). MQTT levert realtime data.",
@@ -241,7 +241,7 @@
       "type": "staticText",
       "text": {
         "en": "Select which BMW CarData API endpoints to fetch. No important data is fetched. Each endpoint uses one API call from your 50 calls/24h quota. MQTT streaming provides real-time updates and doesn't count against quota.",
-        "de": "Wählen Sie aus, welche BMW CarData API Endpunkte abgerufen werden sollen. Es werden keine wichtigen Daten abgerufen. Jeder Endpunkt verwendet einen API-Aufruf aus Ihrem 50 Aufrufe/24h Kontingent. MQTT-Streaming bietet Echtzeit-Updates und zählt nicht gegen das Kontingent.",
+        "de": "Wählen Sie aus, welche BMW CarData API Endpunkte abgerufen werden sollen. Es werden nur statische Daten abgerufen. Jeder Endpunkt verwendet einen API-Aufruf aus Ihrem 50 Aufrufe/24h Kontingent. MQTT-Streaming bietet Echtzeit-Updates und zählt nicht gegen das Kontingent.",
         "ru": "Выберите, какие конечные точки BMW CarData API загружать. Важные данные не загружаются. Каждая конечная точка использует один API вызов из вашей квоты 50 вызовов/24ч. MQTT потоковая передача обеспечивает обновления в реальном времени и не засчитывается в квоту.",
         "pt": "Selecione quais endpoints da API BMW CarData buscar. Nenhum dado importante é buscado. Cada endpoint usa uma chamada API de sua cota de 50 chamadas/24h. O streaming MQTT fornece atualizações em tempo real e não conta contra a cota.",
         "nl": "Selecteer welke BMW CarData API endpoints op te halen. Er worden geen belangrijke gegevens opgehaald. Elke endpoint gebruikt één API oproep van uw 50 oproepen/24u quota. MQTT streaming biedt realtime updates en telt niet mee tegen quota.",
