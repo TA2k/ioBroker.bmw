@@ -26,20 +26,44 @@
     "_setup": {
       "type": "staticText",
       "text": {
-        "en": "Setup Instructions: 1. Visit BMW ConnectedDrive portal 2. Go to CarData section 3. Generate a client ID 4. Subscribe to API and streaming services 5. Configure data descriptors",
-        "de": "Setup-Anweisungen: 1. BMW ConnectedDrive Portal besuchen 2. CarData Bereich aufrufen 3. Client ID generieren 4. API und Streaming Services abonnieren 5. Datendeskriptoren konfigurieren",
-        "ru": "Инструкции по настройке: 1. Посетите портал BMW ConnectedDrive 2. Перейдите в раздел CarData 3. Создайте client ID 4. Подпишитесь на API и streaming сервисы 5. Настройте дескрипторы данных",
-        "pt": "Instruções de configuração: 1. Visite o portal BMW ConnectedDrive 2. Vá para a seção CarData 3. Gere um client ID 4. Inscreva-se nos serviços de API e streaming 5. Configure descritores de dados",
-        "nl": "Setup instructies: 1. Bezoek BMW ConnectedDrive portal 2. Ga naar CarData sectie 3. Genereer een client ID 4. Abonneer op API en streaming services 5. Configureer data descriptors",
-        "fr": "Instructions de configuration: 1. Visitez le portail BMW ConnectedDrive 2. Allez dans la section CarData 3. Générez un client ID 4. Abonnez-vous aux services API et streaming 5. Configurez les descripteurs de données",
-        "it": "Istruzioni di configurazione: 1. Visita il portale BMW ConnectedDrive 2. Vai alla sezione CarData 3. Genera un client ID 4. Iscriviti ai servizi API e streaming 5. Configura i descrittori dati",
-        "es": "Instrucciones de configuración: 1. Visita el portal BMW ConnectedDrive 2. Ve a la sección CarData 3. Genera un client ID 4. Suscríbete a los servicios API y streaming 5. Configura descriptores de datos",
-        "pl": "Instrukcje konfiguracji: 1. Odwiedź portal BMW ConnectedDrive 2. Przejdź do sekcji CarData 3. Wygeneruj client ID 4. Subskrybuj usługi API i streaming 5. Skonfiguruj deskryptory danych",
-        "zh-cn": "设置说明：1. 访问BMW ConnectedDrive门户 2. 转到CarData部分 3. 生成客户端ID 4. 订阅API和流媒体服务 5. 配置数据描述符"
+        "en": "Setup Instructions: 1. Visit BMW ConnectedDrive portal (https://customer.bmwgroup.com/) 2. Go to CarData section 3. Generate a client ID 4. Subscribe to API and streaming services 5. Configure data descriptors",
+        "de": "Setup-Anweisungen: 1. BMW ConnectedDrive Portal besuchen (https://customer.bmwgroup.com/) 2. CarData Bereich aufrufen 3. Client ID generieren 4. API und Streaming Services abonnieren 5. Datendeskriptoren konfigurieren",
+        "ru": "Инструкции по настройке: 1. Посетите портал BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Перейдите в раздел CarData 3. Создайте client ID 4. Подпишитесь на API и streaming сервисы 5. Настройте дескрипторы данных",
+        "pt": "Instruções de configuração: 1. Visite o portal BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Vá para a seção CarData 3. Gere um client ID 4. Inscreva-se nos serviços de API e streaming 5. Configure descritores de dados",
+        "nl": "Setup instructies: 1. Bezoek BMW ConnectedDrive portal (https://customer.bmwgroup.com/) 2. Ga naar CarData sectie 3. Genereer een client ID 4. Abonneer op API en streaming services 5. Configureer data descriptors",
+        "fr": "Instructions de configuration: 1. Visitez le portail BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Allez dans la section CarData 3. Générez un client ID 4. Abonnez-vous aux services API et streaming 5. Configurez les descripteurs de données",
+        "it": "Istruzioni di configurazione: 1. Visita il portale BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Vai alla sezione CarData 3. Genera un client ID 4. Iscriviti ai servizi API e streaming 5. Configura i descrittori dati",
+        "es": "Instrucciones de configuración: 1. Visita el portal BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Ve a la sección CarData 3. Genera un client ID 4. Suscríbete a los servicios API y streaming 5. Configura descriptores de datos",
+        "pl": "Instrukcje konfiguracji: 1. Odwiedź portal BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Przejdź do sekcji CarData 3. Wygeneruj client ID 4. Subskrybuj usługi API i streaming 5. Skonfiguruj deskryptory danych",
+        "zh-cn": "设置说明：1. 访问BMW ConnectedDrive门户 (https://customer.bmwgroup.com/) 2. 转到CarData部分 3. 生成客户端ID 4. 订阅API和流媒体服务 5. 配置数据描述符"
       },
       "style": {
         "fontSize": "smaller",
         "fontStyle": "italic"
+      },
+      "newLine": true
+    },
+    "_cardata_setup": {
+      "type": "staticText",
+      "text": {
+        "en": "⚠️ IMPORTANT: CarData Streaming Setup - After creating your Client ID, you MUST activate CarData Streaming and manually select ALL 244 data points in the BMW portal. Go to CarData > Data Descriptors > Select all categories and individual data points. Without this step, real-time MQTT streaming will not work!",
+        "de": "⚠️ WICHTIG: CarData Streaming Setup - Nach dem Erstellen Ihrer Client ID MÜSSEN Sie CarData Streaming aktivieren und manuell ALLE 244 Datenpunkte im BMW Portal auswählen. Gehen Sie zu CarData > Datendeskriptoren > Wählen Sie alle Kategorien und einzelne Datenpunkte aus. Ohne diesen Schritt funktioniert das Echtzeit-MQTT-Streaming nicht!",
+        "ru": "⚠️ ВАЖНО: Настройка CarData Streaming - После создания Client ID вы ДОЛЖНЫ активировать CarData Streaming и вручную выбрать ВСЕ 244 точки данных на портале BMW. Перейдите в CarData > Дескрипторы данных > Выберите все категории и отдельные точки данных. Без этого шага потоковая передача MQTT в реальном времени не будет работать!",
+        "pt": "⚠️ IMPORTANTE: Configuração CarData Streaming - Após criar seu Client ID, você DEVE ativar o CarData Streaming e selecionar manualmente TODOS os 244 pontos de dados no portal BMW. Vá para CarData > Descritores de Dados > Selecione todas as categorias e pontos de dados individuais. Sem este passo, o streaming MQTT em tempo real não funcionará!",
+        "nl": "⚠️ BELANGRIJK: CarData Streaming Setup - Na het aanmaken van uw Client ID MOET u CarData Streaming activeren en handmatig ALLE 244 datapunten selecteren in het BMW portaal. Ga naar CarData > Data Descriptors > Selecteer alle categorieën en individuele datapunten. Zonder deze stap werkt realtime MQTT streaming niet!",
+        "fr": "⚠️ IMPORTANT: Configuration CarData Streaming - Après avoir créé votre Client ID, vous DEVEZ activer CarData Streaming et sélectionner manuellement TOUS les 244 points de données dans le portail BMW. Allez dans CarData > Descripteurs de données > Sélectionnez toutes les catégories et points de données individuels. Sans cette étape, le streaming MQTT en temps réel ne fonctionnera pas!",
+        "it": "⚠️ IMPORTANTE: Configurazione CarData Streaming - Dopo aver creato il tuo Client ID, DEVI attivare CarData Streaming e selezionare manualmente TUTTI i 244 punti dati nel portale BMW. Vai su CarData > Descrittori Dati > Seleziona tutte le categorie e i singoli punti dati. Senza questo passaggio, lo streaming MQTT in tempo reale non funzionerà!",
+        "es": "⚠️ IMPORTANTE: Configuración CarData Streaming - Después de crear tu Client ID, DEBES activar CarData Streaming y seleccionar manualmente TODOS los 244 puntos de datos en el portal BMW. Ve a CarData > Descriptores de Datos > Selecciona todas las categorías y puntos de datos individuales. ¡Sin este paso, el streaming MQTT en tiempo real no funcionará!",
+        "pl": "⚠️ WAŻNE: Konfiguracja CarData Streaming - Po utworzeniu Client ID MUSISZ aktywować CarData Streaming i ręcznie wybrać WSZYSTKIE 244 punkty danych w portalu BMW. Przejdź do CarData > Deskryptory Danych > Wybierz wszystkie kategorie i poszczególne punkty danych. Bez tego kroku streaming MQTT w czasie rzeczywistym nie będzie działać!",
+        "zh-cn": "⚠️ 重要：CarData流媒体设置 - 创建客户端ID后，您必须激活CarData流媒体并在BMW门户中手动选择所有244个数据点。转到CarData > 数据描述符 > 选择所有类别和单个数据点。没有此步骤，实时MQTT流媒体将无法工作！"
+      },
+      "style": {
+        "fontSize": "smaller",
+        "fontWeight": "bold",
+        "color": "orange",
+        "backgroundColor": "#fff3cd",
+        "padding": "10px",
+        "borderRadius": "4px"
       },
       "newLine": true
     },
@@ -70,6 +94,37 @@
         "zh-cn": "来自BMW ConnectedDrive门户CarData部分的客户端ID。OAuth2身份验证所需。"
       },
       "placeholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "newLine": true,
+      "sm": 6
+    },
+    "cardataStreamingUsername": {
+      "type": "text",
+      "label": {
+        "en": "CarData Streaming Username *",
+        "de": "CarData Streaming Benutzername *",
+        "ru": "Имя пользователя CarData Streaming *",
+        "pt": "Nome de usuário CarData Streaming *",
+        "nl": "CarData Streaming gebruikersnaam *",
+        "fr": "Nom d'utilisateur CarData Streaming *",
+        "it": "Nome utente CarData Streaming *",
+        "es": "Nombre de usuario CarData Streaming *",
+        "pl": "Nazwa użytkownika CarData Streaming *",
+        "zh-cn": "CarData流媒体用户名 *"
+      },
+      "help": {
+        "en": "REQUIRED: Your CarData Streaming username (different from your BMW login). Find this in BMW ConnectedDrive portal under CarData > Streaming section. Without this, MQTT streaming will not work!",
+        "de": "ERFORDERLICH: Ihr CarData Streaming Benutzername (unterscheidet sich von Ihrem BMW Login). Finden Sie diesen im BMW ConnectedDrive Portal unter CarData > Streaming Bereich. Ohne diesen funktioniert MQTT-Streaming nicht!",
+        "ru": "ОБЯЗАТЕЛЬНО: Ваше имя пользователя CarData Streaming (отличается от вашего BMW логина). Найдите это на портале BMW ConnectedDrive в разделе CarData > Streaming. Без этого MQTT потоковая передача не будет работать!",
+        "pt": "OBRIGATÓRIO: Seu nome de usuário CarData Streaming (diferente do seu login BMW). Encontre isso no portal BMW ConnectedDrive na seção CarData > Streaming. Sem isso, o streaming MQTT não funcionará!",
+        "nl": "VEREIST: Uw CarData Streaming gebruikersnaam (verschilt van uw BMW login). Vind dit in BMW ConnectedDrive portaal onder CarData > Streaming sectie. Zonder dit werkt MQTT streaming niet!",
+        "fr": "REQUIS: Votre nom d'utilisateur CarData Streaming (différent de votre connexion BMW). Trouvez ceci dans le portail BMW ConnectedDrive sous CarData > section Streaming. Sans cela, le streaming MQTT ne fonctionnera pas!",
+        "it": "RICHIESTO: Il tuo nome utente CarData Streaming (diverso dal tuo login BMW). Trova questo nel portale BMW ConnectedDrive sotto CarData > sezione Streaming. Senza questo, lo streaming MQTT non funzionerà!",
+        "es": "REQUERIDO: Tu nombre de usuario CarData Streaming (diferente de tu login BMW). Encuéntralo en el portal BMW ConnectedDrive bajo CarData > sección Streaming. ¡Sin esto, el streaming MQTT no funcionará!",
+        "pl": "WYMAGANE: Twoja nazwa użytkownika CarData Streaming (inna niż twój login BMW). Znajdź to w portalu BMW ConnectedDrive w sekcji CarData > Streaming. Bez tego streaming MQTT nie będzie działać!",
+        "zh-cn": "必需：您的CarData流媒体用户名（与您的BMW登录不同）。在BMW ConnectedDrive门户的CarData > 流媒体部分中找到此信息。没有此信息，MQTT流媒体将无法工作！"
+      },
+      "placeholder": "streaming_username_from_bmw_portal",
+      "required": true,
       "newLine": true,
       "sm": 6
     },

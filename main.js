@@ -104,10 +104,7 @@ class Bmw extends utils.Adapter {
 			// Get vehicles and fetch all initial data
 			await this.getVehiclesv2(true);
 
-			// Clean up old states from previous versions
-			await this.cleanObjects();
-
-			// Start periodic token refresh (every 45 minutes)
+				// Start periodic token refresh (every 45 minutes)
 			this.refreshTokenInterval = setInterval(async () => {
 				await this.refreshToken();
 			}, 45 * 60 * 1000);
@@ -178,13 +175,39 @@ class Bmw extends utils.Adapter {
 			})
 			.catch(error => {
 				this.log.error('Device code request failed: ' + error.message);
-				
+				this.log.error('Error stack: ' + error.stack);
 				if (error.response) {
 					this.log.error('Response status: ' + error.response.status);
 					this.log.error('Response headers: ' + JSON.stringify(error.response.headers));
 					this.log.error('Response data: ' + JSON.stringify(error.response.data));
+
+					// Special handling for 400 Bad Request - likely client configuration issue
+					if (error.response.status === 400) {
+						this.log.error('='.repeat(80));
+						this.log.error('BMW CLIENT ID CONFIGURATION ERROR (400 Bad Request)');
+						this.log.error('='.repeat(80));
+						this.log.error('This error usually means:');
+						this.log.error('1. CarData API access is not activated for your Client ID');
+						this.log.error('2. CarData Streaming is not enabled for your Client ID');
+						this.log.error('3. Your Client ID is invalid or has been revoked');
+						this.log.error('');
+						this.log.error('To fix this issue:');
+						this.log.error('1. Visit BMW ConnectedDrive portal: https://customer.bmwgroup.com/');
+						this.log.error('2. Go to CarData section');
+						this.log.error('3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection');
+						this.log.error('4. If not activated, enable both services');
+						this.log.error('5. If already activated, delete and recreate your Client ID');
+						this.log.error('6. Update the adapter configuration with the new Client ID');
+						this.log.error('='.repeat(80));
+					}
 				}
-	
+				if (error.request) {
+					this.log.error('Request details: ' + JSON.stringify({
+						method: error.request.method,
+						url: error.request.url,
+						headers: error.request._headers
+					}));
+				}
 				return false; // Return false instead of throwing
 			});
 
@@ -372,7 +395,9 @@ class Bmw extends utils.Adapter {
 
 					this.vinArray.push(vin);
 					this.log.info(`Added vehicle: ${vin}`);
-
+					if (firstStart) {
+						this.cleanObjects(vin);
+					}
 					// Create vehicle device
 					await this.extendObject(vin, {
 						type: 'device',
@@ -388,6 +413,8 @@ class Bmw extends utils.Adapter {
 					}
 				}
 			}
+
+	
 		})
 		.catch(error => {
 			this.log.error('BMW CarData vehicle discovery failed: ' + error.message);
@@ -870,8 +897,8 @@ class Bmw extends utils.Adapter {
 		}
 	}
 
-	async cleanObjects() {
-		for (const vin of this.vinArray) {
+	async cleanObjects(vin) {
+
 			// Check if this is an upgrade from old version by looking for remotev2 states
 			const remoteState = await this.getObjectAsync(`${vin}.remotev2`);
 			if (remoteState) {
@@ -903,7 +930,7 @@ class Bmw extends utils.Adapter {
 					await this.delObject(`${vin}.remote`, { recursive: true });
 				}
 			}
-		}
+		
 
 		// Clean up old global states
 		await this.delObject(`_DatenNeuLaden`);
@@ -1047,8 +1074,14 @@ class Bmw extends utils.Adapter {
 	}
 
 	async connectMQTT() {
-		if (!this.session.id_token || !this.session.gcid) {
-			this.log.warn('No MQTT credentials available (missing ID token or GCID)');
+		if (!this.session.id_token) {
+			this.log.warn('No MQTT credentials available (missing ID token)');
+			return false;
+		}
+
+		if (!this.config.cardataStreamingUsername) {
+			this.log.error('CarData Streaming Username not configured! Please set it in adapter settings.');
+			this.log.error('Find your streaming username in BMW ConnectedDrive portal under CarData > Streaming section.');
 			return false;
 		}
 
@@ -1058,7 +1091,7 @@ class Bmw extends utils.Adapter {
 			host: 'customer.streaming-cardata.bmwgroup.com',
 			port: 9000,
 			protocol: 'mqtts',
-			username: this.session.gcid,
+			username: this.config.cardataStreamingUsername,
 			password: this.session.id_token,
 			keepalive: 30,
 			clean: true,
@@ -1068,14 +1101,15 @@ class Bmw extends utils.Adapter {
 		};
 
 		this.log.debug(`Connecting to BMW MQTT: ${options.host}:${options.port}`);
+		this.log.debug(`MQTT Username: ${this.config.cardataStreamingUsername}`);
 		this.mqtt = mqtt.connect(options);
 
 		this.mqtt.on('connect', () => {
 			this.log.info('BMW MQTT stream connected');
 			this.setState('info.mqttConnected', true, true);
 
-			// Subscribe to all vehicle topics for this GCID
-			const topic = `${this.session.gcid}/+`;
+			// Subscribe to all vehicle topics for this CarData Streaming username
+			const topic = `${this.config.cardataStreamingUsername}/+`;
 			this.mqtt.subscribe(topic, (err) => {
 				if (err) {
 					this.log.error('MQTT subscription failed: ' + err.message);
