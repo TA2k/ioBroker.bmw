@@ -61,7 +61,7 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 
 ### 1. BMW ConnectedDrive Portal Setup
 
-1. Visit the BMW ConnectedDrive portal: **https://customer.bmwgroup.com/**
+1. Visit the BMW ConnectedDrive portal: **https://www.bmw.de/de-de/mybmw/vehicle-overview**
 2. Navigate to the **BMW CarData** section (you'll see various service categories)
 
 ![BMW Portal Overview](img/bmw-portal-overview.png)
