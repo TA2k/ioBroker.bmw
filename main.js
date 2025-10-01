@@ -92,6 +92,7 @@ class Bmw extends utils.Adapter {
 				// Try to refresh tokens
 				await this.refreshToken();
 			} catch (error) {
+				this.log.error(error)
 				this.log.warn('Failed to parse stored session, starting new login');
 				await this.login();
 			}
