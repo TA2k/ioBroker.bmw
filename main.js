@@ -806,7 +806,7 @@ class Bmw extends utils.Adapter {
             await this.connectMQTT();
           }, 5000);
         } catch (refreshError) {
-          this.log.error('Token refresh failed: ' + refreshError.message);
+          this.log.error(`Token refresh failed: ${refreshError.message}`);
           this.log.warn('Will retry MQTT connection with current token');
         }
       }
