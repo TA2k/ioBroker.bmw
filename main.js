@@ -201,7 +201,7 @@ class Bmw extends utils.Adapter {
 						this.log.error('3. Your Client ID is invalid or has been revoked');
 						this.log.error('');
 						this.log.error('To fix this issue:');
-						this.log.error('1. Visit BMW ConnectedDrive portal: https://customer.bmwgroup.com/');
+						this.log.error('1. Visit BMW ConnectedDrive portal: https://www.bmw.de/de-de/mybmw/vehicle-overview');
 						this.log.error('2. Go to CarData section');
 						this.log.error('3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection');
 						this.log.error('4. If not activated, enable both services');
