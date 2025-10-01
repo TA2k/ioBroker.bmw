@@ -44,9 +44,9 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 
 ![CarData Client Setup](img/cardata-client-setup.png)
 
-**CRITICAL**: Click one service and wait 20 seconds if you see an error message, then click again
+# **CRITICAL**: Click one service and wait 20 seconds if you see an error message, then click again. Don't press on "Gerät Authentifizieren/Devict authentication" Enter the client_id in iobroker settings.
 
-### 2. ⚠️ CRITICAL: CarData Streaming Configuration
+### 2. CarData Streaming Configuration
 
 **YOU MUST CONFIGURE CARDATA STREAMING AND SELECT ALL 244 DATA POINTS**
 
