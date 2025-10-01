@@ -381,7 +381,7 @@ class Bmw extends utils.Adapter {
         }
 
         for (const mapping of mappings) {
-          if (mapping.mappingType === 'PRIMARY' && mapping.vin) {
+          if (mapping.vin) {
             const vin = mapping.vin;
 
             // Check ignore list
