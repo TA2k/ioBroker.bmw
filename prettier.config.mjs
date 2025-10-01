@@ -6,5 +6,6 @@ export default {
     // uncomment next line if you prefer double quotes
     singleQuote: true,
 	printWidth: 140,
-	useTabs: true,
+	useTabs: false,
+    tabWidth: 2,
 }

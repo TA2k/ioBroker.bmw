@@ -81,6 +81,7 @@ class Bmw extends utils.Adapter {
         this.apiCalls = JSON.parse(apiCallsHistoryState.val);
         this.log.debug(`Restored ${this.apiCalls.length} API call timestamps from history`);
       } catch (error) {
+        this.log.error(`Failed to parse API calls history: ${error.message}`);
         this.log.warn('Failed to parse API calls history, starting fresh');
         this.apiCalls = [];
       }
@@ -101,7 +102,7 @@ class Bmw extends utils.Adapter {
         // Try to refresh tokens
         await this.refreshToken();
       } catch (error) {
-        this.log.warn('Failed to parse stored session, starting new login');
+        this.log.warn(`Failed to parse stored session, starting new login ${error.message}`);
         await this.login();
       }
     } else {
@@ -118,30 +119,36 @@ class Bmw extends utils.Adapter {
       // Connect MQTT after successful auth
       await this.connectMQTT();
       // Start periodic token refresh (every 45 minutes)
-      this.refreshTokenInterval = setInterval(async () => {
-        await this.refreshToken();
-      }, 45 * 60 * 1000);
+      this.refreshTokenInterval = setInterval(
+        async () => {
+          await this.refreshToken();
+        },
+        45 * 60 * 1000,
+      );
 
       // Start periodic API updates (respecting quota limits)
       if (this.vinArray.length > 0) {
         this.log.info(`Setting up periodic updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`);
-        this.updateInterval = setInterval(async () => {
-          // Update quota states (expired calls removed automatically)
-          this.updateQuotaStates();
+        this.updateInterval = setInterval(
+          async () => {
+            // Update quota states (expired calls removed automatically)
+            this.updateQuotaStates();
 
-          // Periodic API data refresh - MQTT provides real-time updates
-          const headers = {
-            Authorization: `Bearer ${this.session.access_token}`,
-            'x-version': 'v1',
-            Accept: 'application/json',
-          };
+            // Periodic API data refresh - MQTT provides real-time updates
+            const headers = {
+              Authorization: `Bearer ${this.session.access_token}`,
+              'x-version': 'v1',
+              Accept: 'application/json',
+            };
 
-          for (const vin of this.vinArray) {
-            this.log.debug(`Periodic API refresh for ${vin}`);
-            await this.fetchAllVehicleData(vin, headers);
-            break; // Only one vehicle per interval to conserve quota
-          }
-        }, this.config.interval * 60 * 1000);
+            for (const vin of this.vinArray) {
+              this.log.debug(`Periodic API refresh for ${vin}`);
+              await this.fetchAllVehicleData(vin, headers);
+              break; // Only one vehicle per interval to conserve quota
+            }
+          },
+          this.config.interval * 60 * 1000,
+        );
       }
 
       this.log.info('BMW CarData adapter startup complete');
@@ -175,7 +182,7 @@ class Bmw extends utils.Adapter {
         code_challenge: codeChallenge,
         code_challenge_method: 'S256',
       };
-      this.log.debug('Device code request data: ' + JSON.stringify(requestData));
+      this.log.debug(`Device code request data: ${JSON.stringify(requestData)}`);
 
       const deviceResponse = await this.requestClient({
         method: 'post',
@@ -186,17 +193,17 @@ class Bmw extends utils.Adapter {
         },
         data: requestData,
       })
-        .then((res) => {
-          this.log.debug('Device code response: ' + JSON.stringify(res.data));
+        .then(res => {
+          this.log.debug(`Device code response: ${JSON.stringify(res.data)}`);
           return res;
         })
-        .catch((error) => {
-          this.log.error('Device code request failed: ' + error.message);
-          this.log.error('Error stack: ' + error.stack);
+        .catch(error => {
+          this.log.error(`Device code request failed: ${error.message}`);
+          this.log.error(`Error stack: ${error.stack}`);
           if (error.response) {
-            this.log.error('Response status: ' + error.response.status);
-            this.log.error('Response headers: ' + JSON.stringify(error.response.headers));
-            this.log.error('Response data: ' + JSON.stringify(error.response.data));
+            this.log.error(`Response status: ${error.response.status}`);
+            this.log.error(`Response headers: ${JSON.stringify(error.response.headers)}`);
+            this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
 
             // Special handling for 400 Bad Request - likely client configuration issue
             if (error.response.status === 400) {
@@ -211,7 +218,9 @@ class Bmw extends utils.Adapter {
               this.log.error('To fix this issue:');
               this.log.error('1. Visit BMW ConnectedDrive portal: https://www.bmw.de/de-de/mybmw/vehicle-overview');
               this.log.error('2. Go to CarData section');
-              this.log.error('3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection');
+              this.log.error(
+                '3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection',
+              );
               this.log.error('4. If not activated, enable both services');
               this.log.error('5. If already activated, delete and recreate your Client ID');
               this.log.error('6. Update the adapter configuration with the new Client ID');
@@ -220,12 +229,11 @@ class Bmw extends utils.Adapter {
           }
           if (error.request) {
             this.log.error(
-              'Request details: ' +
-                JSON.stringify({
-                  method: error.request.method,
-                  url: error.request.url,
-                  headers: error.request._headers,
-                })
+              `Request details: ${JSON.stringify({
+                method: error.request.method,
+                url: error.request.url,
+                headers: error.request._headers,
+              })}`,
             );
           }
           return false; // Return false instead of throwing
@@ -263,7 +271,7 @@ class Bmw extends utils.Adapter {
             device_code: device_code,
             code_verifier: codeVerifier,
           };
-          this.log.debug('Token request data: ' + JSON.stringify(tokenRequestData));
+          this.log.debug(`Token request data: ${JSON.stringify(tokenRequestData)}`);
 
           const tokenResponse = await this.requestClient({
             method: 'post',
@@ -302,7 +310,7 @@ class Bmw extends utils.Adapter {
           return true;
         } catch (error) {
           const errorCode = error.response?.data?.error;
-          this.log.debug('Token polling error: ' + (errorCode || error.message));
+          this.log.debug(`Token polling error: ${errorCode || error.message}`);
 
           if (errorCode === 'authorization_pending') {
             this.log.debug('Authorization still pending, continuing to poll...');
@@ -315,10 +323,10 @@ class Bmw extends utils.Adapter {
             this.log.error('Authorization code expired, please restart adapter');
             return false;
           } else {
-            this.log.error('Token request failed: ' + (errorCode || error.message));
+            this.log.error(`Token request failed: ${errorCode || error.message}`);
             if (error.response) {
-              this.log.error('Token response status: ' + error.response.status);
-              this.log.error('Token response data: ' + JSON.stringify(error.response.data));
+              this.log.error(`Token response status: ${error.response.status}`);
+              this.log.error(`Token response data: ${JSON.stringify(error.response.data)}`);
             }
             return false;
           }
@@ -359,7 +367,7 @@ class Bmw extends utils.Adapter {
       url: `${this.carDataApiBase}/customers/vehicles/mappings`,
       headers: headers,
     })
-      .then(async (res) => {
+      .then(async res => {
         this.log.debug(JSON.stringify(res.data));
         const mappings = res.data;
 
@@ -406,10 +414,10 @@ class Bmw extends utils.Adapter {
           }
         }
       })
-      .catch((error) => {
-        this.log.error('BMW CarData vehicle discovery failed: ' + error.message);
+      .catch(error => {
+        this.log.error(`BMW CarData vehicle discovery failed: ${error.message}`);
         if (error.response) {
-          this.log.error('Response: ' + JSON.stringify(error.response.data));
+          this.log.error(`Response: ${JSON.stringify(error.response.data)}`);
           if (error.response.status === 403 || error.response.status === 429) {
             this.log.warn('Rate limit exceeded or access denied');
           }
@@ -497,7 +505,7 @@ class Bmw extends utils.Adapter {
     ];
 
     // Filter endpoints based on user configuration
-    const enabledEndpoints = apiEndpoints.filter((endpoint) => this.config[endpoint.configKey] === true);
+    const enabledEndpoints = apiEndpoints.filter(endpoint => this.config[endpoint.configKey] === true);
 
     this.log.info(`Fetching ${enabledEndpoints.length} configured API endpoints for ${vin}...`);
 
@@ -572,11 +580,13 @@ class Bmw extends utils.Adapter {
 
   updateQuotaStates() {
     const now = Date.now();
-    if (!this.apiCalls) this.apiCalls = [];
+    if (!this.apiCalls) {
+      this.apiCalls = [];
+    }
 
     // Remove calls older than 24h
     const originalLength = this.apiCalls.length;
-    this.apiCalls = this.apiCalls.filter((time) => now - time < 24 * 60 * 60 * 1000);
+    this.apiCalls = this.apiCalls.filter(time => now - time < 24 * 60 * 60 * 1000);
 
     // Save history if calls were removed due to expiration
     if (this.apiCalls.length !== originalLength) {
@@ -612,7 +622,7 @@ class Bmw extends utils.Adapter {
   }
 
   sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   async cleanObjects(vin) {
@@ -676,7 +686,7 @@ class Bmw extends utils.Adapter {
       refresh_token: this.session.refresh_token,
       client_id: this.config.clientId,
     };
-    this.log.debug('Refresh request data: ' + JSON.stringify(refreshData));
+    this.log.debug(`Refresh request data: ${JSON.stringify(refreshData)}`);
 
     await this.requestClient({
       method: 'post',
@@ -686,7 +696,7 @@ class Bmw extends utils.Adapter {
       },
       data: qs.stringify(refreshData),
     })
-      .then(async (res) => {
+      .then(async res => {
         // Store refreshed tokens (keep existing session structure)
         this.session = res.data;
         this.setState('cardataauth.session', JSON.stringify(this.session), true);
@@ -703,7 +713,7 @@ class Bmw extends utils.Adapter {
 
         return res.data;
       })
-      .catch(async (error) => {
+      .catch(async error => {
         this.log.error('Token refresh failed:', error.message);
         this.log.error('Error stack:', error.stack);
         if (error.response) {
@@ -760,9 +770,9 @@ class Bmw extends utils.Adapter {
 
       // Subscribe to all vehicle topics for this CarData Streaming username
       const topic = `${this.config.cardataStreamingUsername}/+`;
-      this.mqtt.subscribe(topic, (err) => {
+      this.mqtt.subscribe(topic, err => {
         if (err) {
-          this.log.error('MQTT subscription failed: ' + err.message);
+          this.log.error(`MQTT subscription failed: ${err.message}`);
         } else {
           this.log.debug(`Subscribed to MQTT topic: ${topic}`);
         }
@@ -773,8 +783,8 @@ class Bmw extends utils.Adapter {
       this.handleMQTTMessage(topic, message);
     });
 
-    this.mqtt.on('error', (error) => {
-      this.log.error('MQTT error: ' + error.message);
+    this.mqtt.on('error', error => {
+      this.log.error(`MQTT error: ${error.message}`);
       this.setState('info.mqttConnected', false, true);
     });
 
@@ -797,7 +807,9 @@ class Bmw extends utils.Adapter {
       const topicParts = topic.split('/');
 
       if (topicParts.length >= 2) {
-        const entityId = topicParts[0];
+        /*
+   34ddc38-93220-423330-93101-fcd292373/WBY11HH: {"vin":"WBY11HH","entityId":"34ddc38-93220-423330-93101-fcd292373","topic":"WBY11HH","timestamp":"2025-10-01T10:12:40.809Z","data":{"vehicle.powertrain.electric.battery.charging.preferenceSmartCharging":{"timestamp":"2025-10-01T10:12:39Z","value":"PRICE_OPTIMIZED"}}}
+   */
         const vin = topicParts[1];
 
         if (data.vin && data.data) {
@@ -860,7 +872,7 @@ class Bmw extends utils.Adapter {
         }
       }
     } catch (error) {
-      this.log.warn('Failed to parse MQTT message: ' + error.message);
+      this.log.warn(`Failed to parse MQTT message: ${error.message}`);
     }
   }
 
@@ -915,7 +927,7 @@ if (require.main !== module) {
   /**
    * @param {Partial<utils.AdapterOptions>} [options] - Optional adapter configuration options.
    */
-  module.exports = (options) => new Bmw(options);
+  module.exports = options => new Bmw(options);
 } else {
   // otherwise start the instance directly
   new Bmw();
