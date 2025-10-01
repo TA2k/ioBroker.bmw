@@ -103,7 +103,8 @@ class Bmw extends utils.Adapter {
 
 			// Get vehicles and fetch all initial data
 			await this.getVehiclesv2(true);
-
+					// Connect MQTT after successful auth
+					await this.connectMQTT();
 				// Start periodic token refresh (every 45 minutes)
 			this.refreshTokenInterval = setInterval(async () => {
 				await this.refreshToken();
@@ -279,8 +280,7 @@ class Bmw extends utils.Adapter {
 					this.setState('info.connection', true, true);
 					this.log.info('BMW CarData authorization successful!');
 
-					// Connect MQTT after successful auth
-					await this.connectMQTT();
+			
 					return true;
 
 				} catch (error) {
@@ -730,6 +730,22 @@ class Bmw extends utils.Adapter {
 					this.log.error('MQTT subscription failed: ' + err.message);
 				} else {
 					this.log.debug(`Subscribed to MQTT topic: ${topic}`);
+				}
+			});
+			const vin = "WBY11HH070CS80663";
+			this.mqtt.subscribe(vin, (err) => {
+				if (err) {
+					this.log.error('MQTT subscription failed: ' + err.message);
+				} else {
+					this.log.debug(`Subscribed to MQTT topic: ${vin}`);
+				}
+			});
+			const uservin = `${this.config.cardataStreamingUsername}/WBY11HH070CS80663`;
+			this.mqtt.subscribe(uservin, (err) => {
+				if (err) {
+					this.log.error('MQTT subscription failed: ' + err.message);
+				} else {
+					this.log.debug(`Subscribed to MQTT topic: ${uservin}`);
 				}
 			});
 		});
