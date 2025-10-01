@@ -28,35 +28,6 @@
 
 This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API with OAuth2 authentication and real-time MQTT streaming. It provides comprehensive vehicle data monitoring for all BMW models linked to your BMW account.
 
-## Features
-
-- **OAuth2 Device Flow Authentication** - Secure authentication without storing credentials
-- **Real-time MQTT Streaming** - Instant updates when vehicle data changes
-- **Comprehensive Data Coverage** - Access to all CarData API endpoints including:
-  - Basic vehicle information
-  - Charging history and sessions
-  - Trip data and efficiency metrics
-  - Service demands and vehicle status
-  - Location and navigation data
-- **API Quota Management** - Intelligent handling of 50 API calls per 24-hour limit
-- **Automatic State Cleanup** - Removes old vehicle data when vehicles are no longer available
-
-## ⚠️ Breaking Changes in v4.0
-
-**REMOVED:**
-
-- Username/password login (replaced with OAuth2)
-- All remote controls (lock/unlock, climate, charging) - CarData API is read-only
-- Second user support
-- CAPTCHA requirements
-
-**ADDED:**
-
-- OAuth2 Device Flow authentication
-- Real-time MQTT streaming
-- 50 API calls per 24h quota management
-- Comprehensive data from all CarData endpoints
-
 ## Setup Instructions
 
 ### 1. BMW ConnectedDrive Portal Setup
