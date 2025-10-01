@@ -398,6 +398,18 @@ class Bmw extends utils.Adapter {
               },
               native: {},
             });
+            await this.extendObject(`${vin}.vin`, {
+              type: 'state',
+              common: {
+                name: 'Vehicle Identification Number',
+                type: 'string',
+                role: 'info.vin',
+                read: true,
+                write: false,
+              },
+              native: {},
+            });
+            await this.setState(`${vin}.vin`, vin, true);
 
             // Fetch all available data for this vehicle on first start
             if (firstStart) {
