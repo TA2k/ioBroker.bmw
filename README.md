@@ -74,13 +74,10 @@ After creating your Client ID, configure streaming:
 5. **Configure API Endpoints** - Select which data to fetch:
    - **Basic Data** ✅ - Essential vehicle information (recommended)
    - **Charging History** ✅ - Charging sessions and history (recommended)
-   - **Vehicle State** ✅ - Current vehicle status (recommended)
-   - **Charging Profile** - Charging preferences and profiles
-   - **Charging Sessions** - Detailed charging session data
-   - **Climate Now** - Current climate control status
-   - **Destination Information** - Navigation and destination data
-   - **Location** - GPS position and location services
-   - **Statistics** - Driving statistics and analytics
+   - **Vehicle Image** - Vehicle image for display purposes
+   - **Location Based Charging Settings** - Location-specific charging preferences
+   - **Smart Maintenance Tyre Diagnosis** - Tyre condition and diagnosis data
+   - **Telematic Data** - Trip information and driving behavior analytics
 6. Configure **VIN ignore list** if needed
 
 **💡 Tip:** Only enable endpoints you actually need to conserve your 50 API calls per 24-hour quota. MQTT streaming provides real-time data without using quota.
@@ -100,7 +97,6 @@ Vehicle data is organized under `bmw.0.VIN.*` where `VIN` represents your Vehicl
 ### Main Folder Structure
 
 - **`bmw.0.VIN.api.*`** - API Data (Periodic Updates)
-
   - Data fetched via BMW CarData REST API
   - Uses API quota (50 calls per 24 hours)
   - Updated based on configured interval
@@ -114,17 +110,14 @@ Vehicle data is organized under `bmw.0.VIN.*` where `VIN` represents your Vehicl
 
 ### Available API Endpoints (Configurable)
 
-You can enable/disable these endpoints in adapter settings:
+You can enable/disable these endpoints in adapter settings (BMW CarData API v1):
 
 - `bmw.0.VIN.api.basicData.*` - Vehicle information, model, brand, series ✅ **(Default: Enabled)**
 - `bmw.0.VIN.api.chargingHistory.*` - Charging sessions and history ✅ **(Default: Enabled)**
-- `bmw.0.VIN.api.chargingProfile.*` - Charging preferences and profiles
-- `bmw.0.VIN.api.chargingSessions.*` - Detailed charging session data
-- `bmw.0.VIN.api.climateNow.*` - Climate control status
-- `bmw.0.VIN.api.destinationInformation.*` - Navigation and destination data
-- `bmw.0.VIN.api.location.*` - GPS position and location services
-- `bmw.0.VIN.api.statistics.*` - Driving statistics and analytics
-- `bmw.0.VIN.api.vehicleState.*` - Current vehicle status and conditions ✅ **(Default: Enabled)**
+- `bmw.0.VIN.api.image.*` - Vehicle image for display purposes
+- `bmw.0.VIN.api.locationBasedChargingSettings.*` - Location-specific charging preferences and settings
+- `bmw.0.VIN.api.smartMaintenanceTyreDiagnosis.*` - Smart maintenance system tyre condition and diagnosis
+- `bmw.0.VIN.api.telematicData.*` - Vehicle telematic data including trip information and driving behavior
 
 ### Metadata
 
@@ -196,7 +189,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ## Changelog
 
-### 4.0.2 (2025-10-01)
+### 4.0.3 (2025-10-01)
 
 - **BREAKING:** Complete migration to BMW CarData API with OAuth2 Device Flow authentication
 - **BREAKING:** Removed username/password authentication (deprecated by BMW)

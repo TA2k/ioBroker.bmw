@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "bmw",
-    "version": "4.0.2",
+    "version": "4.0.3",
     "news": {
-      "4.0.2": {
+      "4.0.3": {
         "en": "BREAKING: Complete migration to BMW CarData API\nBREAKING: OAuth2 device flow authentication (no more username/password)\nBREAKING: Remote controls removed (CarData API is read-only)\nNEW: Real-time MQTT streaming for instant updates\nNEW: 50 API calls per 24h quota management\nNEW: Comprehensive data collection from all CarData endpoints",
         "de": "BREAKING: Vollständige Migration zur BMW CarData API\nBREAKING: OAuth2 Device Flow Authentifizierung (keine Benutzername/Passwort mehr)\nBREAKING: Fernbedienungen entfernt (CarData API ist nur lesend)\nNEU: Echtzeit MQTT Streaming für sofortige Updates\nNEU: 50 API Aufrufe pro 24h Quota Management\nNEU: Umfassende Datensammlung von allen CarData Endpunkten"
       },
@@ -125,12 +125,8 @@
       "uk": "Adapter for BMW CarData API з потоком MQTT в реальному часі",
       "zh-cn": "带有实时MQTT流的BMW CarData API适配器"
     },
-    "authors": [
-      "TA2k <tombox2020@gmail.com>"
-    ],
-    "keywords": [
-      "BMW"
-    ],
+    "authors": ["TA2k <tombox2020@gmail.com>"],
+    "keywords": ["BMW"],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"

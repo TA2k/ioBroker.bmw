@@ -446,7 +446,7 @@ class Bmw extends utils.Adapter {
       native: {},
     });
 
-    // Define available API endpoints with config mapping
+    // Define available API endpoints with config mapping (BMW CarData API v1)
     const apiEndpoints = [
       {
         name: 'basicData',
@@ -461,46 +461,28 @@ class Bmw extends utils.Adapter {
         channel: 'Charging History',
       },
       {
-        name: 'chargingProfile',
-        configKey: 'fetchChargingProfile',
-        url: `/customers/vehicles/${vin}/chargingProfile`,
-        channel: 'Charging Profile',
+        name: 'image',
+        configKey: 'fetchImage',
+        url: `/customers/vehicles/${vin}/image`,
+        channel: 'Vehicle Image',
       },
       {
-        name: 'chargingSessions',
-        configKey: 'fetchChargingSessions',
-        url: `/customers/vehicles/${vin}/chargingSessions`,
-        channel: 'Charging Sessions',
+        name: 'locationBasedChargingSettings',
+        configKey: 'fetchLocationBasedChargingSettings',
+        url: `/customers/vehicles/${vin}/locationBasedChargingSettings`,
+        channel: 'Location Based Charging Settings',
       },
       {
-        name: 'climateNow',
-        configKey: 'fetchClimateNow',
-        url: `/customers/vehicles/${vin}/climateNow`,
-        channel: 'Climate Control',
+        name: 'smartMaintenanceTyreDiagnosis',
+        configKey: 'fetchSmartMaintenanceTyreDiagnosis',
+        url: `/customers/vehicles/${vin}/smartMaintenanceTyreDiagnosis`,
+        channel: 'Smart Maintenance Tyre Diagnosis',
       },
       {
-        name: 'destinationInformation',
-        configKey: 'fetchDestinationInformation',
-        url: `/customers/vehicles/${vin}/destinationInformation`,
-        channel: 'Destination Information',
-      },
-      {
-        name: 'location',
-        configKey: 'fetchLocation',
-        url: `/customers/vehicles/${vin}/location`,
-        channel: 'Vehicle Location',
-      },
-      {
-        name: 'statistics',
-        configKey: 'fetchStatistics',
-        url: `/customers/vehicles/${vin}/statistics`,
-        channel: 'Statistics',
-      },
-      {
-        name: 'vehicleState',
-        configKey: 'fetchVehicleState',
-        url: `/customers/vehicles/${vin}/vehicleState`,
-        channel: 'Vehicle State',
+        name: 'telematicData',
+        configKey: 'fetchTelematicData',
+        url: `/customers/vehicles/${vin}/telematicData`,
+        channel: 'Telematic Data',
       },
     ];
 
