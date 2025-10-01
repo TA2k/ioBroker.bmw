@@ -527,61 +527,6 @@
       "default": true,
       "newLine": false,
       "sm": 4
-    },
-    "_breaking": {
-      "type": "header",
-      "text": {
-        "en": "⚠️ Breaking Changes in v4.0",
-        "de": "⚠️ Breaking Changes in v4.0",
-        "ru": "⚠️ Критические изменения в v4.0",
-        "pt": "⚠️ Mudanças críticas na v4.0",
-        "nl": "⚠️ Breaking changes in v4.0",
-        "fr": "⚠️ Changements critiques en v4.0",
-        "it": "⚠️ Cambiamenti critici nella v4.0",
-        "es": "⚠️ Cambios críticos en v4.0",
-        "pl": "⚠️ Krytyczne zmiany w v4.0",
-        "zh-cn": "⚠️ v4.0中的重大变更"
-      },
-      "size": 5,
-      "color": "orange"
-    },
-    "_removed": {
-      "type": "staticText",
-      "text": {
-        "en": "❌ Removed: Username/password login, remote controls (lock/unlock, climate, charging), second user support, captcha requirement",
-        "de": "❌ Entfernt: Benutzername/Passwort-Login, Fernbedienung (Verriegeln/Entriegeln, Klima, Laden), zweiter Benutzer, Captcha-Anforderung",
-        "ru": "❌ Удалено: Логин по имени пользователя/паролю, удаленное управление (блокировка/разблокировка, климат, зарядка), поддержка второго пользователя, требование капчи",
-        "pt": "❌ Removido: Login com nome de usuário/senha, controles remotos (trancar/destrancar, clima, carregamento), suporte ao segundo usuário, requisito de captcha",
-        "nl": "❌ Verwijderd: Gebruikersnaam/wachtwoord login, remote controls (vergrendelen/ontgrendelen, klimaat, laden), tweede gebruiker ondersteuning, captcha vereiste",
-        "fr": "❌ Supprimé: Connexion nom d'utilisateur/mot de passe, contrôles à distance (verrouiller/déverrouiller, climatisation, charge), support du deuxième utilisateur, exigence de captcha",
-        "it": "❌ Rimosso: Login username/password, controlli remoti (bloccare/sbloccare, clima, ricarica), supporto secondo utente, requisito captcha",
-        "es": "❌ Eliminado: Login de usuario/contraseña, controles remotos (bloquear/desbloquear, clima, carga), soporte de segundo usuario, requisito de captcha",
-        "pl": "❌ Usunięto: Login nazwa użytkownika/hasło, zdalne sterowanie (blokowanie/odblokowanie, klimat, ładowanie), obsługa drugiego użytkownika, wymóg captcha",
-        "zh-cn": "❌ 已移除：用户名/密码登录，远程控制（锁定/解锁，气候，充电），第二用户支持，验证码要求"
-      },
-      "style": {
-        "color": "red",
-        "fontSize": "smaller"
-      }
-    },
-    "_added": {
-      "type": "staticText",
-      "text": {
-        "en": "✅ Added: OAuth2 device flow authentication, real-time MQTT streaming, 50 API calls per 24h quota management, comprehensive data from all CarData endpoints",
-        "de": "✅ Hinzugefügt: OAuth2 Device Flow Authentifizierung, Echtzeit MQTT Streaming, 50 API Aufrufe pro 24h Quota Management, umfassende Daten von allen CarData Endpunkten",
-        "ru": "✅ Добавлено: OAuth2 device flow аутентификация, MQTT поток в реальном времени, управление квотой 50 API вызовов за 24ч, всесторонние данные со всех CarData конечных точек",
-        "pt": "✅ Adicionado: Autenticação OAuth2 device flow, streaming MQTT em tempo real, gerenciamento de quota de 50 chamadas API por 24h, dados abrangentes de todos os endpoints CarData",
-        "nl": "✅ Toegevoegd: OAuth2 device flow authenticatie, realtime MQTT streaming, 50 API oproepen per 24u quota beheer, uitgebreide data van alle CarData endpoints",
-        "fr": "✅ Ajouté: Authentification OAuth2 device flow, streaming MQTT en temps réel, gestion de quota de 50 appels API par 24h, données complètes de tous les endpoints CarData",
-        "it": "✅ Aggiunto: Autenticazione OAuth2 device flow, streaming MQTT in tempo reale, gestione quota 50 chiamate API per 24h, dati completi da tutti gli endpoint CarData",
-        "es": "✅ Agregado: Autenticación OAuth2 device flow, streaming MQTT en tiempo real, gestión de cuota de 50 llamadas API por 24h, datos completos de todos los endpoints CarData",
-        "pl": "✅ Dodano: Uwierzytelnianie OAuth2 device flow, streaming MQTT w czasie rzeczywistym, zarządzanie kwotą 50 wywołań API na 24h, kompleksowe dane ze wszystkich punktów końcowych CarData",
-        "zh-cn": "✅ 已添加：OAuth2设备流身份验证，实时MQTT流，每24小时50次API调用配额管理，来自所有CarData端点的全面数据"
-      },
-      "style": {
-        "color": "green",
-        "fontSize": "smaller"
-      }
     }
   }
 }
