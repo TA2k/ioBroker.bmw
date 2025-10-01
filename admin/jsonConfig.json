@@ -124,7 +124,6 @@
         "zh-cn": "必需：您的CarData流媒体用户名（与您的BMW登录不同）。在BMW ConnectedDrive门户的CarData > 流媒体部分中找到此信息。没有此信息，MQTT流媒体将无法工作！"
       },
       "placeholder": "streaming_username_from_bmw_portal",
-      "required": true,
       "newLine": true,
       "sm": 6
     },
