@@ -119,36 +119,30 @@ class Bmw extends utils.Adapter {
       // Connect MQTT after successful auth
       await this.connectMQTT();
       // Start periodic token refresh (every 45 minutes)
-      this.refreshTokenInterval = setInterval(
-        async () => {
-          await this.refreshToken();
-        },
-        45 * 60 * 1000,
-      );
+      this.refreshTokenInterval = setInterval(async () => {
+        await this.refreshToken();
+      }, 45 * 60 * 1000);
 
       // Start periodic API updates (respecting quota limits)
       if (this.vinArray.length > 0) {
         this.log.info(`Setting up periodic updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`);
-        this.updateInterval = setInterval(
-          async () => {
-            // Update quota states (expired calls removed automatically)
-            this.updateQuotaStates();
+        this.updateInterval = setInterval(async () => {
+          // Update quota states (expired calls removed automatically)
+          this.updateQuotaStates();
 
-            // Periodic API data refresh - MQTT provides real-time updates
-            const headers = {
-              Authorization: `Bearer ${this.session.access_token}`,
-              'x-version': 'v1',
-              Accept: 'application/json',
-            };
+          // Periodic API data refresh - MQTT provides real-time updates
+          const headers = {
+            Authorization: `Bearer ${this.session.access_token}`,
+            'x-version': 'v1',
+            Accept: 'application/json',
+          };
 
-            for (const vin of this.vinArray) {
-              this.log.debug(`Periodic API refresh for ${vin}`);
-              await this.fetchAllVehicleData(vin, headers);
-              break; // Only one vehicle per interval to conserve quota
-            }
-          },
-          this.config.interval * 60 * 1000,
-        );
+          for (const vin of this.vinArray) {
+            this.log.debug(`Periodic API refresh for ${vin}`);
+            await this.fetchAllVehicleData(vin, headers);
+            break; // Only one vehicle per interval to conserve quota
+          }
+        }, this.config.interval * 60 * 1000);
       }
 
       this.log.info('BMW CarData adapter startup complete');
@@ -193,11 +187,11 @@ class Bmw extends utils.Adapter {
         },
         data: requestData,
       })
-        .then(res => {
+        .then((res) => {
           this.log.debug(`Device code response: ${JSON.stringify(res.data)}`);
           return res;
         })
-        .catch(error => {
+        .catch((error) => {
           this.log.error(`Device code request failed: ${error.message}`);
           this.log.error(`Error stack: ${error.stack}`);
           if (error.response) {
@@ -218,9 +212,7 @@ class Bmw extends utils.Adapter {
               this.log.error('To fix this issue:');
               this.log.error('1. Visit BMW ConnectedDrive portal: https://www.bmw.de/de-de/mybmw/vehicle-overview');
               this.log.error('2. Go to CarData section');
-              this.log.error(
-                '3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection',
-              );
+              this.log.error('3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection');
               this.log.error('4. If not activated, enable both services');
               this.log.error('5. If already activated, delete and recreate your Client ID');
               this.log.error('6. Update the adapter configuration with the new Client ID');
@@ -233,7 +225,7 @@ class Bmw extends utils.Adapter {
                 method: error.request.method,
                 url: error.request.url,
                 headers: error.request._headers,
-              })}`,
+              })}`
             );
           }
           return false; // Return false instead of throwing
@@ -367,7 +359,7 @@ class Bmw extends utils.Adapter {
       url: `${this.carDataApiBase}/customers/vehicles/mappings`,
       headers: headers,
     })
-      .then(async res => {
+      .then(async (res) => {
         this.log.debug(JSON.stringify(res.data));
         const mappings = res.data;
 
@@ -414,7 +406,7 @@ class Bmw extends utils.Adapter {
           }
         }
       })
-      .catch(error => {
+      .catch((error) => {
         this.log.error(`BMW CarData vehicle discovery failed: ${error.message}`);
         if (error.response) {
           this.log.error(`Response: ${JSON.stringify(error.response.data)}`);
@@ -487,7 +479,7 @@ class Bmw extends utils.Adapter {
     ];
 
     // Filter endpoints based on user configuration
-    const enabledEndpoints = apiEndpoints.filter(endpoint => this.config[endpoint.configKey] === true);
+    const enabledEndpoints = apiEndpoints.filter((endpoint) => this.config[endpoint.configKey] === true);
 
     this.log.info(`Fetching ${enabledEndpoints.length} configured API endpoints for ${vin}...`);
 
@@ -568,7 +560,7 @@ class Bmw extends utils.Adapter {
 
     // Remove calls older than 24h
     const originalLength = this.apiCalls.length;
-    this.apiCalls = this.apiCalls.filter(time => now - time < 24 * 60 * 60 * 1000);
+    this.apiCalls = this.apiCalls.filter((time) => now - time < 24 * 60 * 60 * 1000);
 
     // Save history if calls were removed due to expiration
     if (this.apiCalls.length !== originalLength) {
@@ -604,7 +596,7 @@ class Bmw extends utils.Adapter {
   }
 
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async cleanObjects(vin) {
@@ -678,7 +670,7 @@ class Bmw extends utils.Adapter {
       },
       data: qs.stringify(refreshData),
     })
-      .then(async res => {
+      .then(async (res) => {
         // Store refreshed tokens (keep existing session structure)
         this.session = res.data;
         this.setState('cardataauth.session', JSON.stringify(this.session), true);
@@ -695,7 +687,7 @@ class Bmw extends utils.Adapter {
 
         return res.data;
       })
-      .catch(async error => {
+      .catch(async (error) => {
         this.log.error('Token refresh failed:', error.message);
         this.log.error('Error stack:', error.stack);
         if (error.response) {
@@ -738,7 +730,7 @@ class Bmw extends utils.Adapter {
       keepalive: 30,
       clean: true,
       rejectUnauthorized: true,
-      reconnectPeriod: 5000,
+      reconnectPeriod: 30000, // Increased from 5000ms to 30000ms (30 seconds)
       connectTimeout: 30000,
     };
 
@@ -752,7 +744,7 @@ class Bmw extends utils.Adapter {
 
       // Subscribe to all vehicle topics for this CarData Streaming username
       const topic = `${this.config.cardataStreamingUsername}/+`;
-      this.mqtt.subscribe(topic, err => {
+      this.mqtt.subscribe(topic, (err) => {
         if (err) {
           this.log.error(`MQTT subscription failed: ${err.message}`);
         } else {
@@ -765,18 +757,46 @@ class Bmw extends utils.Adapter {
       this.handleMQTTMessage(topic, message);
     });
 
-    this.mqtt.on('error', error => {
+    this.mqtt.on('error', async (error) => {
       this.log.error(`MQTT error: ${error.message}`);
       this.setState('info.mqttConnected', false, true);
+
+      // Check if it's an authentication error indicating expired token
+      if (
+        error.message &&
+        (error.message.includes('Bad username or password') ||
+          error.message.includes('Connection refused') ||
+          error.message.includes('Not authorized'))
+      ) {
+        this.log.warn('MQTT authentication failed - attempting token refresh');
+        try {
+          await this.refreshToken();
+          this.log.info('Token refreshed successfully');
+
+          // Close current MQTT connection and reconnect with new token
+          if (this.mqtt) {
+            this.mqtt.end(false); // Force close without waiting
+          }
+
+          // Reconnect with fresh credentials after a short delay
+          setTimeout(async () => {
+            this.log.debug('Reconnecting MQTT with refreshed token');
+            await this.connectMQTT();
+          }, 5000);
+        } catch (refreshError) {
+          this.log.error('Token refresh failed: ' + refreshError.message);
+          this.log.warn('Will retry MQTT connection with current token');
+        }
+      }
     });
 
     this.mqtt.on('close', () => {
-      this.log.warn('MQTT connection closed');
+      this.log.info('MQTT connection closed');
       this.setState('info.mqttConnected', false, true);
     });
 
     this.mqtt.on('reconnect', () => {
-      this.log.debug('MQTT reconnecting...');
+      this.log.info('MQTT reconnecting...');
     });
 
     return true;
@@ -909,7 +929,7 @@ if (require.main !== module) {
   /**
    * @param {Partial<utils.AdapterOptions>} [options] - Optional adapter configuration options.
    */
-  module.exports = options => new Bmw(options);
+  module.exports = (options) => new Bmw(options);
 } else {
   // otherwise start the instance directly
   new Bmw();
