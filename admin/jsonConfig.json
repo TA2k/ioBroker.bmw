@@ -1,0 +1,225 @@
+{
+  "i18n": true,
+  "type": "panel",
+  "items": {
+    "_header": {
+      "type": "header",
+      "text": "BMW CarData Configuration",
+      "size": 3
+    },
+    "_info": {
+      "type": "staticText",
+      "text": {
+        "en": "This adapter uses the new BMW CarData API with OAuth2 authentication and real-time MQTT streaming.",
+        "de": "Dieser Adapter verwendet die neue BMW CarData API mit OAuth2-Authentifizierung und Echtzeit-MQTT-Streaming.",
+        "ru": "Этот адаптер использует новый BMW CarData API с OAuth2 аутентификацией и MQTT потоком в реальном времени.",
+        "pt": "Este adaptador usa a nova API BMW CarData com autenticação OAuth2 e streaming MQTT em tempo real.",
+        "nl": "Deze adapter gebruikt de nieuwe BMW CarData API met OAuth2 authenticatie en realtime MQTT streaming.",
+        "fr": "Cet adaptateur utilise la nouvelle API BMW CarData avec authentification OAuth2 et streaming MQTT en temps réel.",
+        "it": "Questo adattatore utilizza la nuova API BMW CarData con autenticazione OAuth2 e streaming MQTT in tempo reale.",
+        "es": "Este adaptador utiliza la nueva API BMW CarData con autenticación OAuth2 y streaming MQTT en tiempo real.",
+        "pl": "Ten adapter używa nowego BMW CarData API z uwierzytelnianiem OAuth2 i strumieniem MQTT w czasie rzeczywistym.",
+        "zh-cn": "此适配器使用新的BMW CarData API，具有OAuth2身份验证和实时MQTT流。"
+      },
+      "newLine": true
+    },
+    "_setup": {
+      "type": "staticText",
+      "text": {
+        "en": "Setup Instructions: 1. Visit BMW ConnectedDrive portal 2. Go to CarData section 3. Generate a client ID 4. Subscribe to API and streaming services 5. Configure data descriptors",
+        "de": "Setup-Anweisungen: 1. BMW ConnectedDrive Portal besuchen 2. CarData Bereich aufrufen 3. Client ID generieren 4. API und Streaming Services abonnieren 5. Datendeskriptoren konfigurieren",
+        "ru": "Инструкции по настройке: 1. Посетите портал BMW ConnectedDrive 2. Перейдите в раздел CarData 3. Создайте client ID 4. Подпишитесь на API и streaming сервисы 5. Настройте дескрипторы данных",
+        "pt": "Instruções de configuração: 1. Visite o portal BMW ConnectedDrive 2. Vá para a seção CarData 3. Gere um client ID 4. Inscreva-se nos serviços de API e streaming 5. Configure descritores de dados",
+        "nl": "Setup instructies: 1. Bezoek BMW ConnectedDrive portal 2. Ga naar CarData sectie 3. Genereer een client ID 4. Abonneer op API en streaming services 5. Configureer data descriptors",
+        "fr": "Instructions de configuration: 1. Visitez le portail BMW ConnectedDrive 2. Allez dans la section CarData 3. Générez un client ID 4. Abonnez-vous aux services API et streaming 5. Configurez les descripteurs de données",
+        "it": "Istruzioni di configurazione: 1. Visita il portale BMW ConnectedDrive 2. Vai alla sezione CarData 3. Genera un client ID 4. Iscriviti ai servizi API e streaming 5. Configura i descrittori dati",
+        "es": "Instrucciones de configuración: 1. Visita el portal BMW ConnectedDrive 2. Ve a la sección CarData 3. Genera un client ID 4. Suscríbete a los servicios API y streaming 5. Configura descriptores de datos",
+        "pl": "Instrukcje konfiguracji: 1. Odwiedź portal BMW ConnectedDrive 2. Przejdź do sekcji CarData 3. Wygeneruj client ID 4. Subskrybuj usługi API i streaming 5. Skonfiguruj deskryptory danych",
+        "zh-cn": "设置说明：1. 访问BMW ConnectedDrive门户 2. 转到CarData部分 3. 生成客户端ID 4. 订阅API和流媒体服务 5. 配置数据描述符"
+      },
+      "style": {
+        "fontSize": "smaller",
+        "fontStyle": "italic"
+      },
+      "newLine": true
+    },
+    "clientId": {
+      "type": "text",
+      "label": {
+        "en": "BMW CarData Client ID",
+        "de": "BMW CarData Client ID",
+        "ru": "BMW CarData Client ID",
+        "pt": "BMW CarData Client ID",
+        "nl": "BMW CarData Client ID",
+        "fr": "BMW CarData Client ID",
+        "it": "BMW CarData Client ID",
+        "es": "BMW CarData Client ID",
+        "pl": "BMW CarData Client ID",
+        "zh-cn": "BMW CarData客户端ID"
+      },
+      "help": {
+        "en": "Client ID from BMW ConnectedDrive portal CarData section. Required for OAuth2 authentication.",
+        "de": "Client ID aus dem BMW ConnectedDrive Portal CarData Bereich. Erforderlich für OAuth2-Authentifizierung.",
+        "ru": "Client ID из раздела CarData портала BMW ConnectedDrive. Требуется для OAuth2 аутентификации.",
+        "pt": "Client ID da seção CarData do portal BMW ConnectedDrive. Necessário para autenticação OAuth2.",
+        "nl": "Client ID uit BMW ConnectedDrive portal CarData sectie. Vereist voor OAuth2 authenticatie.",
+        "fr": "Client ID de la section CarData du portail BMW ConnectedDrive. Requis pour l'authentification OAuth2.",
+        "it": "Client ID dalla sezione CarData del portale BMW ConnectedDrive. Richiesto per l'autenticazione OAuth2.",
+        "es": "Client ID de la sección CarData del portal BMW ConnectedDrive. Requerido para autenticación OAuth2.",
+        "pl": "Client ID z sekcji CarData portalu BMW ConnectedDrive. Wymagane do uwierzytelniania OAuth2.",
+        "zh-cn": "来自BMW ConnectedDrive门户CarData部分的客户端ID。OAuth2身份验证所需。"
+      },
+      "placeholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "newLine": true,
+      "sm": 6
+    },
+    "brand": {
+      "type": "select",
+      "label": {
+        "en": "Brand",
+        "de": "Marke",
+        "ru": "Марка",
+        "pt": "Marca",
+        "nl": "Merk",
+        "fr": "Marque",
+        "it": "Marca",
+        "es": "Marca",
+        "pl": "Marka",
+        "zh-cn": "品牌"
+      },
+      "options": [
+        {
+          "label": "BMW",
+          "value": "bmw"
+        },
+        {
+          "label": "Mini",
+          "value": "mini"
+        },
+        {
+          "label": "Toyota Supra",
+          "value": "toyota"
+        }
+      ],
+      "newLine": true,
+      "sm": 3
+    },
+    "interval": {
+      "type": "number",
+      "label": {
+        "en": "Update interval (in minutes)",
+        "de": "Aktualisierungsintervall (in Minuten)",
+        "ru": "Интервал обновления (в минутах)",
+        "pt": "Intervalo de atualização (em minutos)",
+        "nl": "Update-interval (in minuten)",
+        "fr": "Intervalle de mise à jour (en minutes)",
+        "it": "Intervallo di aggiornamento (in minuti)",
+        "es": "Intervalo de actualización (en minutos)",
+        "pl": "Interwał aktualizacji (w minutach)",
+        "zh-cn": "更新间隔（分钟）"
+      },
+      "help": {
+        "en": "API polling interval. Minimum 10 minutes due to quota limits (50 calls per 24h). MQTT provides real-time data.",
+        "de": "API-Abfrageintervall. Minimum 10 Minuten aufgrund Quota-Limits (50 Aufrufe pro 24h). MQTT liefert Echtzeitdaten.",
+        "ru": "Интервал опроса API. Минимум 10 минут из-за лимитов квот (50 вызовов за 24ч). MQTT предоставляет данные в реальном времени.",
+        "pt": "Intervalo de polling da API. Mínimo 10 minutos devido aos limites de quota (50 chamadas por 24h). MQTT fornece dados em tempo real.",
+        "nl": "API polling interval. Minimum 10 minuten vanwege quota limieten (50 oproepen per 24u). MQTT levert realtime data.",
+        "fr": "Intervalle de polling API. Minimum 10 minutes à cause des limites de quota (50 appels par 24h). MQTT fournit des données en temps réel.",
+        "it": "Intervallo di polling API. Minimo 10 minuti a causa dei limiti di quota (50 chiamate per 24h). MQTT fornisce dati in tempo reale.",
+        "es": "Intervalo de polling API. Mínimo 10 minutos debido a límites de cuota (50 llamadas por 24h). MQTT proporciona datos en tiempo real.",
+        "pl": "Interwał odpytywania API. Minimum 10 minut z powodu limitów kwot (50 wywołań na 24h). MQTT dostarcza dane w czasie rzeczywistym.",
+        "zh-cn": "API轮询间隔。由于配额限制（24小时50次调用），最少10分钟。MQTT提供实时数据。"
+      },
+      "min": 10,
+      "max": 1440,
+      "default": 60,
+      "newLine": true,
+      "sm": 3
+    },
+    "ignorelist": {
+      "type": "text",
+      "label": {
+        "en": "VIN Ignore List",
+        "de": "VIN Ignorierliste",
+        "ru": "Список игнорируемых VIN",
+        "pt": "Lista de VINs ignorados",
+        "nl": "VIN negeerlijst",
+        "fr": "Liste VIN à ignorer",
+        "it": "Lista VIN da ignorare",
+        "es": "Lista de VIN a ignorar",
+        "pl": "Lista ignorowanych VIN",
+        "zh-cn": "VIN忽略列表"
+      },
+      "help": {
+        "en": "Comma-separated list of VINs to ignore (e.g., VIN1,VIN2,VIN3)",
+        "de": "Kommagetrennte Liste von VINs zum Ignorieren (z.B. VIN1,VIN2,VIN3)",
+        "ru": "Список VIN через запятую для игнорирования (например, VIN1,VIN2,VIN3)",
+        "pt": "Lista separada por vírgulas de VINs para ignorar (ex: VIN1,VIN2,VIN3)",
+        "nl": "Kommagescheiden lijst van VINs om te negeren (bijv. VIN1,VIN2,VIN3)",
+        "fr": "Liste séparée par virgules des VIN à ignorer (ex: VIN1,VIN2,VIN3)",
+        "it": "Lista separata da virgole di VIN da ignorare (es: VIN1,VIN2,VIN3)",
+        "es": "Lista separada por comas de VINs a ignorar (ej: VIN1,VIN2,VIN3)",
+        "pl": "Lista VIN oddzielonych przecinkami do ignorowania (np. VIN1,VIN2,VIN3)",
+        "zh-cn": "要忽略的VIN逗号分隔列表（例如：VIN1,VIN2,VIN3）"
+      },
+      "placeholder": "VIN1,VIN2,VIN3",
+      "newLine": true,
+      "sm": 6
+    },
+    "_breaking": {
+      "type": "header",
+      "text": {
+        "en": "⚠️ Breaking Changes in v4.0",
+        "de": "⚠️ Breaking Changes in v4.0",
+        "ru": "⚠️ Критические изменения в v4.0",
+        "pt": "⚠️ Mudanças críticas na v4.0",
+        "nl": "⚠️ Breaking changes in v4.0",
+        "fr": "⚠️ Changements critiques en v4.0",
+        "it": "⚠️ Cambiamenti critici nella v4.0",
+        "es": "⚠️ Cambios críticos en v4.0",
+        "pl": "⚠️ Krytyczne zmiany w v4.0",
+        "zh-cn": "⚠️ v4.0中的重大变更"
+      },
+      "size": 5,
+      "color": "orange"
+    },
+    "_removed": {
+      "type": "staticText",
+      "text": {
+        "en": "❌ Removed: Username/password login, remote controls (lock/unlock, climate, charging), second user support, captcha requirement",
+        "de": "❌ Entfernt: Benutzername/Passwort-Login, Fernbedienung (Verriegeln/Entriegeln, Klima, Laden), zweiter Benutzer, Captcha-Anforderung",
+        "ru": "❌ Удалено: Логин по имени пользователя/паролю, удаленное управление (блокировка/разблокировка, климат, зарядка), поддержка второго пользователя, требование капчи",
+        "pt": "❌ Removido: Login com nome de usuário/senha, controles remotos (trancar/destrancar, clima, carregamento), suporte ao segundo usuário, requisito de captcha",
+        "nl": "❌ Verwijderd: Gebruikersnaam/wachtwoord login, remote controls (vergrendelen/ontgrendelen, klimaat, laden), tweede gebruiker ondersteuning, captcha vereiste",
+        "fr": "❌ Supprimé: Connexion nom d'utilisateur/mot de passe, contrôles à distance (verrouiller/déverrouiller, climatisation, charge), support du deuxième utilisateur, exigence de captcha",
+        "it": "❌ Rimosso: Login username/password, controlli remoti (bloccare/sbloccare, clima, ricarica), supporto secondo utente, requisito captcha",
+        "es": "❌ Eliminado: Login de usuario/contraseña, controles remotos (bloquear/desbloquear, clima, carga), soporte de segundo usuario, requisito de captcha",
+        "pl": "❌ Usunięto: Login nazwa użytkownika/hasło, zdalne sterowanie (blokowanie/odblokowanie, klimat, ładowanie), obsługa drugiego użytkownika, wymóg captcha",
+        "zh-cn": "❌ 已移除：用户名/密码登录，远程控制（锁定/解锁，气候，充电），第二用户支持，验证码要求"
+      },
+      "style": {
+        "color": "red",
+        "fontSize": "smaller"
+      }
+    },
+    "_added": {
+      "type": "staticText",
+      "text": {
+        "en": "✅ Added: OAuth2 device flow authentication, real-time MQTT streaming, 50 API calls per 24h quota management, comprehensive data from all CarData endpoints",
+        "de": "✅ Hinzugefügt: OAuth2 Device Flow Authentifizierung, Echtzeit MQTT Streaming, 50 API Aufrufe pro 24h Quota Management, umfassende Daten von allen CarData Endpunkten",
+        "ru": "✅ Добавлено: OAuth2 device flow аутентификация, MQTT поток в реальном времени, управление квотой 50 API вызовов за 24ч, всесторонние данные со всех CarData конечных точек",
+        "pt": "✅ Adicionado: Autenticação OAuth2 device flow, streaming MQTT em tempo real, gerenciamento de quota de 50 chamadas API por 24h, dados abrangentes de todos os endpoints CarData",
+        "nl": "✅ Toegevoegd: OAuth2 device flow authenticatie, realtime MQTT streaming, 50 API oproepen per 24u quota beheer, uitgebreide data van alle CarData endpoints",
+        "fr": "✅ Ajouté: Authentification OAuth2 device flow, streaming MQTT en temps réel, gestion de quota de 50 appels API par 24h, données complètes de tous les endpoints CarData",
+        "it": "✅ Aggiunto: Autenticazione OAuth2 device flow, streaming MQTT in tempo reale, gestione quota 50 chiamate API per 24h, dati completi da tutti gli endpoint CarData",
+        "es": "✅ Agregado: Autenticación OAuth2 device flow, streaming MQTT en tiempo real, gestión de cuota de 50 llamadas API por 24h, datos completos de todos los endpoints CarData",
+        "pl": "✅ Dodano: Uwierzytelnianie OAuth2 device flow, streaming MQTT w czasie rzeczywistym, zarządzanie kwotą 50 wywołań API na 24h, kompleksowe dane ze wszystkich punktów końcowych CarData",
+        "zh-cn": "✅ 已添加：OAuth2设备流身份验证，实时MQTT流，每24小时50次API调用配额管理，来自所有CarData端点的全面数据"
+      },
+      "style": {
+        "color": "green",
+        "fontSize": "smaller"
+      }
+    }
+  }
+}

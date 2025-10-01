@@ -22,142 +22,24 @@ class Bmw extends utils.Adapter {
 		this.on('ready', this.onReady.bind(this));
 		this.on('stateChange', this.onStateChange.bind(this));
 		this.on('unload', this.onUnload.bind(this));
-		this.userAgent = 'My%20BMW/8932 CFNetwork/978.0.7 Darwin/18.7.0';
-		this.userAgentDart = 'Dart/3.3 (dart:io)';
-		this.xuserAgent = `android(${this.generateBuildString()});brand;5.7.2(96893);row`;
+
+		// BMW CarData API endpoints
+		this.carDataApiBase = 'https://api-cardata.bmwgroup.com';
+		this.authApiBase = 'https://customer.bmwgroup.com/gcdm/oauth';
+
+		// Core properties
 		this.updateInterval;
-		this.reLoginTimeout;
 		this.refreshTokenInterval;
 		this.vinArray = [];
 		this.session = {};
-		this.statusBlock = {};
-		this.nonChargingHistory = {};
 		this.json2iob = new Json2iob(this);
-		this.lastChargingSessionUpdate = 0;
-		this.description = {
-			allTrips: 'alle Fahrten des Autos',
-			avgCombinedConsumption: 'Durchschnittlicher kombinierter Verbrauch',
-			communityAverage: 'Gesamt Durchschnitt',
-			communityHigh: 'Gesamt max.',
-			communityLow: 'Gesamt min.',
-			userAverage: 'Fahrer Durchschnitt',
-			avgElectricConsumption: 'Durchschnittlicher elektrischer Verbrauch',
-			avgRecuperation: 'Durchschnittliche Rekuperation',
-			chargecycleRange: 'Ladezyklus Reichweite',
-			userCurrentChargeCycle: 'aktueller Ladezyklus',
-			userHigh: 'Fahrer max.',
-			totalElectricDistance: 'gesamte elektrische Distanz',
-			batterySizeMax: 'max. Batterie Ladeleistung in Wh',
-			resetDate: 'Werte zur+ckgesetz am',
-			savedCO2: 'Eingespartes CO2',
-			savedCO2greenEnergy: 'Eingespartes CO2 grüne Energie',
-			totalSavedFuel: 'Gesamt gesparter Kraftstoff',
-			apiV2: 'limitierte v2 Api des Autos',
-			basicType: 'Grundtyp',
-			bodyType: 'Fahrzeugtyp',
-			brand: 'Marke',
-			modelName: 'Model Name',
-			series: 'Serie',
-			vin: 'Fahrzeugidentifikationsnummer',
-			chargingprofile: 'Ladeprofil',
-			overrideTimer: 'Einmalige Abfahrtszeit',
-			weekdays: 'Wochentag',
-			departureTime: 'Abfahrtszeit',
-			timerEnabled: 'Timer Aktiviert',
-			preferredChargingWindow: 'Tägliches Ladefenster',
-			endTime: 'Ende Uhrzeit',
-			startTime: 'Start Uhrzeit',
-			MONDAY: 'Montag',
-			TUESDAY: 'Dienstag',
-			WEDNESDAY: 'Mittwoch',
-			THURSDAY: 'Donnerstag',
-			FRIDAY: 'Freitag',
-			SATURDAY: 'Samstag',
-			SUNDAY: 'Sonntag',
-			chargingMode: 'Lademodus',
-			chargingPreferences: 'Ladeeinstellungen',
-			climatizationEnabled: 'Klimatisierung Aktiviert',
-			general: 'Allgemeine Fahrzeuginformationen',
-			dealer: 'Händler',
-			city: 'Stadt',
-			country: 'Land',
-			phone: 'Telefon',
-			postalCode: 'Postleitzahl',
-			street: 'Straße',
-			supportedChargingModes: 'unterstützte Lademodi',
-			accelerationValue: 'Beschleunigungs Wert',
-			anticipationValue: 'Erwartungswert',
-			auxiliaryConsumptionValue: 'Hilfsverbrauchswert',
-			date: 'Datum',
-			drivingModeValue: 'Fahrmodus',
-			duration: 'Dauer',
-			efficiencyValue: 'Effizienz Wert',
-			electricDistance: 'elektrische Distanz',
-			electricDistanceRatio: 'elektrisches Distanzverhältnis in %',
-			savedFuel: 'Eingesparter Kraftstoff',
-			totalConsumptionValue: 'Gesamtverbrauchswert',
-			totalDistance: 'Gesamtstrecke',
-			rangemap: 'Reichweitenkarte',
-			center: 'Mitte',
-			remote: 'Fernbedienung',
-			CHARGE_NOW: 'jetzt Aufladen',
-			CLIMATE_NOW: 'Klimatisierung starten',
-			DOOR_LOCK: 'Autotüren zusperren',
-			DOOR_UNLOCK: 'Autotüren aufsperren',
-			GET_VEHICLES: 'Fahrzeuginformationen abrufen',
-			GET_VEHICLE_STATUS: 'Fahrzeug Status abrufen',
-			HORN_BLOW: 'Hupe einschalten',
-			LIGHT_FLASH: 'Lichthupe einschalten',
-			START_CHARGING: 'Laden starten',
-			START_PRECONDITIONING: 'Startvoraussetzung',
-			STOP_CHARGING: 'Laden stoppen',
-			VEHICLE_FINDER: 'Positionsdaten Fahrzeug abrufen',
-			serviceExecutionHistory: 'Verlauf der Remote-Ausführung',
-			status: 'Aktueller Status',
-			BRAKE_FLUID: 'Bremsflüssigkeit',
-			cbsDescription: 'Service Beschreibung',
-			cbsDueDate: 'Service Fälligkeitsdatum',
-			cbsState: 'Service Status',
-			cbsType: 'Service Art',
-			VEHICLE_CHECK: 'Fahrzeug Überprüfung',
-			position: 'Position',
-			heading: 'Richtung',
-			lat: 'Latitude',
-			lon: 'Longitude',
-			DCS_CCH_Activation: 'DCS CCH Aktivierung',
-			DCS_CCH_Ongoing: 'DCS CHH Laufend',
-			chargingConnectionType: 'Ladeverbindungstyp',
-			chargingInductivePositioning: 'Aufladen Induktive Positionierung',
-			chargingLevelHv: 'Batterie SoC in %',
-			chargingStatus: 'Ladestatus',
-			chargingTimeRemaining: 'Verbleibende Ladezeit',
-			connectionStatus: 'Verbindungsstatus Ladestecker',
-			doorDriverFront: 'Fahrertüren',
-			driverFront: 'Fahrertüren',
-			doorDriverRear: 'Hintere Türe Fahrerseite',
-			doorLockState: 'Fahrzeug Verriegelungszustand Türen und Fenster',
-			doorPassengerFront: 'Beifahrertüre',
-			doorPassengerRear: 'Hintere Türe Beifahrerseite',
-			hood: 'Motorhaube',
-			internalDataTimeUTC: 'Fahrzeugzeit UTC',
-			lastChargingEndReason: 'letzter Grund für das Ende des Ladevorgangs',
-			lastChargingEndResult: 'letztes Ladeendergebnis',
-			maxRangeElectric: 'max. elektrische Reichweite in km',
-			maxRangeElectricMls: 'max. elektrische Reichweite in mi',
-			mileage: 'Kilometerstand',
-			remainingFuel: 'Tankinhalt',
-			remainingRangeElectric: 'restliche Reichweite Elektrisch in km',
-			remainingRangeElectricMls: 'restliche Reichweite Elektrisch in mi',
-			remainingRangeFuel: 'restliche Reichweite Kraftstoff in km',
-			remainingRangeFuelMls: 'restliche Reichweite Kraftstoff in mi',
-			singleImmediateCharging: 'einmalige Sofortaufladung',
-			trunk: 'Kofferraum',
-			updateReason: 'Aktualisierungsgrund',
-			updateTime: 'Aktualisierungszeit',
-			vehicleCountry: 'Fahrzeug Land',
-			windowDriverFront: 'Fenster Fahrerseite',
-			windowPassengerFront: 'Fenster Beifahrerseite',
-		};
+
+		// MQTT client
+		this.mqtt = null;
+
+		// API quota tracking
+		this.apiCalls = [];
+
 		// @ts-expect-error comment
 		this.cookieJar = new tough.CookieJar(null, { ignoreError: true });
 
@@ -178,238 +60,190 @@ class Bmw extends utils.Adapter {
 	 */
 	async onReady() {
 		this.setState('info.connection', false, true);
-		if (this.config.interval < 0.5) {
-			this.log.info(`Set interval to minimum 0.5`);
-			this.config.interval = 0.5;
+		this.setState('info.mqttConnected', false, true);
+
+		// Validate configuration
+		if (!this.config.clientId) {
+			this.log.error('BMW CarData Client ID not configured! Please set up in adapter settings.');
+			this.log.info('Visit BMW ConnectedDrive portal, go to CarData section, and generate a client ID');
+			return;
+		}
+
+		if (this.config.interval < 10) {
+			this.log.info('Setting minimum interval to 10 minutes due to API quota limits');
+			this.config.interval = 10;
 		}
 
 		this.subscribeStates('*');
-		if (!this.config.username || !this.config.password) {
-			this.log.error(`Please set username and password`);
-			return;
-		}
-		const sessionState = await this.getStateAsync('auth.session');
-		if (sessionState?.val && typeof sessionState.val === 'string') {
-			this.session = JSON.parse(sessionState.val);
-			this.log.info('Session found. If the login fails please delete bmw.0.auth.session and restart the adapter');
-			this.log.debug(JSON.stringify(this.session));
-			await this.refreshToken();
-		} else {
-			if (!this.config.captcha) {
-				this.log.error(`Please generate a captcha in the instance settings`);
-				return;
-			}
 
+		// Initialize API quota tracking
+		this.apiCalls = [];
+
+		// Try to restore stored session
+		const sessionState = await this.getStateAsync('cardataauth.session');
+		if (sessionState?.val && typeof sessionState.val === 'string') {
+			try {
+				this.session = JSON.parse(sessionState.val);
+				this.log.info('Found stored BMW CarData session');
+
+				// Try to refresh tokens
+				await this.refreshToken();
+			} catch (error) {
+				this.log.warn('Failed to parse stored session, starting new login');
+				await this.login();
+			}
+		} else {
+			this.log.info('No stored session found, starting BMW CarData authorization');
 			await this.login();
 		}
-		if (this.config.musername && this.config.mpassword) {
-			const msessionState = await this.getStateAsync(`auth.msession`);
-			if (msessionState?.val && typeof msessionState.val === 'string') {
-				this.msession = JSON.parse(msessionState.val);
-				this.log.debug(JSON.stringify(this.msession));
-				this.log.info(`Session found for M user. If the login fails please delete bmw.0.auth.msession and restart the adapter`);
-				await this.refreshToken(true);
-			} else {
-				if (!this.config.captcha) {
-					this.log.error(`Please generate a captcha in the instance settings to login the m user`);
-					return;
-				}
-				this.log.info(`Start login for second user`);
-				await this.login(true);
-			}
-		}
 
-		if (this.session.access_token) {
-			this.log.info(`Start getting ${this.config.brand} vehicles`);
+		// Proceed if we have valid tokens
+		if (this.session.access_token && this.session.gcid) {
+			this.log.info('Starting BMW CarData vehicle discovery...');
+
+			// Get vehicles and fetch all initial data
 			await this.getVehiclesv2(true);
+
+			// Clean up old states from previous versions
 			await this.cleanObjects();
-			await this.sleep(5000);
-			this.log.info(`Initial first update of the vehicles`);
-			await this.updateDevices();
-			this.log.info(`First update of Trips and Demands in 10 minutes`);
-			this.setTimeout(async () => {
-				this.log.info(`First update of Trips and Demands 10min after Adapter Start`);
-				await this.updateDemands();
-				await this.sleep(5000);
-				await this.updateTrips();
-			}, 10 * 60000);
-			this.updateInterval = setInterval(async () => {
-				await this.sleep(2000);
-				await this.updateDevices();
-			}, this.config.interval * 60000);
-			this.demandInterval = setInterval(
-				async () => {
-					await this.sleep(2000);
-					await this.updateDemands();
-					await this.sleep(5000);
-					await this.updateTrips();
-				},
-				24 * 60 * 60 * 1000,
-			);
-			this.refreshTokenInterval = setInterval(
-				async () => {
-					await this.refreshToken();
-					await this.sleep(5000);
-					if (this.config.musername && this.config.mpassword) {
-						await this.refreshToken(true);
+
+			// Start periodic token refresh (every 45 minutes)
+			this.refreshTokenInterval = setInterval(async () => {
+				await this.refreshToken();
+			}, 45 * 60 * 1000);
+
+			// Start periodic API updates (respecting quota limits)
+			if (this.vinArray.length > 0) {
+				this.log.info(`Setting up periodic updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`);
+				this.updateInterval = setInterval(async () => {
+					// Simple periodic data refresh - MQTT provides real-time updates
+					for (const vin of this.vinArray) {
+						if (this.checkQuota()) {
+							this.log.debug(`Periodic API refresh for ${vin}`);
+							// Could add specific periodic API calls here if needed
+							break; // Only one call per interval to conserve quota
+						} else {
+							this.log.debug('Skipping periodic API call - quota exhausted');
+							break;
+						}
 					}
-				},
-				(this.session.expires_in - 123) * 1000,
-			);
+				}, this.config.interval * 60 * 1000);
+			}
+
+			this.log.info('BMW CarData adapter startup complete');
+			this.log.info('MQTT streaming: enabled');
+			this.log.info(`API quota: ${50 - this.apiCalls.length}/50 calls remaining`);
+		} else {
+			this.log.error('BMW CarData authentication failed');
 		}
 	}
 
-	async login(loginSecondUser) {
-		let username = this.config.username;
-		let password = this.config.password;
-		if (loginSecondUser) {
-			username = this.config.musername;
-			password = this.config.mpassword;
+	async login() {
+		if (!this.config.clientId) {
+			this.log.error('BMW CarData Client ID not configured! Please set up in adapter settings.');
+			return false;
 		}
-		const headers = {
-			Accept: 'application/json, text/plain, */*',
-			'User-Agent':
-				'Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Mobile/15E148 Safari/604.1',
-			'Accept-Language': 'de-de',
-			'Content-Type': 'application/x-www-form-urlencoded',
-			hcaptchatoken: this.config.captcha,
-		};
-		const [code_verifier, codeChallenge] = this.getCodeChallenge();
-		const data = {
-			client_id: '31c357a0-7a1d-4590-aa99-33b97244d048',
-			response_type: 'code',
-			scope: 'openid profile email offline_access smacc vehicle_data perseus dlm svds cesim vsapi remote_services fupo authenticate_user',
-			redirect_uri: 'com.bmw.connected://oauth',
-			state: 'cwU-gIE27j67poy2UcL3KQ',
-			nonce: 'login_nonce',
-			code_challenge_method: 'S256',
-			code_challenge: codeChallenge,
-			username: username,
-			password: password,
-			grant_type: 'authorization_code',
-		};
 
-		const authUrl = await this.requestClient({
-			method: 'post',
-			url: `https://customer.bmwgroup.com/gcdm/oauth/authenticate`,
-			headers: headers,
-			data: qs.stringify(data),
-			withCredentials: true,
-		})
-			.then(async res => {
-				this.log.debug(JSON.stringify(res.data));
-				return res.data;
+		const codeVerifier = crypto.randomBytes(32).toString('base64url');
+		const codeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64url');
+
+		try {
+			// Step 1: Get device code
+			this.log.debug('Starting BMW CarData device authorization flow');
+			this.log.debug(`Auth API Base: ${this.authApiBase}`);
+			this.log.debug(`Client ID: ${this.config.clientId}`);
+			this.log.debug(`Code Challenge: ${codeChallenge}`);
+
+			const requestData = {
+				client_id: this.config.clientId,
+				response_type: 'device_code',
+				scope: 'authenticate_user openid cardata:streaming:read cardata:api:read',
+				code_challenge: codeChallenge,
+				code_challenge_method: 'S256'
+			};
+			this.log.debug('Device code request data: ' + JSON.stringify(requestData));
+
+			const deviceResponse = await this.requestClient({
+				method: 'post',
+				url: `${this.authApiBase}/device/code`,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'Accept': 'application/json'
+				},
+				data: requestData
 			})
-			.catch(async error => {
-				this.log.error(`Login failed`);
-				this.log.error(error);
-				if (error.response) {
-					this.log.error(JSON.stringify(error.response.data));
-				}
-				if (error.response && error.response.status === 401) {
-					this.log.error(`Please check username and password or generate a new captcha in the instance settings`);
-					this.log.error(`Please wait 5 minutes before trying again`);
-					this.log.error(`Start relogin in 5 minutes`);
-
-					this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-					this.reLoginTimeout = setTimeout(
-						async () => {
-							//get adapter settings and set captcha to null
-							const adapterSettings = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
-							if (adapterSettings && adapterSettings.native) {
-								adapterSettings.native.captcha = null;
-								await this.setForeignObjectAsync(`system.adapter.${this.namespace}`, adapterSettings);
-							}
-						},
-						5 * 60 * 1000,
-					);
-				}
-				if (error.response && error.response.status === 400) {
-					this.log.error('Please check username and password');
-				}
-				if (error.response && error.response.status === 429) {
-					this.log.error('Login Rate Limit exceeded, please wait 5 minutes');
-				}
-			});
-		if (!authUrl || !authUrl.redirect_to) {
-			this.log.error(JSON.stringify(authUrl));
-			return;
-		}
-
-		// @ts-expect-error comment
-		delete data.username;
-		// @ts-expect-error comment
-		delete data.password;
-		// @ts-expect-error comment
-		delete data.grant_type;
-		data.authorization = qs.parse(authUrl.redirect_to).authorization;
-		const code = await this.requestClient({
-			method: 'post',
-			url: 'https://customer.bmwgroup.com/gcdm/oauth/authenticate',
-			headers: headers,
-			data: qs.stringify(data),
-			withCredentials: true,
-			maxRedirects: 0,
-		})
 			.then(res => {
-				this.log.debug(JSON.stringify(res.data));
-				return res.data;
+				this.log.debug('Device code response: ' + JSON.stringify(res.data));
+				return res;
 			})
 			.catch(error => {
-				let code = '';
-				if (error.response && error.response.status >= 400) {
-					this.log.error(JSON.stringify(error.response.data));
-					return;
+				this.log.error('Device code request failed: ' + error.message);
+				
+				if (error.response) {
+					this.log.error('Response status: ' + error.response.status);
+					this.log.error('Response headers: ' + JSON.stringify(error.response.headers));
+					this.log.error('Response data: ' + JSON.stringify(error.response.data));
 				}
-				if (error.response && error.response.status === 302) {
-					this.log.debug(JSON.stringify(error.response.headers.location));
-					code = String(qs.parse(error.response.headers.location.split('?')[1]).code);
-					this.log.debug(code);
-					return code;
-				}
-				this.log.error(error);
-				return;
+	
+				return false; // Return false instead of throwing
 			});
-		await this.requestClient({
-			method: 'post',
-			url: 'https://customer.bmwgroup.com/gcdm/oauth/token',
-			withCredentials: true,
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-				'User-Agent': this.userAgent,
-				Accept: '*/*',
-				'Accept-Language': 'de-de',
-				Authorization: 'Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==',
-			},
-			data: `code=${code}&redirect_uri=com.bmw.connected://oauth&grant_type=authorization_code&code_verifier=${code_verifier}`,
-		})
-			.then(async res => {
-				this.log.debug(JSON.stringify(res.data));
 
-				await this.extendObject('auth', {
-					type: 'channel',
-					common: {
-						name: 'Authentification Information',
-					},
-					native: {},
-				});
-				await this.extendObject('auth.session', {
-					type: 'state',
-					common: {
-						name: 'Session Token',
-						type: 'string',
-						role: 'value',
-						read: true,
-						write: false,
-					},
-					native: {},
-				});
-				if (loginSecondUser) {
-					this.msession = res.data;
-					await this.extendObject('auth.msession', {
+			if (!deviceResponse) {
+				return false; // Exit if device code request failed
+			}
+
+			const { user_code, device_code, verification_uri_complete, expires_in, interval } = deviceResponse.data;
+			this.log.debug(`Device code: ${device_code}, User code: ${user_code}, Expires in: ${expires_in}s, Interval: ${interval}s`);
+
+			// Show user instructions
+			this.log.info('='.repeat(80));
+			this.log.info('BMW CARDATA AUTHORIZATION REQUIRED');
+			this.log.info('='.repeat(80));
+			this.log.info(`1. Visit: ${verification_uri_complete}`);
+			this.log.info(`2. Or visit: ${deviceResponse.data.verification_uri} and enter code: ${user_code}`);
+			this.log.info(`3. Login with your BMW account and authorize`);
+			this.log.info(`4. Code expires in ${Math.floor(expires_in/60)} minutes`);
+			this.log.info('The adapter will automatically continue after authorization');
+			this.log.info('='.repeat(80));
+
+			// Step 2: Poll for tokens
+			const startTime = Date.now();
+			this.log.debug(`Starting token polling, will timeout in ${expires_in}s`);
+			while (Date.now() - startTime < expires_in * 1000) {
+				this.log.debug(`Waiting ${interval}s before next token poll...`);
+				await this.sleep(interval * 1000);
+
+				try {
+					const tokenRequestData = {
+						client_id: this.config.clientId,
+						grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
+						device_code: device_code,
+						code_verifier: codeVerifier
+					};
+					this.log.debug('Token request data: ' + JSON.stringify(tokenRequestData));
+
+					const tokenResponse = await this.requestClient({
+						method: 'post',
+						url: `${this.authApiBase}/token`,
+						headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+						data: qs.stringify(tokenRequestData)
+					});
+
+					// Success! Store tokens in existing session structure
+					this.session = tokenResponse.data;
+
+					// Create BMW CarData auth objects
+					await this.extendObject('cardataauth', {
+						type: 'channel',
+						common: {
+							name: 'BMW CarData OAuth2',
+						},
+						native: {},
+					});
+					await this.extendObject('cardataauth.session', {
 						type: 'state',
 						common: {
-							name: 'MSession Token',
+							name: 'OAuth2 Session',
 							type: 'string',
 							role: 'value',
 							read: true,
@@ -417,21 +251,60 @@ class Bmw extends utils.Adapter {
 						},
 						native: {},
 					});
-					await this.setState('auth.msession', JSON.stringify(this.msession), true);
-				} else {
-					this.session = res.data;
+
+					await this.setState('cardataauth.session', JSON.stringify(this.session), true);
+					this.setState('info.connection', true, true);
+					this.log.info('BMW CarData authorization successful!');
+
+					// Connect MQTT after successful auth
+					await this.connectMQTT();
+					return true;
+
+				} catch (error) {
+					const errorCode = error.response?.data?.error;
+					this.log.debug('Token polling error: ' + (errorCode || error.message));
+
+					if (errorCode === 'authorization_pending') {
+						this.log.debug('Authorization still pending, continuing to poll...');
+						continue; // Keep polling
+					} else if (errorCode === 'slow_down') {
+						this.log.debug('Rate limit hit, slowing down polling...');
+						await this.sleep(5000); // Additional delay
+						continue;
+					} else if (errorCode === 'expired_token') {
+						this.log.error('Authorization code expired, please restart adapter');
+						return false;
+					} else {
+						this.log.error('Token request failed: ' + (errorCode || error.message));
+						if (error.response) {
+							this.log.error('Token response status: ' + error.response.status);
+							this.log.error('Token response data: ' + JSON.stringify(error.response.data));
+						}
+						return false;
+					}
 				}
-				this.setState('auth.session', JSON.stringify(this.session), true);
-				this.setState('info.connection', true, true);
-				return res.data;
-			})
-			.catch(error => {
-				this.log.error(`Login step 3 failed`);
-				this.log.error(error);
-				if (error.response) {
-					this.log.error(JSON.stringify(error.response.data));
-				}
-			});
+			}
+
+			this.log.error('Authorization timed out');
+			return false;
+
+		} catch (error) {
+			this.log.error('Device flow failed:', error.message);
+			this.log.error('Error stack:', error.stack);
+			if (error.response) {
+				this.log.error('Response status:', error.response.status);
+				this.log.error('Response headers:', JSON.stringify(error.response.headers));
+				this.log.error('Response data:', JSON.stringify(error.response.data));
+			}
+			if (error.request) {
+				this.log.error('Request details:', {
+					method: error.request.method,
+					url: error.request.url,
+					headers: error.request._headers
+				});
+			}
+			return false;
+		}
 	}
 
 	generateBuildString() {
@@ -459,126 +332,190 @@ class Bmw extends utils.Adapter {
 	}
 
 	async getVehiclesv2(firstStart) {
-		const brand = this.config.brand;
 		const headers = {
-			'user-agent': this.userAgentDart,
-			'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${brand};`),
-			authorization: `Bearer ${this.session.access_token}`,
-			'accept-language': 'de-DE',
-			host: 'cocoapi.bmwgroup.com',
-			'24-hour-format': 'true',
+			'Authorization': `Bearer ${this.session.access_token}`,
+			'x-version': 'v1',
+			'Accept': 'application/json'
 		};
-		this.log.debug('getVehiclesv2');
+
+		this.log.debug('Fetching BMW CarData vehicle mappings');
 		await this.requestClient({
 			method: 'get',
-			url: `https://cocoapi.bmwgroup.com/eadrax-vcs/v4/vehicles?apptimezone=120&appDateTime=${Date.now()}&tireGuardMode=ENABLED`,
-			headers: headers,
+			url: `${this.carDataApiBase}/customers/vehicles/mappings`,
+			headers: headers
 		})
-			.then(async res => {
-				this.log.debug(JSON.stringify(res.data));
-				if (firstStart) {
-					this.log.info(`Found ${res.data.length} ${brand} vehicles`);
-				}
-				if (res.data.length === 0) {
-					this.log.info(`No ${brand} vehicles found please check brand in instance settings`);
-					return;
-				}
-				for (const vehicle of res.data) {
+		.then(async res => {
+			this.log.debug(JSON.stringify(res.data));
+			const mappings = res.data;
+
+			if (firstStart) {
+				this.log.info(`Found ${mappings.length} BMW vehicles`);
+			}
+
+			if (mappings.length === 0) {
+				this.log.info('No BMW vehicles found in CarData mappings');
+				return;
+			}
+
+			for (const mapping of mappings) {
+				if (mapping.mappingType === 'PRIMARY' && mapping.vin) {
+					const vin = mapping.vin;
+
+					// Check ignore list
 					if (this.config.ignorelist) {
-						this.log.info(`Ignorelist found`);
 						const ignoreListArray = this.config.ignorelist.replace(/\s/g, '').split(',');
-						if (ignoreListArray.includes(vehicle.vin)) {
-							this.log.info(`Ignore ${vehicle.vin}`);
+						if (ignoreListArray.includes(vin)) {
+							this.log.info(`Ignoring ${vin} (in ignore list)`);
 							continue;
 						}
 					}
-					this.vinArray.push(vehicle.vin);
-					let vehicleName = vehicle.model;
-					if (!vehicleName && vehicle.attributes) {
-						vehicleName = vehicle.attributes.model;
-					}
-					await this.extendObject(vehicle.vin, {
+
+					this.vinArray.push(vin);
+					this.log.info(`Added vehicle: ${vin}`);
+
+					// Create vehicle device
+					await this.extendObject(vin, {
 						type: 'device',
 						common: {
-							name: vehicleName,
+							name: vin // Will be updated with model name when basic data is fetched
 						},
-						native: {},
-					});
-					await this.extendObject(`${vehicle.vin}.state`, {
-						type: 'channel',
-						common: {
-							name: 'Current state of the car v4',
-						},
-						native: {},
-					});
-					await this.setObjectNotExistsAsync(`${vehicle.vin}.remotev2`, {
-						type: 'channel',
-						common: {
-							name: 'Remote Controls',
-						},
-						native: {},
+						native: {}
 					});
 
-					const remoteArray = [
-						{ command: 'door-lock', name: 'Lock Doors (Not updated)' },
-						{ command: 'door-unlock', name: 'Unlock Doors (Not updated)' },
-						{ command: 'door', name: 'Door Lock True=Lock, False=Unlock' },
-						{ command: 'horn-blow', name: 'Horn Blow' },
-						{ command: 'light-flash', name: 'Light Flash' },
-						{ command: 'vehicle-finder', name: 'Trigger Vehicle Finder' },
-						{ command: 'climate-now_START', name: 'Start Climate (Not updated)' },
-						{ command: 'climate-now_STOP', name: 'Stop Climate (Not updated)' },
-						{ command: 'climate-now', name: 'Climate True=Start, False=Stop' },
-						{ command: 'start-charging', name: 'Start Charging (Not updated)' },
-						{ command: 'stop-charging', name: 'Stop Charging (Not updated)' },
-						{ command: 'charging', name: 'Charging True=Start, False=Stop' },
-						{ command: 'force-refresh', name: 'Force Refresh' },
-						{ command: 'fetch-images', name: 'Fetch Images of the car in the image folder' },
-						{
-							command: 'fetch-charges',
-							name: 'Fetch Charge Sessions/Statistics for month',
-							type: 'string',
-							role: 'text',
-							def: '2025-04',
-						},
-					];
-					remoteArray.forEach(remote => {
-						// @ts-expect-error comment
-						this.extendObject(`${vehicle.vin}.remotev2.${remote.command}`, {
-							type: 'state',
-							common: {
-								name: remote.name || '',
-								type: remote.type || 'boolean',
-								role: remote.role || 'boolean',
-								def: remote.def == null ? false : remote.def,
-								write: true,
-								read: true,
-							},
-							native: {},
-						});
-					});
+					// Fetch all available data for this vehicle on first start
+					if (firstStart) {
+						await this.fetchAllVehicleData(vin, headers);
+					}
+				}
+			}
+		})
+		.catch(error => {
+			this.log.error('BMW CarData vehicle discovery failed: ' + error.message);
+			if (error.response) {
+				this.log.error('Response: ' + JSON.stringify(error.response.data));
+				if (error.response.status === 403 || error.response.status === 429) {
+					this.log.warn('Rate limit exceeded or access denied');
+				}
+			}
+		});
 
-					this.json2iob.parse(vehicle.vin, vehicle, {
-						forceIndex: true,
-						descriptions: this.description,
-						channelName: vehicleName,
+		await this.sleep(2000);
+	}
+
+	// Fetch ALL available API endpoints for each vehicle
+	async fetchAllVehicleData(vin, headers) {
+		const apiEndpoints = [
+			{
+				name: 'basicData',
+				url: `/customers/vehicles/${vin}/basicData`,
+				channel: 'Basic Information'
+			},
+			{
+				name: 'chargingHistory',
+				url: `/customers/vehicles/${vin}/chargingHistory`,
+				channel: 'Charging History'
+			},
+			{
+				name: 'image',
+				url: `/customers/vehicles/${vin}/image`,
+				channel: 'Vehicle Image'
+			},
+			{
+				name: 'locationBasedChargingSettings',
+				url: `/customers/vehicles/${vin}/locationBasedChargingSettings`,
+				channel: 'Location Charging Settings'
+			},
+			{
+				name: 'smartMaintenanceTyreDiagnosis',
+				url: `/customers/vehicles/${vin}/smartMaintenanceTyreDiagnosis`,
+				channel: 'Tyre Diagnosis'
+			},
+			{
+				name: 'telematicData',
+				url: `/customers/vehicles/${vin}/telematicData`,
+				channel: 'Telematic Data'
+			}
+		];
+
+		this.log.info(`Fetching all available data for ${vin}...`);
+
+		for (const endpoint of apiEndpoints) {
+			if (!this.checkQuota()) {
+				this.log.warn(`Skipping ${endpoint.name} for ${vin} - API quota exhausted`);
+				break;
+			}
+
+			try {
+				this.log.debug(`Fetching ${endpoint.name} for ${vin}`);
+				const response = await this.requestClient({
+					method: 'get',
+					url: `${this.carDataApiBase}${endpoint.url}`,
+					headers: headers
+				});
+
+				// Store data with json2iob (no conversion needed!)
+				await this.json2iob.parse(`${vin}.${endpoint.name}`, response.data, {
+					channelName: endpoint.channel,
+					descriptions: this.description,
+					forceIndex: true
+				});
+
+				// Update vehicle name if we got basic data
+				if (endpoint.name === 'basicData' && response.data) {
+					const vehicleName = `${response.data.brand || 'BMW'} ${response.data.modelName || response.data.series || vin}`.trim();
+					await this.extendObject(vin, {
+						type: 'device',
+						common: {
+							name: vehicleName
+						},
+						native: {
+							brand: response.data.brand,
+							model: response.data.modelName,
+							series: response.data.series,
+							vin: vin
+						}
 					});
+					this.log.info(`Updated vehicle name: ${vehicleName} (${vin})`);
 				}
-			})
-			.catch(error => {
-				this.log.error(`getvehicles v2 failed`);
-				this.log.error(error);
-				error.response && this.log.error(JSON.stringify(error.response.data));
-				if (error.response && (error.response.status === 403 || error.response.status === 429)) {
-					this.log.warn(`Rate limit exceeded, please wait 5 minutes`);
+
+				this.log.debug(`✓ ${endpoint.name} for ${vin}`);
+				await this.sleep(1000); // Rate limiting between calls
+
+			} catch (error) {
+				// Some endpoints might not be available for all vehicles
+				const status = error.response?.status;
+				if (status === 404) {
+					this.log.debug(`${endpoint.name} not available for ${vin} (404)`);
+				} else if (status === 403) {
+					this.log.warn(`${endpoint.name} access denied for ${vin} (403)`);
+				} else {
+					this.log.debug(`${endpoint.name} failed for ${vin}: ${error.message}`);
 				}
-				this.log.info(`Adapter will retry in 3 minutes to get vehicles`);
-				this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-				this.reLoginTimeout = setTimeout(() => {
-					this.getVehiclesv2();
-				}, 3 * 60000);
-			});
-		await this.sleep(5000);
+			}
+		}
+	}
+
+	checkQuota() {
+		const now = Date.now();
+		if (!this.apiCalls) this.apiCalls = [];
+
+		// Remove calls older than 24h
+		this.apiCalls = this.apiCalls.filter(time => now - time < 24 * 60 * 60 * 1000);
+
+		const used = this.apiCalls.length;
+		const remaining = 50 - used;
+
+		// Update quota states
+		this.setState('info.apiQuotaUsed', used, true);
+		this.setState('info.apiQuotaRemaining', remaining, true);
+
+		if (remaining > 0) {
+			this.apiCalls.push(now);
+			return true;
+		}
+
+		this.log.warn(`API quota exhausted: ${used}/50 calls used in last 24h`);
+		return false;
 	}
 
 	async updateDevices() {
@@ -935,23 +872,49 @@ class Bmw extends utils.Adapter {
 
 	async cleanObjects() {
 		for (const vin of this.vinArray) {
-			const remoteState = await this.getObjectAsync(`${vin}.properties`);
+			// Check if this is an upgrade from old version by looking for remotev2 states
+			const remoteState = await this.getObjectAsync(`${vin}.remotev2`);
 			if (remoteState) {
-				this.log.debug(`clean old states ${vin}`);
-				await this.delObjectAsync(`${vin}.statusv1`, { recursive: true });
-				await this.delObjectAsync(`${vin}.lastTrip`, { recursive: true });
-				await this.delObjectAsync(`${vin}.allTrips`, { recursive: true });
-				await this.delObjectAsync(`${vin}.status`, { recursive: true });
-				await this.delObjectAsync(`${vin}.properties`, { recursive: true });
-				await this.delObjectAsync(`${vin}.capabilities`, { recursive: true });
-				await this.delObjectAsync(`${vin}.chargingprofile`, { recursive: true });
-				await this.delObjectAsync(`${vin}.serviceExecutionHistory`, { recursive: true });
-				await this.delObjectAsync(`${vin}.apiV2`, { recursive: true });
-				await this.delObject(`${vin}.remote`, { recursive: true });
-				await this.delObject(`_DatenNeuLaden`);
-				await this.delObject(`_LetzterDatenabrufOK`);
-				await this.delObject(`_LetzerFehler`);
+				this.log.info(`Cleaning old states for ${vin} (upgrading from previous version)`);
+
+				// Delete all old state structures recursively
+				await this.delObjectAsync(`${vin}`, { recursive: true });
+
+				// Create fresh vehicle device
+				await this.extendObject(vin, {
+					type: 'device',
+					common: { name: vin },
+					native: {}
+				});
+			} else {
+				// Standard cleanup for existing CarData installations
+				const oldProperties = await this.getObjectAsync(`${vin}.properties`);
+				if (oldProperties) {
+					this.log.debug(`Clean old states ${vin}`);
+					await this.delObjectAsync(`${vin}.statusv1`, { recursive: true });
+					await this.delObjectAsync(`${vin}.lastTrip`, { recursive: true });
+					await this.delObjectAsync(`${vin}.allTrips`, { recursive: true });
+					await this.delObjectAsync(`${vin}.status`, { recursive: true });
+					await this.delObjectAsync(`${vin}.properties`, { recursive: true });
+					await this.delObjectAsync(`${vin}.capabilities`, { recursive: true });
+					await this.delObjectAsync(`${vin}.chargingprofile`, { recursive: true });
+					await this.delObjectAsync(`${vin}.serviceExecutionHistory`, { recursive: true });
+					await this.delObjectAsync(`${vin}.apiV2`, { recursive: true });
+					await this.delObject(`${vin}.remote`, { recursive: true });
+				}
 			}
+		}
+
+		// Clean up old global states
+		await this.delObject(`_DatenNeuLaden`);
+		await this.delObject(`_LetzterDatenabrufOK`);
+		await this.delObject(`_LetzerFehler`);
+
+		// Clean up old authentication objects (v3.x used different auth structure)
+		const oldAuthObjects = await this.getObjectAsync('auth');
+		if (oldAuthObjects) {
+			this.log.info('Cleaning up complete old auth folder from previous version');
+			await this.delObjectAsync('auth', { recursive: true });
 		}
 	}
 
@@ -1021,48 +984,169 @@ class Bmw extends utils.Adapter {
 		}
 	}
 
-	async refreshToken(useSecondUser) {
-		this.log.debug(`refresh token`);
-		let refresh_token = this.session.refresh_token;
-		if (useSecondUser) {
-			refresh_token = this.msession.refresh_token;
+	async refreshToken() {
+		if (!this.session.refresh_token) {
+			this.log.error('No refresh token available, starting new device flow');
+			return await this.login();
 		}
+
+		this.log.debug('Refreshing BMW CarData tokens');
+		this.log.debug(`Refresh token URL: ${this.authApiBase}/token`);
+		this.log.debug(`Client ID: ${this.config.clientId}`);
+
+		const refreshData = {
+			grant_type: 'refresh_token',
+			refresh_token: this.session.refresh_token,
+			client_id: this.config.clientId
+		};
+		this.log.debug('Refresh request data: ' + JSON.stringify(refreshData));
+
 		await this.requestClient({
 			method: 'post',
-			url: `https://customer.bmwgroup.com/gcdm/oauth/token`,
-			withCredentials: true,
+			url: `${this.authApiBase}/token`,
 			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-				Accept: '*/*',
-				Authorization: `Basic MzFjMzU3YTAtN2ExZC00NTkwLWFhOTktMzNiOTcyNDRkMDQ4OmMwZTMzOTNkLTcwYTItNGY2Zi05ZDNjLTg1MzBhZjY0ZDU1Mg==`,
+				'Content-Type': 'application/x-www-form-urlencoded'
 			},
-			data: `redirect_uri=com.bmw.connected://oauth&refresh_token=${refresh_token}&grant_type=refresh_token`,
+			data: qs.stringify(refreshData)
 		})
+		.then(async res => {
+			// Store refreshed tokens (keep existing session structure)
+			this.session = res.data;
+			this.setState('cardataauth.session', JSON.stringify(this.session), true);
+			this.setState('info.connection', true, true);
+			this.log.debug('Tokens refreshed successfully');
 
-			.then(res => {
-				this.log.debug(JSON.stringify(res.data));
-				if (useSecondUser) {
-					this.msession = res.data;
-					this.setState(`auth.msession`, JSON.stringify(this.msession), true);
-				} else {
-					this.session = res.data;
-				}
-				this.setState(`auth.session`, JSON.stringify(this.session), true);
-				this.setState(`info.connection`, true, true);
-				return res.data;
-			})
+			// IMPORTANT: Reconnect MQTT with new token
+			if (this.mqtt) {
+				this.log.debug('Reconnecting MQTT with new token');
+				this.mqtt.end();
+				await this.sleep(2000);
+				await this.connectMQTT();
+			}
 
-			.catch(error => {
-				this.log.error(`Refresh token failed. Please delete the Object DP "bmw.0.auth.session" and restart the adapter`);
-				this.log.error(error);
-				error.response && this.log.error(JSON.stringify(error.response.data));
-				this.log.error(`Start relogin in 1 min`);
-				this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
-				this.reLoginTimeout = setTimeout(() => {
-					this.login();
-				}, 1 * 60000);
-			});
+			return res.data;
+		})
+		.catch(async error => {
+			this.log.error('Token refresh failed:', error.message);
+			this.log.error('Error stack:', error.stack);
+			if (error.response) {
+				this.log.error('Response status:', error.response.status);
+				this.log.error('Response headers:', JSON.stringify(error.response.headers));
+				this.log.error('Response data:', JSON.stringify(error.response.data));
+			}
+			if (error.request) {
+				this.log.error('Request details:', {
+					method: error.request.method,
+					url: error.request.url,
+					headers: error.request._headers
+				});
+			}
+			this.log.info('Starting new device authorization flow');
+			return await this.login();
+		});
 	}
+
+	async connectMQTT() {
+		if (!this.session.id_token || !this.session.gcid) {
+			this.log.warn('No MQTT credentials available (missing ID token or GCID)');
+			return false;
+		}
+
+		const mqtt = require('mqtt');
+
+		const options = {
+			host: 'customer.streaming-cardata.bmwgroup.com',
+			port: 9000,
+			protocol: 'mqtts',
+			username: this.session.gcid,
+			password: this.session.id_token,
+			keepalive: 30,
+			clean: true,
+			rejectUnauthorized: true,
+			reconnectPeriod: 5000,
+			connectTimeout: 30000
+		};
+
+		this.log.debug(`Connecting to BMW MQTT: ${options.host}:${options.port}`);
+		this.mqtt = mqtt.connect(options);
+
+		this.mqtt.on('connect', () => {
+			this.log.info('BMW MQTT stream connected');
+			this.setState('info.mqttConnected', true, true);
+
+			// Subscribe to all vehicle topics for this GCID
+			const topic = `${this.session.gcid}/+`;
+			this.mqtt.subscribe(topic, (err) => {
+				if (err) {
+					this.log.error('MQTT subscription failed: ' + err.message);
+				} else {
+					this.log.debug(`Subscribed to MQTT topic: ${topic}`);
+				}
+			});
+		});
+
+		this.mqtt.on('message', (topic, message) => {
+			this.handleMQTTMessage(topic, message);
+		});
+
+		this.mqtt.on('error', (error) => {
+			this.log.error('MQTT error: ' + error.message);
+			this.setState('info.mqttConnected', false, true);
+		});
+
+		this.mqtt.on('close', () => {
+			this.log.warn('MQTT connection closed');
+			this.setState('info.mqttConnected', false, true);
+		});
+
+		this.mqtt.on('reconnect', () => {
+			this.log.debug('MQTT reconnecting...');
+		});
+
+		return true;
+	}
+
+	async handleMQTTMessage(topic, message) {
+		try {
+			const data = JSON.parse(message.toString());
+			const topicParts = topic.split('/');
+
+			if (topicParts.length >= 2) {
+				const gcid = topicParts[0];
+				const vin = topicParts[1];
+
+				if (gcid === this.session.gcid && data.vin && data.data) {
+					this.log.debug(`MQTT: ${vin} - ${Object.keys(data.data).length} data points`);
+
+					// Ensure VIN is in our array
+					if (!this.vinArray.includes(vin)) {
+						this.vinArray.push(vin);
+					}
+
+					// Create vehicle device if not exists
+					await this.extendObject(vin, {
+						type: 'device',
+						common: { name: vin },
+						native: {}
+					});
+
+					// Process data with json2iob (no conversion needed!)
+					await this.json2iob.parse(vin, data.data, {
+						forceIndex: true,
+						descriptions: this.description,
+						channelName: 'MQTT Stream'
+					});
+
+					// Add metadata
+					await this.setState(`${vin}.lastUpdate`, new Date().toISOString(), true);
+					await this.setState(`${vin}.dataSource`, 'mqtt', true);
+				}
+			}
+		} catch (error) {
+			this.log.warn('Failed to parse MQTT message: ' + error.message);
+		}
+	}
+
 
 	/**
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
@@ -1071,19 +1155,20 @@ class Bmw extends utils.Adapter {
 	 */
 	async onUnload(callback) {
 		try {
-			clearTimeout(this.refreshTimeout);
-			clearTimeout(this.reLoginTimeout);
+			// Clear all intervals and timeouts
 			clearInterval(this.updateInterval);
 			clearInterval(this.refreshTokenInterval);
-			this.demandInterval && clearInterval(this.demandInterval);
-			//get adapter settings and set captcha to null
-			if (this.config.captcha) {
-				const adapterSettings = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
-				if (adapterSettings && adapterSettings.native) {
-					adapterSettings.native.captcha = null;
-					await this.setForeignObjectAsync(`system.adapter.${this.namespace}`, adapterSettings);
-				}
+
+			// Close MQTT connection
+			if (this.mqtt) {
+				this.mqtt.end();
+				this.mqtt = null;
 			}
+
+			// Update connection states
+			this.setState('info.connection', false, true);
+			this.setState('info.mqttConnected', false, true);
+
 			callback();
 		} catch (e) {
 			this.log.error(e);
@@ -1098,176 +1183,13 @@ class Bmw extends utils.Adapter {
 	 * @param {ioBroker.State | null | undefined} state - The new state value or null if the state was deleted.
 	 */
 	async onStateChange(id, state) {
-		if (state) {
-			if (!state.ack) {
-				if (id.indexOf(`.remotev2.`) === -1) {
-					this.log.warn(`Please use remotev2 to control`);
-					return;
-				}
+		if (state && !state.ack) {
+			// BMW CarData API is read-only, no remote controls available
+			this.log.warn('Remote controls not available in BMW CarData (read-only API)');
+			this.log.info('BMW CarData only provides vehicle data, no command functionality');
 
-				const vin = id.split('.')[2];
-
-				let command = id.split('.')[4];
-				if (command === 'force-refresh') {
-					this.log.info('force refresh');
-					this.updateDevices();
-					return;
-				}
-				if (command === 'fetch-images') {
-					this.log.info('fetch images');
-					await this.fetchImages(vin);
-					return;
-				}
-				if (command === 'fetch-charges') {
-					this.log.info('fetch charges');
-					await this.updateChargingSessionv2(vin, 200, state.val);
-					return;
-				}
-				if (command === 'charging') {
-					command = 'start-charging';
-					if (!state.val) {
-						command = 'stop-charging';
-					}
-				}
-				if (command === 'climate-now') {
-					command = 'climate-now_START';
-					if (!state.val) {
-						command = 'climate-now_STOP';
-					}
-				}
-				if (command === 'door') {
-					command = 'door-lock';
-					if (!state.val) {
-						command = 'door-unlock';
-					}
-				}
-				const action = command.split('_')[1];
-				command = command.split('_')[0];
-				let access_token = this.session.access_token;
-				if (this.msession) {
-					this.log.debug('Use second user for remote command');
-					access_token = this.msession.access_token;
-				}
-				const headers = {
-					'user-agent': this.userAgentDart,
-					'x-user-agent': this.xuserAgent.replace(`;brand;`, `;${this.config.brand};`),
-					authorization: `Bearer ${access_token}`,
-					'accept-language': 'de-DE',
-					host: 'cocoapi.bmwgroup.com',
-					'24-hour-format': 'true',
-					'Content-Type': 'text/plain',
-					'bmw-vin': vin,
-				};
-				const url = `https://cocoapi.bmwgroup.com/eadrax-vrccs/v4/presentation/remote-commands/${command}${action ? `?action=${action}` : ''}`;
-
-				this.log.debug(`Send remote command ${command} to ${vin}`);
-				await this.requestClient({
-					method: 'post',
-					url: url,
-					headers: headers,
-					'axios-retry': {
-						retries: 5,
-						// only 403 rate limit
-						retryCondition: error => {
-							this.log.debug(error.message);
-							if (error.response) {
-								this.log.debug(JSON.stringify(error.response.data));
-								return error.response.status === 403;
-							}
-							return false;
-						},
-						onRetry: (retryCount, error) => {
-							this.log.info(`Retry ${retryCount}`);
-							this.log.debug(error.message);
-							error.response && this.log.info(JSON.stringify(error.response.data));
-							this.log.warn(`Rate Limit exceeded, retry in 5 seconds`);
-						},
-						onMaxRetryTimesExceeded: () => {
-							this.log.error(`3 Retries failed`);
-						},
-					},
-				})
-					.then(res => {
-						this.log.debug(JSON.stringify(res.data));
-						const eventId = res.data.eventId;
-						this.log.debug(`Check Status of event in 10sec`);
-						this.setTimeout(() => {
-							this.checkEventStatus(eventId, headers).then(async res => {
-								if (res === 'EXECUTED') {
-									this.log.info(`Remote command executed`);
-								} else {
-									this.log.info(`Remote event is not finished it is: ${res}`);
-									await this.sleep(10000);
-									this.checkEventStatus(eventId, headers).then(res => {
-										if (res === 'EXECUTED') {
-											this.log.info(`Remote command successfully executed`);
-										} else if (res === 'RUNNING') {
-											this.log.info(`Remote command is still running`);
-										} else if (res === 'UNKNOWN') {
-											this.log.debug(`Remote command is unknown`);
-										} else {
-											this.log.warn(`Remote command failed ${res}`);
-										}
-									});
-								}
-							});
-						}, 10 * 1000);
-
-						return res.data;
-					})
-					.catch(error => {
-						this.log.error(`Remote command failed`);
-
-						this.log.error(error);
-						if (error.response) {
-							//check for 403 quota exceeded
-							if (error.response.status === 403) {
-								this.log.warn(
-									`Rate Limit exceeded, think about to use the second user Mitbenutzer feature in the adapter settings to send remote commands`,
-								);
-							}
-							this.log.error(JSON.stringify(error.response.data));
-						}
-					});
-				this.refreshTimeout = setTimeout(async () => {
-					this.log.info('Refresh values');
-					await this.updateDevices();
-				}, 12 * 1000);
-			} else {
-				const resultDict = { chargingStatus: 'charging', combinedSecurityState: 'door', activity: 'climate-now' };
-				const idArray = id.split('.');
-				const stateName = idArray[idArray.length - 1];
-				const vin = id.split('.')[2];
-				if (resultDict[stateName]) {
-					let value = true;
-					if (
-						!state.val ||
-						state.val === 'INVALID' ||
-						state.val === 'INACTIVE' ||
-						state.val === 'NOT_CHARGING' ||
-						state.val === 'ERROR' ||
-						state.val === 'UNLOCKED'
-					) {
-						value = false;
-					}
-					await this.setState(`${vin}.remotev2.${resultDict[stateName]}`, value, true);
-				}
-
-				// if (id.indexOf('.chargingStatus') !== -1 && state.val !== 'CHARGING') {
-				//   await this.setObjectNotExistsAsync(`${vin}.status.chargingTimeRemaining`, {
-				//     type: 'state',
-				//     common: {
-				//       name: 'chargingTimeRemaining',
-				//       role: 'value',
-				//       type: 'number',
-				//       write: false,
-				//       read: true,
-				//     },
-				//     native: {},
-				//   });
-				//   this.setState(`${vin}.status.chargingTimeRemaining`, 0, true);
-				// }
-			}
+			// Reset the state to acknowledge it
+			this.setState(id, state.val, true);
 		}
 	}
 
