@@ -4,11 +4,9 @@
 const utils = require('@iobroker/adapter-core');
 const axios = require('axios');
 
-const { HttpsCookieAgent } = require('http-cookie-agent/http');
 const crypto = require('crypto');
 const qs = require('qs');
 const Json2iob = require('json2iob');
-const tough = require('tough-cookie');
 const axiosRetry = require('axios-retry').default;
 class Bmw extends utils.Adapter {
 	/**
@@ -40,12 +38,8 @@ class Bmw extends utils.Adapter {
 		// API quota tracking
 		this.apiCalls = [];
 
-		// @ts-expect-error comment
-		this.cookieJar = new tough.CookieJar(null, { ignoreError: true });
-
 		this.requestClient = axios.create({
 			withCredentials: true,
-			httpsAgent: new HttpsCookieAgent({ cookies: { jar: this.cookieJar } }),
 		});
 		axiosRetry(this.requestClient, {
 			retries: 0,
@@ -544,6 +538,20 @@ class Bmw extends utils.Adapter {
 				}
 			}
 		}
+
+		// Update lastUpdate after all API data is fetched
+		await this.extendObject(`${vin}.lastUpdate`, {
+			type: 'state',
+			common: {
+				name: 'Last Update Time',
+				type: 'string',
+				role: 'date',
+				read: true,
+				write: false
+			},
+			native: {}
+		});
+		await this.setState(`${vin}.lastUpdate`, new Date().toISOString(), true);
 	}
 
 	checkQuota() {
@@ -796,9 +804,32 @@ class Bmw extends utils.Adapter {
 						channelName: 'MQTT Stream Data'
 					});
 
-					// Add metadata
+					// Create and update metadata states
+					await this.extendObject(`${vin}.lastUpdate`, {
+						type: 'state',
+						common: {
+							name: 'Last Update Time',
+							type: 'string',
+							role: 'date',
+							read: true,
+							write: false
+						},
+						native: {}
+					});
 					await this.setState(`${vin}.lastUpdate`, new Date().toISOString(), true);
-					await this.setState(`${vin}.dataSource`, 'mqtt', true);
+
+					await this.extendObject(`${vin}.lastStreamUpdate`, {
+						type: 'state',
+						common: {
+							name: 'Last Stream Update Time',
+							type: 'string',
+							role: 'date',
+							read: true,
+							write: false
+						},
+						native: {}
+					});
+					await this.setState(`${vin}.lastStreamUpdate`, new Date().toISOString(), true);
 				}
 			}
 		} catch (error) {
