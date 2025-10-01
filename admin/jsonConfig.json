@@ -161,15 +161,15 @@
     "interval": {
       "type": "number",
       "label": {
-        "en": "Update interval (in minutes)",
-        "de": "Aktualisierungsintervall (in Minuten)",
-        "ru": "Интервал обновления (в минутах)",
-        "pt": "Intervalo de atualização (em minutos)",
-        "nl": "Update-interval (in minuten)",
-        "fr": "Intervalle de mise à jour (en minutes)",
-        "it": "Intervallo di aggiornamento (in minuti)",
-        "es": "Intervalo de actualización (en minutos)",
-        "pl": "Interwał aktualizacji (w minutach)",
+        "en": "Update interval for static data (in minutes)",
+        "de": "Aktualisierungsintervall für statische Daten (in Minuten)",
+        "ru": "Интервал обновления для статических данных (в минутах)",
+        "pt": "Intervalo de atualização para dados estáticos (em minutos)",
+        "nl": "Update-interval voor statische gegevens (in minuten)",
+        "fr": "Intervalle de mise à jour pour les données statiques (en minutes)",
+        "it": "Intervallo di aggiornamento per dati statici (in minuti)",
+        "es": "Intervalo de actualización para datos estáticos (en minutos)",
+        "pl": "Interwał aktualizacji dla danych statycznych (w minutach)",
         "zh-cn": "更新间隔（分钟）"
       },
       "help": {

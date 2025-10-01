@@ -155,7 +155,9 @@ class Bmw extends utils.Adapter {
 
       this.log.info('BMW CarData adapter startup complete');
       this.log.info('MQTT streaming: enabled');
-      this.log.info(`API quota: ${API_QUOTA_LIMIT - this.apiCalls.length}/${API_QUOTA_LIMIT} calls remaining for static data`);
+      this.log.info(
+        `API quota: ${API_QUOTA_LIMIT - this.apiCalls.length}/${API_QUOTA_LIMIT} calls remaining for static data. Updates via MQTT do not count against quota.`,
+      );
     } else {
       this.log.error('BMW CarData authentication failed');
     }
