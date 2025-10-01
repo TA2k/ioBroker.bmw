@@ -26,16 +26,16 @@
     "_setup": {
       "type": "staticText",
       "text": {
-        "en": "Setup Instructions: 1. Visit BMW ConnectedDrive portal (https://customer.bmwgroup.com/) 2. Go to CarData section 3. Generate a client ID 4. Subscribe to API and streaming services 5. Configure data descriptors",
-        "de": "Setup-Anweisungen: 1. BMW ConnectedDrive Portal besuchen (https://customer.bmwgroup.com/) 2. CarData Bereich aufrufen 3. Client ID generieren 4. API und Streaming Services abonnieren 5. Datendeskriptoren konfigurieren",
-        "ru": "Инструкции по настройке: 1. Посетите портал BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Перейдите в раздел CarData 3. Создайте client ID 4. Подпишитесь на API и streaming сервисы 5. Настройте дескрипторы данных",
-        "pt": "Instruções de configuração: 1. Visite o portal BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Vá para a seção CarData 3. Gere um client ID 4. Inscreva-se nos serviços de API e streaming 5. Configure descritores de dados",
-        "nl": "Setup instructies: 1. Bezoek BMW ConnectedDrive portal (https://customer.bmwgroup.com/) 2. Ga naar CarData sectie 3. Genereer een client ID 4. Abonneer op API en streaming services 5. Configureer data descriptors",
-        "fr": "Instructions de configuration: 1. Visitez le portail BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Allez dans la section CarData 3. Générez un client ID 4. Abonnez-vous aux services API et streaming 5. Configurez les descripteurs de données",
-        "it": "Istruzioni di configurazione: 1. Visita il portale BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Vai alla sezione CarData 3. Genera un client ID 4. Iscriviti ai servizi API e streaming 5. Configura i descrittori dati",
-        "es": "Instrucciones de configuración: 1. Visita el portal BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Ve a la sección CarData 3. Genera un client ID 4. Suscríbete a los servicios API y streaming 5. Configura descriptores de datos",
-        "pl": "Instrukcje konfiguracji: 1. Odwiedź portal BMW ConnectedDrive (https://customer.bmwgroup.com/) 2. Przejdź do sekcji CarData 3. Wygeneruj client ID 4. Subskrybuj usługi API i streaming 5. Skonfiguruj deskryptory danych",
-        "zh-cn": "设置说明：1. 访问BMW ConnectedDrive门户 (https://customer.bmwgroup.com/) 2. 转到CarData部分 3. 生成客户端ID 4. 订阅API和流媒体服务 5. 配置数据描述符"
+        "en": "Setup Instructions: 1. Visit BMW ConnectedDrive portal (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Go to CarData section 3. Generate a client ID 4. Subscribe to API and streaming services 5. Configure data descriptors",
+        "de": "Setup-Anweisungen: 1. BMW ConnectedDrive Portal besuchen (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. CarData Bereich aufrufen 3. Client ID generieren 4. API und Streaming Services abonnieren 5. Datendeskriptoren konfigurieren",
+        "ru": "Инструкции по настройке: 1. Посетите портал BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Перейдите в раздел CarData 3. Создайте client ID 4. Подпишитесь на API и streaming сервисы 5. Настройте дескрипторы данных",
+        "pt": "Instruções de configuração: 1. Visite o portal BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Vá para a seção CarData 3. Gere um client ID 4. Inscreva-se nos serviços de API e streaming 5. Configure descritores de dados",
+        "nl": "Setup instructies: 1. Bezoek BMW ConnectedDrive portal (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Ga naar CarData sectie 3. Genereer een client ID 4. Abonneer op API en streaming services 5. Configureer data descriptors",
+        "fr": "Instructions de configuration: 1. Visitez le portail BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Allez dans la section CarData 3. Générez un client ID 4. Abonnez-vous aux services API et streaming 5. Configurez les descripteurs de données",
+        "it": "Istruzioni di configurazione: 1. Visita il portale BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Vai alla sezione CarData 3. Genera un client ID 4. Iscriviti ai servizi API e streaming 5. Configura i descrittori dati",
+        "es": "Instrucciones de configuración: 1. Visita el portal BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Ve a la sección CarData 3. Genera un client ID 4. Suscríbete a los servicios API y streaming 5. Configura descriptores de datos",
+        "pl": "Instrukcje konfiguracji: 1. Odwiedź portal BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Przejdź do sekcji CarData 3. Wygeneruj client ID 4. Subskrybuj usługi API i streaming 5. Skonfiguruj deskryptory danych",
+        "zh-cn": "设置说明：1. 访问BMW ConnectedDrive门户 (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. 转到CarData部分 3. 生成客户端ID 4. 订阅API和流媒体服务 5. 配置数据描述符"
       },
       "style": {
         "fontSize": "smaller",

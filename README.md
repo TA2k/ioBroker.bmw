@@ -44,12 +44,14 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 ## ⚠️ Breaking Changes in v4.0
 
 **REMOVED:**
+
 - Username/password login (replaced with OAuth2)
 - All remote controls (lock/unlock, climate, charging) - CarData API is read-only
 - Second user support
 - CAPTCHA requirements
 
 **ADDED:**
+
 - OAuth2 Device Flow authentication
 - Real-time MQTT streaming
 - 50 API calls per 24h quota management
@@ -59,19 +61,20 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 
 ### 1. BMW ConnectedDrive Portal Setup
 
-1. Visit the BMW ConnectedDrive portal: **https://customer.bmwgroup.com/**
+1. Visit the BMW ConnectedDrive portal: **https://www.bmw.de/de-de/mybmw/vehicle-overview**
 2. Navigate to the **CarData** section
 3. Generate a new **Client ID**
 4. **Subscribe to both services:**
    - CarData API
    - CarData Streaming
-  **CRITICAL**: Click one service and wait 20seconds if you see a error message click again
+     **CRITICAL**: Click one service and wait 20seconds if you see a error message click again
 
 ### 2. ⚠️ CRITICAL: Data Descriptors Configuration
 
 **YOU MUST MANUALLY SELECT ALL 244 DATA POINTS**
 
 After creating your Client ID:
+
 1. Go to **CarData > Data Descriptors**
 2. **Select ALL categories** (Vehicle Status, Charging, Trip Data, etc.)
 3. **Manually check ALL 244 individual data points**
@@ -114,6 +117,7 @@ Vehicle data is organized under `bmw.0.VIN.*` where `VIN` represents your Vehicl
 ### Main Folder Structure
 
 - **`bmw.0.VIN.api.*`** - API Data (Periodic Updates)
+
   - Data fetched via BMW CarData REST API
   - Uses API quota (50 calls per 24 hours)
   - Updated based on configured interval
@@ -147,6 +151,7 @@ You can enable/disable these endpoints in adapter settings:
 ## Real-time Updates
 
 The adapter receives real-time updates via MQTT streaming when:
+
 - Vehicle status changes (doors, windows, lights)
 - Charging status updates
 - Location changes during driving
@@ -160,34 +165,43 @@ The adapter receives real-time updates via MQTT streaming when:
 ## Troubleshooting
 
 ### Authentication Issues (400 Bad Request)
+
 If you encounter authentication errors:
+
 1. Verify CarData API is activated for your Client ID
 2. Ensure CarData Streaming is enabled
 3. Check that all 244 data points are selected
 4. Consider regenerating your Client ID
 
 ### No MQTT Data
+
 If you're not receiving real-time updates:
+
 1. Verify CarData Streaming is subscribed and active
 2. Ensure all data descriptors (244 points) are selected
 3. Check that your vehicle supports CarData streaming
 4. Restart the adapter after descriptor configuration changes
 
 ### API Quota Exceeded
+
 The adapter manages the 50 API calls per 24-hour limit automatically:
+
 - **Disable unnecessary API endpoints** in adapter settings to reduce quota usage
 - Increase update interval if you hit quota limits frequently
 - MQTT streaming doesn't count against API quota and provides real-time data
 - Each enabled API endpoint uses one quota call per update interval
 
 ### Missing Data in API Folder
+
 If you're not seeing expected data in `VIN.api.*`:
+
 1. Check if the corresponding endpoint is enabled in adapter settings
 2. Verify you haven't exceeded API quota (check adapter logs)
 3. Some endpoints may not be available for all vehicle types
 4. Check adapter logs for specific endpoint errors (404, 403, etc.)
 
 ### Understanding Data Sources
+
 - **`VIN.api.*`** - Updated periodically based on interval and enabled endpoints
 - **`VIN.stream.*`** - Updated in real-time via MQTT when vehicle data changes
 - **`VIN.lastUpdate`** - Timestamp of most recent data update (API or MQTT)
@@ -198,6 +212,7 @@ If you're not seeing expected data in `VIN.api.*`:
 This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://github.com/TA2k/ioBroker.bmw)
 
 ## Changelog
+
 ### 4.0.0 (2025-10-01)
 
 - **BREAKING:** Complete migration to BMW CarData API with OAuth2 Device Flow authentication
