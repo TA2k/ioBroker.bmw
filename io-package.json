@@ -156,8 +156,7 @@
       {
         "admin": ">=7.6.17"
       }
-    ],
-    "installedFrom": "TA2k/ioBroker.bmw"
+    ]
   },
   "encryptedNative": [],
   "protectedNative": [],
