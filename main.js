@@ -345,10 +345,10 @@ class Bmw extends utils.Adapter {
         }
       }
 
-      this.log.error('Authorization timed out');
+      this.log.error(`Authorization timed out`);
       return false;
     } catch (error) {
-      this.log.error('Device flow failed:', error.message);
+      this.log.error(`Device flow failed: ${error.message}`);
       this.log.error('Error stack:', error.stack);
       if (error.response) {
         this.log.error('Response status:', error.response.status);
