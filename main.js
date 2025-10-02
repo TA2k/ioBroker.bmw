@@ -162,7 +162,9 @@ class Bmw extends utils.Adapter {
       this.log.info('BMW CarData adapter startup complete');
       this.log.info('MQTT streaming: enabled');
       this.log.info(
-        `API quota: ${API_QUOTA_LIMIT - this.apiCalls.length}/${API_QUOTA_LIMIT} calls remaining for static data. Updates via MQTT do not count against quota.`,
+        `API quota: ${
+          API_QUOTA_LIMIT - this.apiCalls.length
+        }/${API_QUOTA_LIMIT} calls remaining for static data. Updates via MQTT do not count against quota.`,
       );
     } else {
       this.log.error('BMW CarData authentication failed');
@@ -928,7 +930,7 @@ class Bmw extends utils.Adapter {
         headers: headers,
       });
 
-      const containers = response.data;
+      const containers = response.data.containers || [];
       const ioBrokerContainers = containers.filter(container => container.name && container.name.startsWith('ioBroker'));
 
       this.log.info(`Found ${containers.length} total containers, ${ioBrokerContainers.length} ioBroker containers to delete`);
