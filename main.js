@@ -118,7 +118,7 @@ class Bmw extends utils.Adapter {
       this.log.info('Starting BMW CarData vehicle discovery...');
 
       // Setup telematic container first
-      await this.setupTelematicContainer();
+      // await this.setupTelematicContainer();
 
       // Get vehicles and fetch all initial data
       await this.getVehiclesv2(true);
