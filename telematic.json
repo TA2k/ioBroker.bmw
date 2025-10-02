@@ -2878,7 +2878,7 @@
     "technical_identifier": "vehicle​.powertrain​.electric​.battery​.stateOfCharge​.target",
     "data_type": "uint8",
     "typical_value_range": "0-100 [10% Schritte], INVALID",
-    "unit": "",
+    "unit": "%",
     "streaming_capable": false
   },
   {
