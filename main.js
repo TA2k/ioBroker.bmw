@@ -374,11 +374,14 @@ class Bmw extends utils.Adapter {
     };
 
     this.log.debug('Fetching BMW CarData vehicle mappings');
-    await this.requestClient({
-      method: 'get',
-      url: `${this.carDataApiBase}/customers/vehicles/mappings`,
-      headers: headers,
-    })
+    await this.makeCarDataApiRequest(
+      {
+        method: 'get',
+        url: `${this.carDataApiBase}/customers/vehicles/mappings`,
+        headers: headers,
+      },
+      'fetch vehicle mappings',
+    )
       .then(async res => {
         this.log.debug(JSON.stringify(res.data));
         const mappings = res.data;
@@ -511,11 +514,6 @@ class Bmw extends utils.Adapter {
     this.log.info(`Fetching ${enabledEndpoints.length} configured API endpoints for ${vin}...`);
 
     for (const endpoint of enabledEndpoints) {
-      const quotaAvailable = this.checkQuota();
-      if (!quotaAvailable) {
-        this.log.warn(`API quota exhausted for ${endpoint.name} on ${vin} for static data - continuing to fetch current data via stream`);
-      }
-
       try {
         this.log.debug(`Fetching ${endpoint.name} for ${vin}`);
 
@@ -548,7 +546,7 @@ class Bmw extends utils.Adapter {
           }
         } else {
           // Standard endpoint handling
-          const response = await this.requestClient(requestConfig);
+          const response = await this.makeCarDataApiRequest(requestConfig, `fetch ${endpoint.name} for ${vin}`);
           responseData = response.data;
         }
 
@@ -648,6 +646,40 @@ class Bmw extends utils.Adapter {
 
     this.log.warn(`API quota for static dataexhausted: ${used}/${API_QUOTA_LIMIT} calls used in last 24h. Stream data still working.`);
     return false;
+  }
+
+  /**
+   * Make a CarData API request with automatic quota tracking and warning
+   *
+   * @param {object} requestConfig - Axios request configuration
+   * @param {string} operationName - Name of the operation for logging
+   */
+  async makeCarDataApiRequest(requestConfig, operationName = 'API request') {
+    try {
+      // Check quota and warn if exhausted, but continue anyway
+      const quotaAvailable = this.checkQuota();
+      if (!quotaAvailable) {
+        this.log.warn(`API quota exhausted for ${operationName} - continuing anyway`);
+      }
+
+      // Make the API request
+      const response = await this.requestClient(requestConfig);
+
+      if (quotaAvailable) {
+        this.log.debug(`✓ ${operationName} completed successfully`);
+      } else {
+        this.log.debug(`✓ ${operationName} completed successfully (over quota)`);
+      }
+
+      return response;
+    } catch (error) {
+      this.log.error(`${operationName} failed: ${error.message}`);
+      if (error.response) {
+        this.log.error(`Response status: ${error.response.status}`);
+        this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
+      }
+      throw error; // Re-throw to maintain existing error handling
+    }
   }
 
   sleep(ms) {
@@ -947,11 +979,14 @@ class Bmw extends utils.Adapter {
       this.log.info('Cleaning up existing ioBroker containers...');
 
       // Get all existing containers
-      const response = await this.requestClient({
-        method: 'get',
-        url: `${this.carDataApiBase}/customers/containers`,
-        headers: headers,
-      });
+      const response = await this.makeCarDataApiRequest(
+        {
+          method: 'get',
+          url: `${this.carDataApiBase}/customers/containers`,
+          headers: headers,
+        },
+        'list containers',
+      );
 
       const containers = response.data.containers || [];
       const ioBrokerContainers = containers.filter(container => container.name && container.name.startsWith('ioBroker'));
@@ -961,11 +996,14 @@ class Bmw extends utils.Adapter {
       // Delete only ioBroker containers
       for (const container of ioBrokerContainers) {
         try {
-          await this.requestClient({
-            method: 'delete',
-            url: `${this.carDataApiBase}/customers/containers/${container.id}`,
-            headers: headers,
-          });
+          await this.makeCarDataApiRequest(
+            {
+              method: 'delete',
+              url: `${this.carDataApiBase}/customers/containers/${container.id}`,
+              headers: headers,
+            },
+            `delete container ${container.id}`,
+          );
           this.log.debug(`Deleted ioBroker container: ${container.id} (${container.name})`);
         } catch (error) {
           this.log.warn(`Failed to delete container ${container.id}: ${error.message}`);
@@ -1018,12 +1056,15 @@ class Bmw extends utils.Adapter {
         technicalDescriptors: technicalDescriptors,
       };
 
-      const response = await this.requestClient({
-        method: 'post',
-        url: `${this.carDataApiBase}/customers/containers`,
-        headers: headers,
-        data: containerData,
-      });
+      const response = await this.makeCarDataApiRequest(
+        {
+          method: 'post',
+          url: `${this.carDataApiBase}/customers/containers`,
+          headers: headers,
+          data: containerData,
+        },
+        'create telematic container',
+      );
 
       this.containerId = response.data.id;
       this.log.info(`Container created successfully with ID: ${this.containerId}`);
@@ -1079,14 +1120,17 @@ class Bmw extends utils.Adapter {
 
       this.log.debug(`Retrieving telematic data for VIN: ${vin}, Container ID: ${containerId}`);
 
-      const response = await this.requestClient({
-        method: 'get',
-        url: `${this.carDataApiBase}/customers/vehicles/${vin}/telematicData`,
-        headers: headers,
-        params: {
-          containerId: containerId,
+      const response = await this.makeCarDataApiRequest(
+        {
+          method: 'get',
+          url: `${this.carDataApiBase}/customers/vehicles/${vin}/telematicData`,
+          headers: headers,
+          params: {
+            containerId: containerId,
+          },
         },
-      });
+        `get telematic data for ${vin}`,
+      );
 
       this.log.info(
         `Telematic data retrieved successfully for ${vin} (${Object.keys(response.data.telematicData || {}).length} data points)`,
@@ -1135,12 +1179,15 @@ class Bmw extends utils.Adapter {
 
       this.log.debug(`Fetching charging history for ${vin} from ${fromDate} to ${toDate}${nextToken ? ` (page token: ${nextToken})` : ''}`);
 
-      const response = await this.requestClient({
-        method: 'get',
-        url: `${this.carDataApiBase}/customers/vehicles/${vin}/chargingHistory`,
-        headers: headers,
-        params: params,
-      });
+      const response = await this.makeCarDataApiRequest(
+        {
+          method: 'get',
+          url: `${this.carDataApiBase}/customers/vehicles/${vin}/chargingHistory`,
+          headers: headers,
+          params: params,
+        },
+        `fetch charging history for ${vin}${nextToken ? ' (paginated)' : ''}`,
+      );
 
       const chargingData = response.data;
       this.log.info(`Retrieved ${chargingData.data?.length || 0} charging sessions for ${vin}`);
