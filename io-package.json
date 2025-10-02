@@ -93,19 +93,6 @@
         "pl": "dodano nowe piloty jako przełącznik i zaktualizowane wartości\ndodano logikę retry dla pilotów",
         "uk": "додано нові пульти як перемикач і оновлені значення\nдодана логіка для пультів",
         "zh-cn": "作为切换和更新值添加新远程\n为远程添加重试逻辑"
-      },
-      "2.8.4": {
-        "en": "improved charging sessios parsing\nadded remote to fetch charging session from a specific month\nadd raw JSON of charging session for export",
-        "de": "verbesserte charging sessios Import\nRemote hinzugefügt, um charging sessios aus einem bestimmten Monat abzurufen\nRohes JSON der charging sessios für den Export hinzugefügt",
-        "ru": "улучшенный сеанс зарядки\nдобавить удаленное к сеансу зарядки с определенного месяца\nдобавить сырой JSON зарядной сессии для экспорта",
-        "pt": "análise de sessão de carregamento melhorada\nadicionar remoto para buscar sessão de carregamento de um mês específico\nadicionar JSON cru da sessão de carregamento para exportação",
-        "nl": "verbeterde laadsessie ontleden\nremote toevoegen aan opladen van een bepaalde maand\nrauw JSON toevoegen van laadsessie voor export",
-        "fr": "amélioration de l'analyse des sessions de chargement\najouter distant pour récupérer la session de chargement à partir d'un mois spécifique\najouter JSON brut de la session de tarification pour l'exportation",
-        "it": "migliore sessione di ricarica\naggiungere la sessione di ricarica remota a fetch da un mese specifico\naggiungere grezzo JSON di sessione di ricarica per l'esportazione",
-        "es": "mejora de la sesión de carga\nañadir remoto para buscar sesión de carga de un mes específico\nañadir JSON crudo de la sesión de carga para la exportación",
-        "pl": "ulepszona sesja pobierania opłat\ndodaj zdalny do pobierania sesji ładowania z określonego miesiąca\ndodać surowy JSON sesji pobierania opłat za eksport",
-        "uk": "поліпшення зарядки сеансу\nдодати дистанційне сеанс зарядки fetch з конкретного місяця\nдодати сиру JSON на зарядку для експорту",
-        "zh-cn": "改进充值会话解析\n添加远程以获取特定月的充电会话\n添加用于导出的充电会话的原始 JSON"
       }
     },
     "titleLang": {
