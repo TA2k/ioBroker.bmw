@@ -483,6 +483,7 @@ class Bmw extends utils.Adapter {
         configKey: 'fetchChargingHistory',
         url: `/customers/vehicles/${vin}/chargingHistory`,
         channel: 'Charging History',
+        requiresDateRange: true,
       },
       {
         name: 'image',
@@ -502,12 +503,6 @@ class Bmw extends utils.Adapter {
         url: `/customers/vehicles/${vin}/smartMaintenanceTyreDiagnosis`,
         channel: 'Smart Maintenance Tyre Diagnosis',
       },
-      {
-        name: 'telematicData',
-        configKey: 'fetchTelematicData',
-        url: `/customers/vehicles/${vin}/telematicData`,
-        channel: 'Telematic Data',
-      },
     ];
 
     // Filter endpoints based on user configuration
@@ -523,31 +518,59 @@ class Bmw extends utils.Adapter {
 
       try {
         this.log.debug(`Fetching ${endpoint.name} for ${vin}`);
-        const response = await this.requestClient({
+
+        // Prepare request configuration
+        const requestConfig = {
           method: 'get',
           url: `${this.carDataApiBase}${endpoint.url}`,
           headers: headers,
-        });
+        };
+
+        let responseData;
+
+        // Handle chargingHistory endpoint with pagination
+        if (endpoint.name === 'chargingHistory') {
+          const now = new Date();
+          const fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
+
+          const chargingData = await this.fetchChargingHistory(vin, fromDate.toISOString(), now.toISOString());
+          if (chargingData) {
+            responseData = {
+              data: chargingData.data,
+              totalSessions: chargingData.totalSessions,
+              dateRange: {
+                from: fromDate.toISOString(),
+                to: now.toISOString(),
+              },
+            };
+          } else {
+            throw new Error('Failed to fetch charging history');
+          }
+        } else {
+          // Standard endpoint handling
+          const response = await this.requestClient(requestConfig);
+          responseData = response.data;
+        }
 
         // Store data in api/ folder with json2iob
-        await this.json2iob.parse(`${vin}.api.${endpoint.name}`, response.data, {
+        await this.json2iob.parse(`${vin}.api.${endpoint.name}`, responseData, {
           channelName: endpoint.channel,
           descriptions: this.description,
           forceIndex: true,
         });
 
         // Update vehicle name if we got basic data
-        if (endpoint.name === 'basicData' && response.data) {
-          const vehicleName = `${response.data.modelName || response.data.series || vin}`.trim();
+        if (endpoint.name === 'basicData' && responseData) {
+          const vehicleName = `${responseData.modelName || responseData.series || vin}`.trim();
           await this.extendObject(vin, {
             type: 'device',
             common: {
               name: vehicleName,
             },
             native: {
-              brand: response.data.brand,
-              model: response.data.modelName,
-              series: response.data.series,
+              brand: responseData.brand,
+              model: responseData.modelName,
+              series: responseData.series,
               vin: vin,
             },
           });
@@ -1041,11 +1064,12 @@ class Bmw extends utils.Adapter {
   }
 
   /**
-   * Get telematic container details by ID
+   * Get telematic container data for a specific vehicle
    *
-   * @param {string} containerId - The container ID to retrieve
+   * @param {string} vin - The vehicle VIN
+   * @param {string} containerId - The container ID to retrieve data from
    */
-  async getTelematicContainer(containerId) {
+  async getTelematicContainer(vin, containerId) {
     try {
       const headers = {
         Authorization: `Bearer ${this.session.access_token}`,
@@ -1053,27 +1077,93 @@ class Bmw extends utils.Adapter {
         Accept: 'application/json',
       };
 
-      this.log.debug(`Retrieving container details for ID: ${containerId}`);
+      this.log.debug(`Retrieving telematic data for VIN: ${vin}, Container ID: ${containerId}`);
 
       const response = await this.requestClient({
         method: 'get',
-        url: `${this.carDataApiBase}/customers/containers/${containerId}`,
+        url: `${this.carDataApiBase}/customers/vehicles/${vin}/telematicData`,
         headers: headers,
+        params: {
+          containerId: containerId,
+        },
       });
 
-      this.log.info(`Container retrieved successfully: ${response.data.name}`);
-      this.log.debug(`Container details: ${JSON.stringify(response.data)}`);
+      this.log.info(
+        `Telematic data retrieved successfully for ${vin} (${Object.keys(response.data.telematicData || {}).length} data points)`,
+      );
+      this.log.debug(`Telematic data: ${JSON.stringify(response.data)}`);
 
       return response.data;
     } catch (error) {
-      this.log.error(`Failed to retrieve container ${containerId}: ${error.message}`);
+      this.log.error(`Failed to retrieve telematic data for ${vin} with container ${containerId}: ${error.message}`);
       if (error.response) {
         this.log.error(`Response status: ${error.response.status}`);
         this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
 
         if (error.response.status === 404) {
-          this.log.warn(`Container ${containerId} not found (404)`);
+          this.log.warn(`Telematic data not found for VIN ${vin} or container ${containerId} (404)`);
         }
+      }
+      return null;
+    }
+  }
+
+  /**
+   * Fetch charging history with pagination support
+   *
+   * @param {string} vin - The vehicle VIN
+   * @param {string} fromDate - Start date in ISO format
+   * @param {string} toDate - End date in ISO format
+   * @param {string|null} nextToken - Optional pagination token
+   */
+  async fetchChargingHistory(vin, fromDate, toDate, nextToken = null) {
+    try {
+      const headers = {
+        Authorization: `Bearer ${this.session.access_token}`,
+        'x-version': 'v1',
+        Accept: 'application/json',
+      };
+
+      const params = {
+        from: fromDate,
+        to: toDate,
+      };
+
+      if (nextToken) {
+        params.nextToken = nextToken;
+      }
+
+      this.log.debug(`Fetching charging history for ${vin} from ${fromDate} to ${toDate}${nextToken ? ` (page token: ${nextToken})` : ''}`);
+
+      const response = await this.requestClient({
+        method: 'get',
+        url: `${this.carDataApiBase}/customers/vehicles/${vin}/chargingHistory`,
+        headers: headers,
+        params: params,
+      });
+
+      const chargingData = response.data;
+      this.log.info(`Retrieved ${chargingData.data?.length || 0} charging sessions for ${vin}`);
+
+      // If there's a next token, fetch additional pages
+      let allData = chargingData.data || [];
+      if (chargingData.next_token) {
+        this.log.debug(`Found next_token, fetching additional charging history pages...`);
+        const nextPageData = await this.fetchChargingHistory(vin, fromDate, toDate, chargingData.next_token);
+        if (nextPageData && nextPageData.data) {
+          allData = allData.concat(nextPageData.data);
+        }
+      }
+
+      return {
+        data: allData,
+        totalSessions: allData.length,
+      };
+    } catch (error) {
+      this.log.error(`Failed to fetch charging history for ${vin}: ${error.message}`);
+      if (error.response) {
+        this.log.error(`Response status: ${error.response.status}`);
+        this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
       }
       return null;
     }
@@ -1096,12 +1186,19 @@ class Bmw extends utils.Adapter {
     if (createSuccess) {
       this.log.info(`Telematic container setup completed. Container ID: ${this.containerId}`);
 
-      // Optionally verify the created container
-      const containerDetails = await this.getTelematicContainer(this.containerId);
-      if (containerDetails) {
-        this.log.info(
-          `Container verification successful: ${containerDetails.technicalDescriptors.length} technical descriptors configured`,
-        );
+      // Optionally test the created container with first available VIN
+      if (this.vinArray.length > 0) {
+        const testVin = this.vinArray[0];
+        const telematicData = await this.getTelematicContainer(testVin, this.containerId);
+        if (telematicData && telematicData.telematicData) {
+          this.log.info(
+            `Container verification successful: Retrieved ${Object.keys(telematicData.telematicData).length} telematic data points for ${testVin}`,
+          );
+        } else {
+          this.log.warn('Container created but no telematic data retrieved for verification');
+        }
+      } else {
+        this.log.info('Container created successfully (no vehicles available for verification)');
       }
     } else {
       this.log.error('Failed to setup telematic container');
