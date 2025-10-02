@@ -349,11 +349,11 @@ class Bmw extends utils.Adapter {
       return false;
     } catch (error) {
       this.log.error(`Device flow failed: ${error.message}`);
-      this.log.error('Error stack:', error.stack);
+      this.log.error(`Error stack: ${error.stack}`);
       if (error.response) {
-        this.log.error('Response status:', error.response.status);
-        this.log.error('Response headers:', JSON.stringify(error.response.headers));
-        this.log.error('Response data:', JSON.stringify(error.response.data));
+        this.log.error(`Response status: ${error.response.status}`);
+        this.log.error(`Response headers: ${JSON.stringify(error.response.headers)}`);
+        this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
       }
       if (error.request) {
         this.log.error('Request details:', {
@@ -775,10 +775,10 @@ class Bmw extends utils.Adapter {
         return res.data;
       })
       .catch(async error => {
-        this.log.error('Token refresh failed:', error.message);
-        this.log.error('Error stack:', error.stack);
+        this.log.error(`Token refresh failed: ${error.message}`);
+        this.log.error(`Error stack: ${error.stack}`);
         if (error.response) {
-          this.log.error('Response status:', error.response.status);
+          this.log.error(`Response status: ${error.response.status}`);
           this.log.error('Response headers:', JSON.stringify(error.response.headers));
           this.log.error('Response data:', JSON.stringify(error.response.data));
         }
