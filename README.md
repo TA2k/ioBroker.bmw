@@ -61,7 +61,8 @@ After creating your Client ID, configure streaming:
 4. Click **"Datenauswahl ändern"** (Change Data Selection) button
 5. **Select ALL categories** (Vehicle Status, Charging, Trip Data, etc.)
 6. **Manually check ALL 244 individual data points**
-7. Save your configuration by clicking **"Stream löschen"** if needed to reset, then reconfigure
+7. Or enter this in Google Developer Console `document.querySelectorAll('label.chakra-checkbox:not([data-checked])').forEach(l => l.click());`
+8. Save your configuration by clicking **"Stream löschen"** if needed to reset, then reconfigure
 
 **Without selecting all data points, MQTT streaming will not provide complete data!**
 
