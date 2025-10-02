@@ -24,9 +24,9 @@
       "newLine": true,
       "xs": 12,
       "sm": 12,
-      "md": 6,
-      "lg": 6,
-      "xl": 6
+      "md": 12,
+      "lg": 12,
+      "xl": 12
     },
     "_setup": {
       "type": "staticText",
@@ -49,7 +49,7 @@
       "newLine": true,
       "xs": 12,
       "sm": 12,
-      "md": 6,
+      "md": 12,
       "lg": 6,
       "xl": 6
     },
@@ -78,7 +78,7 @@
       "newLine": true,
       "xs": 12,
       "sm": 12,
-      "md": 6,
+      "md": 12,
       "lg": 6,
       "xl": 6
     },
@@ -112,7 +112,7 @@
       "newLine": true,
       "xs": 12,
       "sm": 12,
-      "md": 6,
+      "md": 12,
       "lg": 6,
       "xl": 6
     },
@@ -146,7 +146,7 @@
       "newLine": true,
       "xs": 12,
       "sm": 12,
-      "md": 6,
+      "md": 12,
       "lg": 6,
       "xl": 6
     },
@@ -179,11 +179,11 @@
         }
       ],
       "newLine": true,
-      "xs": 6,
-      "sm": 6,
-      "md": 3,
-      "lg": 3,
-      "xl": 3
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 6,
+      "xl": 6
     },
     "interval": {
       "type": "number",
@@ -215,11 +215,11 @@
       "max": 1440,
       "default": 60,
       "newLine": true,
-      "xs": 6,
-      "sm": 6,
-      "md": 3,
-      "lg": 3,
-      "xl": 3
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 6,
+      "xl": 6
     },
     "ignorelist": {
       "type": "text",

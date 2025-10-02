@@ -356,11 +356,9 @@ class Bmw extends utils.Adapter {
         this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
       }
       if (error.request) {
-        this.log.error('Request details:', {
-          method: error.request.method,
-          url: error.request.url,
-          headers: error.request._headers,
-        });
+        this.log.error(
+          `Request details  -  method: ${error.request.method}, url: ${error.request.url}, headers: ${error.request._headers}`,
+        );
       }
       return false;
     }
@@ -783,11 +781,9 @@ class Bmw extends utils.Adapter {
           this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
         }
         if (error.request) {
-          this.log.error('Request details:', {
-            method: error.request.method,
-            url: error.request.url,
-            headers: error.request._headers,
-          });
+          this.log.error(
+            `Request details  -  method: ${error.request.method}, url: ${error.request.url}, headers: ${error.request._headers}`,
+          );
         }
         this.log.info('Starting new device authorization flow');
         return await this.login();
