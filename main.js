@@ -42,6 +42,9 @@ class Bmw extends utils.Adapter {
     // API quota tracking
     this.apiCalls = [];
 
+    // Container ID for telematic data
+    this.containerId = null;
+
     this.requestClient = axios.create({
       withCredentials: true,
     });
@@ -113,6 +116,9 @@ class Bmw extends utils.Adapter {
     // Proceed if we have valid tokens
     if (this.session.access_token && this.session.gcid) {
       this.log.info('Starting BMW CarData vehicle discovery...');
+
+      // Setup telematic container first
+      await this.setupTelematicContainer();
 
       // Get vehicles and fetch all initial data
       await this.getVehiclesv2(true);
@@ -900,6 +906,206 @@ class Bmw extends utils.Adapter {
     } catch (error) {
       this.log.warn(`Failed to parse MQTT message: ${error.message}`);
     }
+  }
+
+  /**
+   * Clean up existing containers that start with "ioBroker"
+   */
+  async cleanupAllContainers() {
+    try {
+      const headers = {
+        Authorization: `Bearer ${this.session.access_token}`,
+        'x-version': 'v1',
+        Accept: 'application/json',
+      };
+
+      this.log.info('Cleaning up existing ioBroker containers...');
+
+      // Get all existing containers
+      const response = await this.requestClient({
+        method: 'get',
+        url: `${this.carDataApiBase}/customers/containers`,
+        headers: headers,
+      });
+
+      const containers = response.data;
+      const ioBrokerContainers = containers.filter(container => container.name && container.name.startsWith('ioBroker'));
+
+      this.log.info(`Found ${containers.length} total containers, ${ioBrokerContainers.length} ioBroker containers to delete`);
+
+      // Delete only ioBroker containers
+      for (const container of ioBrokerContainers) {
+        try {
+          await this.requestClient({
+            method: 'delete',
+            url: `${this.carDataApiBase}/customers/containers/${container.id}`,
+            headers: headers,
+          });
+          this.log.debug(`Deleted ioBroker container: ${container.id} (${container.name})`);
+        } catch (error) {
+          this.log.warn(`Failed to delete container ${container.id}: ${error.message}`);
+        }
+      }
+
+      this.log.info(`Container cleanup completed - deleted ${ioBrokerContainers.length} ioBroker containers`);
+      return true;
+    } catch (error) {
+      this.log.error(`Failed to cleanup containers: ${error.message}`);
+      if (error.response) {
+        this.log.error(`Response: ${JSON.stringify(error.response.data)}`);
+      }
+      return false;
+    }
+  }
+
+  /**
+   * Create a new container with all technical identifiers from telematic.json
+   */
+  async createTelematicContainer() {
+    try {
+      const headers = {
+        Authorization: `Bearer ${this.session.access_token}`,
+        'x-version': 'v1',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      };
+
+      // Read telematic.json file
+      const fs = require('fs');
+      const path = require('path');
+      const telematicPath = path.join(__dirname, 'telematic.json');
+
+      if (!fs.existsSync(telematicPath)) {
+        this.log.error('telematic.json file not found');
+        return false;
+      }
+
+      const telematicData = JSON.parse(fs.readFileSync(telematicPath, 'utf8'));
+
+      // Extract all technical identifiers
+      const technicalDescriptors = telematicData.map(item => item.technical_identifier).filter(identifier => identifier); // Remove any undefined/null values
+
+      this.log.info(`Creating container with ${technicalDescriptors.length} technical identifiers from telematic.json`);
+
+      const containerData = {
+        name: `ioBroker BMW Telematic Data - ${new Date().toISOString()}`,
+        purpose: 'Container for BMW telematic data endpoints used by ioBroker adapter',
+        technicalDescriptors: technicalDescriptors,
+      };
+
+      const response = await this.requestClient({
+        method: 'post',
+        url: `${this.carDataApiBase}/customers/containers`,
+        headers: headers,
+        data: containerData,
+      });
+
+      this.containerId = response.data.id;
+      this.log.info(`Container created successfully with ID: ${this.containerId}`);
+      this.log.debug(`Container details: ${JSON.stringify(response.data)}`);
+
+      // Store container ID in adapter state for persistence
+      await this.extendObject('containerInfo', {
+        type: 'channel',
+        common: {
+          name: 'Container Information',
+        },
+        native: {},
+      });
+
+      await this.extendObject('containerInfo.containerId', {
+        type: 'state',
+        common: {
+          name: 'Container ID',
+          type: 'string',
+          role: 'info',
+          read: true,
+          write: false,
+        },
+        native: {},
+      });
+
+      await this.setState('containerInfo.containerId', this.containerId, true);
+
+      return true;
+    } catch (error) {
+      this.log.error(`Failed to create telematic container: ${error.message}`);
+      if (error.response) {
+        this.log.error(`Response status: ${error.response.status}`);
+        this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
+      }
+      return false;
+    }
+  }
+
+  /**
+   * Get telematic container details by ID
+   *
+   * @param {string} containerId - The container ID to retrieve
+   */
+  async getTelematicContainer(containerId) {
+    try {
+      const headers = {
+        Authorization: `Bearer ${this.session.access_token}`,
+        'x-version': 'v1',
+        Accept: 'application/json',
+      };
+
+      this.log.debug(`Retrieving container details for ID: ${containerId}`);
+
+      const response = await this.requestClient({
+        method: 'get',
+        url: `${this.carDataApiBase}/customers/containers/${containerId}`,
+        headers: headers,
+      });
+
+      this.log.info(`Container retrieved successfully: ${response.data.name}`);
+      this.log.debug(`Container details: ${JSON.stringify(response.data)}`);
+
+      return response.data;
+    } catch (error) {
+      this.log.error(`Failed to retrieve container ${containerId}: ${error.message}`);
+      if (error.response) {
+        this.log.error(`Response status: ${error.response.status}`);
+        this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
+
+        if (error.response.status === 404) {
+          this.log.warn(`Container ${containerId} not found (404)`);
+        }
+      }
+      return null;
+    }
+  }
+
+  /**
+   * Setup telematic container by cleaning up existing ones and creating a new one
+   */
+  async setupTelematicContainer() {
+    this.log.info('Setting up telematic container...');
+
+    // First cleanup all existing containers
+    const cleanupSuccess = await this.cleanupAllContainers();
+    if (!cleanupSuccess) {
+      this.log.warn('Container cleanup failed, proceeding with container creation anyway');
+    }
+
+    // Create new container with telematic data
+    const createSuccess = await this.createTelematicContainer();
+    if (createSuccess) {
+      this.log.info(`Telematic container setup completed. Container ID: ${this.containerId}`);
+
+      // Optionally verify the created container
+      const containerDetails = await this.getTelematicContainer(this.containerId);
+      if (containerDetails) {
+        this.log.info(
+          `Container verification successful: ${containerDetails.technicalDescriptors.length} technical descriptors configured`,
+        );
+      }
+    } else {
+      this.log.error('Failed to setup telematic container');
+    }
+
+    return createSuccess;
   }
 
   /**
