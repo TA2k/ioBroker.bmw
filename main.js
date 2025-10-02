@@ -779,8 +779,8 @@ class Bmw extends utils.Adapter {
         this.log.error(`Error stack: ${error.stack}`);
         if (error.response) {
           this.log.error(`Response status: ${error.response.status}`);
-          this.log.error('Response headers:', JSON.stringify(error.response.headers));
-          this.log.error('Response data:', JSON.stringify(error.response.data));
+          this.log.error(`Response headers: ${JSON.stringify(error.response.headers)}`);
+          this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
         }
         if (error.request) {
           this.log.error('Request details:', {
@@ -976,7 +976,7 @@ class Bmw extends utils.Adapter {
         Accept: 'application/json',
       };
 
-      this.log.info('Cleaning up existing ioBroker containers...');
+      this.log.info(`Cleaning up existing ioBroker containers...`);
 
       // Get all existing containers
       const response = await this.makeCarDataApiRequest(
@@ -1039,7 +1039,7 @@ class Bmw extends utils.Adapter {
       const telematicPath = path.join(__dirname, 'telematic.json');
 
       if (!fs.existsSync(telematicPath)) {
-        this.log.error('telematic.json file not found');
+        this.log.error(`telematic.json file not found`);
         return false;
       }
 
@@ -1220,12 +1220,12 @@ class Bmw extends utils.Adapter {
    * Setup telematic container by cleaning up existing ones and creating a new one
    */
   async setupTelematicContainer() {
-    this.log.info('Setting up telematic container...');
+    this.log.info(`Setting up telematic container...`);
 
     // First cleanup all existing containers
     const cleanupSuccess = await this.cleanupAllContainers();
     if (!cleanupSuccess) {
-      this.log.warn('Container cleanup failed, proceeding with container creation anyway');
+      this.log.warn(`Container cleanup failed, proceeding with container creation anyway`);
     }
 
     // Create new container with telematic data
@@ -1242,13 +1242,13 @@ class Bmw extends utils.Adapter {
             `Container verification successful: Retrieved ${Object.keys(telematicData.telematicData).length} telematic data points for ${testVin}`,
           );
         } else {
-          this.log.warn('Container created but no telematic data retrieved for verification');
+          this.log.warn(`Container created but no telematic data retrieved for verification`);
         }
       } else {
-        this.log.info('Container created successfully (no vehicles available for verification)');
+        this.log.info(`Container created successfully (no vehicles available for verification)`);
       }
     } else {
-      this.log.error('Failed to setup telematic container');
+      this.log.error(`Failed to setup telematic container`);
     }
 
     return createSuccess;
@@ -1291,8 +1291,8 @@ class Bmw extends utils.Adapter {
   async onStateChange(id, state) {
     if (state && !state.ack) {
       // BMW CarData API is read-only, no remote controls available
-      this.log.warn('Remote controls not available in BMW CarData (read-only API)');
-      this.log.info('BMW CarData only provides vehicle data, no command functionality');
+      this.log.warn(`Remote controls not available in BMW CarData (read-only API)`);
+      this.log.info(`BMW CarData only provides vehicle data, no command functionality`);
 
       // Reset the state to acknowledge it
       this.setState(id, state.val, true);
