@@ -200,7 +200,11 @@
       "max": 1440,
       "default": 60,
       "newLine": true,
-      "sm": 3
+      "xs": 6,
+      "sm": 6,
+      "md": 3,
+      "lg": 3,
+      "xl": 3
     },
     "ignorelist": {
       "type": "text",
@@ -230,7 +234,11 @@
       },
       "placeholder": "VIN1,VIN2,VIN3",
       "newLine": true,
-      "sm": 6
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 6,
+      "xl": 6
     },
     "_api_endpoints": {
       "type": "header",
@@ -269,6 +277,7 @@
       },
       "newLine": true
     },
+
     "fetchBasicData": {
       "type": "checkbox",
       "label": {
@@ -297,7 +306,11 @@
       },
       "default": true,
       "newLine": true,
-      "sm": 4
+      "xs": 4,
+      "sm": 4,
+      "md": 4,
+      "lg": 4,
+      "xl": 4
     },
     "fetchChargingHistory": {
       "type": "checkbox",
@@ -327,7 +340,11 @@
       },
       "default": true,
       "newLine": false,
-      "sm": 4
+      "xs": 4,
+      "sm": 4,
+      "md": 4,
+      "lg": 4,
+      "xl": 4
     },
     "fetchImage": {
       "type": "checkbox",
@@ -357,8 +374,13 @@
       },
       "default": false,
       "newLine": false,
-      "sm": 4
+      "xs": 4,
+      "sm": 4,
+      "md": 4,
+      "lg": 4,
+      "xl": 4
     },
+
     "fetchLocationBasedChargingSettings": {
       "type": "checkbox",
       "label": {
@@ -387,7 +409,11 @@
       },
       "default": false,
       "newLine": true,
-      "sm": 4
+      "xs": 4,
+      "sm": 4,
+      "md": 4,
+      "lg": 4,
+      "xl": 4
     },
     "fetchSmartMaintenanceTyreDiagnosis": {
       "type": "checkbox",
@@ -417,7 +443,11 @@
       },
       "default": false,
       "newLine": false,
-      "sm": 4
+      "xs": 4,
+      "sm": 4,
+      "md": 4,
+      "lg": 4,
+      "xl": 4
     },
     "fetchTelematicData": {
       "type": "checkbox",
@@ -447,7 +477,11 @@
       },
       "default": false,
       "newLine": false,
-      "sm": 4
+      "xs": 4,
+      "sm": 4,
+      "md": 4,
+      "lg": 4,
+      "xl": 4
     }
   }
 }
