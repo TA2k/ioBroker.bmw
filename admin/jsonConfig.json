@@ -95,7 +95,11 @@
       },
       "placeholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
       "newLine": true,
-      "sm": 6
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 6,
+      "xl": 6
     },
     "cardataStreamingUsername": {
       "type": "text",
@@ -125,7 +129,11 @@
       },
       "placeholder": "streaming_username_from_bmw_portal",
       "newLine": true,
-      "sm": 6
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 6,
+      "xl": 6
     },
     "brand": {
       "type": "select",
@@ -156,7 +164,11 @@
         }
       ],
       "newLine": true,
-      "sm": 3
+      "xs": 6,
+      "sm": 6,
+      "md": 3,
+      "lg": 3,
+      "xl": 3
     },
     "interval": {
       "type": "number",
