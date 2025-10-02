@@ -52,6 +52,18 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 
 **YOU MUST CONFIGURE CARDATA STREAMING AND SELECT ALL 244 DATA POINTS**
 
+You can use your browser console (press F12) to select all data points with the following javascript. This selection takes some seconds.
+```
+for (let i = 1; i <= 244; i++) {
+  const label = document.querySelector(
+    `tr.css-0:nth-child(${i}) > td:nth-child(1) > div:nth-child(1) > label:nth-child(1)`
+  );
+  if (label) {
+    label.click();
+  }
+}
+```
+
 After creating your Client ID, configure streaming:
 
 1. In the CarData section, look for **"CARDATA STREAMING"**
@@ -185,6 +197,13 @@ If you're not seeing expected data in `VIN.api.*`:
 - **`VIN.stream.*`** - Updated in real-time via MQTT when vehicle data changes
 - **`VIN.lastUpdate`** - Timestamp of most recent data update (API or MQTT)
 - **`VIN.lastStreamUpdate`** - Timestamp of most recent MQTT stream update
+
+## Adapter Upgrade via Shell
+
+To upgrade this adapter on the shell console
+1. switch to the iobroker user
+2. cd into the iobroker directory
+3. execute `iobroker url npm:iobroker.bmw@latest` 
 
 ## Source
 
