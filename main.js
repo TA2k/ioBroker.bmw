@@ -45,6 +45,9 @@ class Bmw extends utils.Adapter {
     // Container ID for telematic data
     this.containerId = null;
 
+    // Flag to track initial login (not adapter restart)
+    this.initialLogin = false;
+
     this.requestClient = axios.create({
       withCredentials: true,
     });
@@ -117,46 +120,73 @@ class Bmw extends utils.Adapter {
     if (this.session.access_token && this.session.gcid) {
       this.log.info('Starting BMW CarData vehicle discovery...');
 
-      // Setup telematic container first
-      // await this.setupTelematicContainer();
-
-      // Get vehicles and fetch all initial data
+      // Get vehicles first to populate vinArray
       await this.getVehiclesv2(true);
+
+      // Setup telematic container after we have vehicles
+      await this.setupTelematicContainer();
+
       // Connect MQTT after successful auth
       await this.connectMQTT();
       // Start periodic token refresh (every 45 minutes)
-      this.refreshTokenInterval = setInterval(
-        async () => {
-          await this.refreshToken();
-        },
-        45 * 60 * 1000,
-      );
+      this.refreshTokenInterval = setInterval(async () => {
+        await this.refreshToken();
+      }, 45 * 60 * 1000);
 
-      // Start periodic API updates (respecting quota limits)
-      if (this.vinArray.length > 0) {
-        this.log.info(
-          `Setting up periodic updates for static data every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`,
-        );
-        this.updateInterval = setInterval(
-          async () => {
-            // Update quota states (expired calls removed automatically)
-            this.updateQuotaStates();
+      // Start periodic telematic data updates (respecting quota limits)
+      if (this.vinArray.length > 0 && this.config.interval > 0) {
+        this.log.info(`Setting up periodic telematic data updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`);
+        this.updateInterval = setInterval(async () => {
+          // Update quota states (expired calls removed automatically)
+          this.updateQuotaStates();
 
-            // Periodic API data refresh - MQTT provides real-time updates
-            const headers = {
-              Authorization: `Bearer ${this.session.access_token}`,
-              'x-version': 'v1',
-              Accept: 'application/json',
-            };
-
-            for (const vin of this.vinArray) {
-              this.log.debug(`Periodic API refresh for ${vin}`);
-              await this.fetchAllVehicleData(vin, headers);
-              break; // Only one vehicle per interval to conserve quota
+          // Periodic telematic data refresh - MQTT provides real-time updates
+          if (!this.containerId) {
+            this.log.warn('No container ID available for periodic telematic data fetch, setting up container...');
+            const setupSuccess = await this.setupTelematicContainer();
+            if (!setupSuccess) {
+              this.log.error('Failed to setup telematic container for periodic updates');
+              return;
             }
-          },
-          this.config.interval * 60 * 1000,
-        );
+          }
+
+          for (const vin of this.vinArray) {
+            this.log.debug(`Periodic telematic data refresh for ${vin}`);
+            try {
+              const telematicData = await this.getTelematicContainer(vin, this.containerId);
+              if (telematicData && telematicData.telematicData) {
+                // Store telematic data directly in stream folder
+                await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
+                  descriptions: this.description,
+                  forceIndex: true,
+                });
+
+                // Update lastAPIUpdate timestamp
+                await this.extendObject(`${vin}.stream.lastAPIUpdate`, {
+                  type: 'state',
+                  common: {
+                    name: 'Last Telematic API Update',
+                    type: 'string',
+                    role: 'date',
+                    read: true,
+                    write: false,
+                  },
+                  native: {},
+                });
+                await this.setState(`${vin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
+
+                this.log.debug(`✓ Periodic telematic data update for ${vin}: ${Object.keys(telematicData.telematicData).length} data points`);
+              } else {
+                this.log.warn(`No telematic data retrieved for ${vin} during periodic update`);
+              }
+            } catch (error) {
+              this.log.error(`Periodic telematic data fetch failed for ${vin}: ${error.message}`);
+            }
+            break; // Only one vehicle per interval to conserve quota
+          }
+        }, this.config.interval * 60 * 1000);
+      } else if (this.config.interval === 0) {
+        this.log.info('Periodic telematic data updates disabled (interval = 0)');
       }
 
       this.log.info('BMW CarData adapter startup complete');
@@ -164,7 +194,7 @@ class Bmw extends utils.Adapter {
       this.log.info(
         `API quota: ${
           API_QUOTA_LIMIT - this.apiCalls.length
-        }/${API_QUOTA_LIMIT} calls remaining for static data. Updates via MQTT do not count against quota.`,
+        }/${API_QUOTA_LIMIT} calls remaining for static data. Updates via MQTT do not count against quota.`
       );
     } else {
       this.log.error('BMW CarData authentication failed');
@@ -205,11 +235,11 @@ class Bmw extends utils.Adapter {
         },
         data: requestData,
       })
-        .then(res => {
+        .then((res) => {
           this.log.debug(`Device code response: ${JSON.stringify(res.data)}`);
           return res;
         })
-        .catch(error => {
+        .catch((error) => {
           this.log.error(`Device code request failed: ${error.message}`);
           this.log.error(`Error stack: ${error.stack}`);
           if (error.response) {
@@ -230,9 +260,7 @@ class Bmw extends utils.Adapter {
               this.log.error('To fix this issue:');
               this.log.error('1. Visit BMW ConnectedDrive portal: https://www.bmw.de/de-de/mybmw/vehicle-overview');
               this.log.error('2. Go to CarData section');
-              this.log.error(
-                '3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection',
-              );
+              this.log.error('3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection');
               this.log.error('4. If not activated, enable both services');
               this.log.error('5. If already activated, delete and recreate your Client ID');
               this.log.error('6. Update the adapter configuration with the new Client ID');
@@ -245,7 +273,7 @@ class Bmw extends utils.Adapter {
                 method: error.request.method,
                 url: error.request.url,
                 headers: error.request._headers,
-              })}`,
+              })}`
             );
           }
           return false; // Return false instead of throwing
@@ -319,6 +347,9 @@ class Bmw extends utils.Adapter {
           this.setState('info.connection', true, true);
           this.log.info('BMW CarData authorization successful!');
 
+          // Mark this as an initial login so basicData will be fetched
+          this.initialLogin = true;
+
           return true;
         } catch (error) {
           const errorCode = error.response?.data?.error;
@@ -380,9 +411,9 @@ class Bmw extends utils.Adapter {
         url: `${this.carDataApiBase}/customers/vehicles/mappings`,
         headers: headers,
       },
-      'fetch vehicle mappings',
+      'fetch vehicle mappings'
     )
-      .then(async res => {
+      .then(async (res) => {
         this.log.debug(JSON.stringify(res.data));
         const mappings = res.data;
 
@@ -434,14 +465,24 @@ class Bmw extends utils.Adapter {
             });
             await this.setState(`${vin}.vin`, vin, true);
 
-            // Fetch all available data for this vehicle on first start
+            // Fetch all initial data for this vehicle on first start
             if (firstStart) {
-              await this.fetchAllVehicleData(vin, headers);
+              await this.fetchAllVehicleData(vin);
+            }
+
+            // Fetch basicData only after real login (not adapter restart)
+            if (this.initialLogin) {
+              try {
+                await this.handleRemoteApiCall(vin, 'basicData');
+                this.log.info(`✓ BasicData fetched for ${vin} after initial login`);
+              } catch (error) {
+                this.log.warn(`Failed to fetch basicData for ${vin} after initial login: ${error.message}`);
+              }
             }
           }
         }
       })
-      .catch(error => {
+      .catch((error) => {
         this.log.error(`BMW CarData vehicle discovery failed: ${error.message}`);
         if (error.response) {
           this.log.error(`Response: ${JSON.stringify(error.response.data)}`);
@@ -451,11 +492,17 @@ class Bmw extends utils.Adapter {
         }
       });
 
+    // Reset initialLogin flag after processing all vehicles
+    if (this.initialLogin) {
+      this.initialLogin = false;
+      this.log.info('Initial login basicData fetching completed');
+    }
+
     await this.sleep(2000);
   }
 
-  // Fetch ALL available API endpoints for each vehicle
-  async fetchAllVehicleData(vin, headers) {
+  // Create vehicle structure and remote buttons (no automatic API fetching)
+  async fetchAllVehicleData(vin) {
     // Create main folder structure
     await this.extendObject(`${vin}.api`, {
       type: 'channel',
@@ -473,122 +520,66 @@ class Bmw extends utils.Adapter {
       native: {},
     });
 
-    // Define available API endpoints with config mapping (BMW CarData API v1)
+    // Create remote control structure with buttons for all API endpoints
+    await this.extendObject(`${vin}.remote`, {
+      type: 'channel',
+      common: {
+        name: 'Remote Controls',
+      },
+      native: {},
+    });
+
+    // Define available API endpoints (BMW CarData API v1)
     const apiEndpoints = [
       {
+        name: 'fetchViaAPI',
+        label: 'Fetch Telematic Data via API',
+        desc: 'Trigger fetching telematic container data for this vehicle',
+      },
+      {
         name: 'basicData',
-        configKey: 'fetchBasicData',
-        url: `/customers/vehicles/${vin}/basicData`,
-        channel: 'Basic Information',
+        label: 'Fetch Basic Data',
+        desc: 'Fetch vehicle information, model, brand, series, VIN details',
       },
       {
         name: 'chargingHistory',
-        configKey: 'fetchChargingHistory',
-        url: `/customers/vehicles/${vin}/chargingHistory`,
-        channel: 'Charging History',
-        requiresDateRange: true,
+        label: 'Fetch Charging History',
+        desc: 'Fetch charging sessions and history data',
       },
       {
         name: 'image',
-        configKey: 'fetchImage',
-        url: `/customers/vehicles/${vin}/image`,
-        channel: 'Vehicle Image',
+        label: 'Fetch Vehicle Image',
+        desc: 'Fetch vehicle image for display purposes',
       },
       {
         name: 'locationBasedChargingSettings',
-        configKey: 'fetchLocationBasedChargingSettings',
-        url: `/customers/vehicles/${vin}/locationBasedChargingSettings`,
-        channel: 'Location Based Charging Settings',
+        label: 'Fetch Location Based Charging Settings',
+        desc: 'Fetch location-specific charging preferences and settings',
       },
       {
         name: 'smartMaintenanceTyreDiagnosis',
-        configKey: 'fetchSmartMaintenanceTyreDiagnosis',
-        url: `/customers/vehicles/${vin}/smartMaintenanceTyreDiagnosis`,
-        channel: 'Smart Maintenance Tyre Diagnosis',
+        label: 'Fetch Smart Maintenance Tyre Diagnosis',
+        desc: 'Fetch smart maintenance system tyre condition and diagnosis data',
       },
     ];
 
-    // Filter endpoints based on user configuration
-    const enabledEndpoints = apiEndpoints.filter(endpoint => this.config[endpoint.configKey] === true);
-
-    this.log.info(`Fetching ${enabledEndpoints.length} configured API endpoints for ${vin}...`);
-
-    for (const endpoint of enabledEndpoints) {
-      try {
-        this.log.debug(`Fetching ${endpoint.name} for ${vin}`);
-
-        // Prepare request configuration
-        const requestConfig = {
-          method: 'get',
-          url: `${this.carDataApiBase}${endpoint.url}`,
-          headers: headers,
-        };
-
-        let responseData;
-
-        // Handle chargingHistory endpoint with pagination
-        if (endpoint.name === 'chargingHistory') {
-          const now = new Date();
-          const fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
-
-          const chargingData = await this.fetchChargingHistory(vin, fromDate.toISOString(), now.toISOString());
-          if (chargingData) {
-            responseData = {
-              data: chargingData.data,
-              totalSessions: chargingData.totalSessions,
-              dateRange: {
-                from: fromDate.toISOString(),
-                to: now.toISOString(),
-              },
-            };
-          } else {
-            throw new Error('Failed to fetch charging history');
-          }
-        } else {
-          // Standard endpoint handling
-          const response = await this.makeCarDataApiRequest(requestConfig, `fetch ${endpoint.name} for ${vin}`);
-          responseData = response.data;
-        }
-
-        // Store data in api/ folder with json2iob
-        await this.json2iob.parse(`${vin}.api.${endpoint.name}`, responseData, {
-          channelName: endpoint.channel,
-          descriptions: this.description,
-          forceIndex: true,
-        });
-
-        // Update vehicle name if we got basic data
-        if (endpoint.name === 'basicData' && responseData) {
-          const vehicleName = `${responseData.modelName || responseData.series || vin}`.trim();
-          await this.extendObject(vin, {
-            type: 'device',
-            common: {
-              name: vehicleName,
-            },
-            native: {
-              brand: responseData.brand,
-              model: responseData.modelName,
-              series: responseData.series,
-              vin: vin,
-            },
-          });
-          this.log.info(`Updated vehicle name: ${vehicleName} (${vin})`);
-        }
-
-        this.log.debug(`✓ ${endpoint.name} for ${vin}`);
-        await this.sleep(1000); // Rate limiting between calls
-      } catch (error) {
-        // Some endpoints might not be available for all vehicles
-        const status = error.response?.status;
-        if (status === 404) {
-          this.log.debug(`${endpoint.name} not available for ${vin} (404)`);
-        } else if (status === 403) {
-          this.log.warn(`${endpoint.name} access denied for ${vin} (403)`);
-        } else {
-          this.log.debug(`${endpoint.name} failed for ${vin}: ${error.message}`);
-        }
-      }
+    // Create remote buttons for all endpoints
+    for (const endpoint of apiEndpoints) {
+      await this.extendObject(`${vin}.remote.${endpoint.name}`, {
+        type: 'state',
+        common: {
+          name: endpoint.label,
+          type: 'boolean',
+          role: 'button',
+          read: false,
+          write: true,
+          desc: endpoint.desc,
+        },
+        native: {},
+      });
     }
+
+    // No automatic fetching - all endpoints are now available via remote buttons
 
     // Update lastUpdate after all API data is fetched
     await this.extendObject(`${vin}.lastUpdate`, {
@@ -613,7 +604,7 @@ class Bmw extends utils.Adapter {
 
     // Remove calls older than 24h
     const originalLength = this.apiCalls.length;
-    this.apiCalls = this.apiCalls.filter(time => now - time < 24 * 60 * 60 * 1000);
+    this.apiCalls = this.apiCalls.filter((time) => now - time < 24 * 60 * 60 * 1000);
 
     // Save history if calls were removed due to expiration
     if (this.apiCalls.length !== originalLength) {
@@ -683,7 +674,7 @@ class Bmw extends utils.Adapter {
   }
 
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async cleanObjects(vin) {
@@ -757,7 +748,7 @@ class Bmw extends utils.Adapter {
       },
       data: qs.stringify(refreshData),
     })
-      .then(async res => {
+      .then(async (res) => {
         // Store refreshed tokens (keep existing session structure)
         this.session = res.data;
         this.setState('cardataauth.session', JSON.stringify(this.session), true);
@@ -774,7 +765,7 @@ class Bmw extends utils.Adapter {
 
         return res.data;
       })
-      .catch(async error => {
+      .catch(async (error) => {
         this.log.error('Token refresh failed:', error.message);
         this.log.error('Error stack:', error.stack);
         if (error.response) {
@@ -831,7 +822,7 @@ class Bmw extends utils.Adapter {
 
       // Subscribe to all vehicle topics for this CarData Streaming username
       const topic = `${this.config.cardataStreamingUsername}/+`;
-      this.mqtt.subscribe(topic, err => {
+      this.mqtt.subscribe(topic, (err) => {
         if (err) {
           this.log.error(`MQTT subscription failed: ${err.message}`);
         } else {
@@ -844,7 +835,7 @@ class Bmw extends utils.Adapter {
       this.handleMQTTMessage(topic, message);
     });
 
-    this.mqtt.on('error', async error => {
+    this.mqtt.on('error', async (error) => {
       this.log.error(`MQTT error: ${error.message}`);
       this.setState('info.mqttConnected', false, true);
 
@@ -985,11 +976,11 @@ class Bmw extends utils.Adapter {
           url: `${this.carDataApiBase}/customers/containers`,
           headers: headers,
         },
-        'list containers',
+        'list containers'
       );
 
       const containers = response.data.containers || [];
-      const ioBrokerContainers = containers.filter(container => container.name && container.name.startsWith('ioBroker'));
+      const ioBrokerContainers = containers;
 
       this.log.info(`Found ${containers.length} total containers, ${ioBrokerContainers.length} ioBroker containers to delete`);
 
@@ -1002,7 +993,7 @@ class Bmw extends utils.Adapter {
               url: `${this.carDataApiBase}/customers/containers/${container.id}`,
               headers: headers,
             },
-            `delete container ${container.id}`,
+            `delete container ${container.id}`
           );
           this.log.debug(`Deleted ioBroker container: ${container.id} (${container.name})`);
         } catch (error) {
@@ -1026,6 +1017,38 @@ class Bmw extends utils.Adapter {
    */
   async createTelematicContainer() {
     try {
+      // Check if we already have a stored container ID
+      const storedContainerId = await this.getStateAsync('containerInfo.containerId');
+      if (storedContainerId && storedContainerId.val) {
+        this.containerId = storedContainerId.val;
+        this.log.info(`Using existing container ID: ${this.containerId}`);
+
+        // Test if the existing container is still valid by attempting real telematic data fetching
+        try {
+          // Container exists, now test with real telematic data fetching if we have vehicles
+          if (this.vinArray && this.vinArray.length > 0) {
+            const testVin = this.vinArray[0];
+            this.log.debug(`Testing container ${this.containerId} with real telematic data fetch for ${testVin}`);
+
+            const telematicData = await this.getTelematicContainer(testVin, this.containerId);
+            if (telematicData && telematicData.telematicData) {
+              this.log.info(
+                `Existing container is valid and working - retrieved ${Object.keys(telematicData.telematicData).length} telematic data points`
+              );
+              return true;
+            } else {
+              this.log.warn('Container exists but failed to retrieve telematic data, will recreate');
+            }
+          } else {
+            this.log.info('Existing container exists, reusing it (no vehicles available for telematic test)');
+            return true;
+          }
+        } catch (validationError) {
+          this.log.warn(`Existing container ID ${this.containerId} validation failed: ${validationError.message}`);
+          this.log.info('Will create a new container');
+        }
+      }
+
       const headers = {
         Authorization: `Bearer ${this.session.access_token}`,
         'x-version': 'v1',
@@ -1045,8 +1068,8 @@ class Bmw extends utils.Adapter {
 
       const telematicData = JSON.parse(fs.readFileSync(telematicPath, 'utf8'));
 
-      // Extract all technical identifiers
-      const technicalDescriptors = telematicData.map(item => item.technical_identifier).filter(identifier => identifier); // Remove any undefined/null values
+      // Extract all technical identifiers and ensure no trailing commas in JSON
+      const technicalDescriptors = telematicData.map((item) => item.technical_identifier).filter((identifier) => identifier); // Remove any undefined/null values
 
       this.log.info(`Creating container with ${technicalDescriptors.length} technical identifiers from telematic.json`);
 
@@ -1063,10 +1086,10 @@ class Bmw extends utils.Adapter {
           headers: headers,
           data: containerData,
         },
-        'create telematic container',
+        'create telematic container'
       );
 
-      this.containerId = response.data.id;
+      this.containerId = response.data.containerId;
       this.log.info(`Container created successfully with ID: ${this.containerId}`);
       this.log.debug(`Container details: ${JSON.stringify(response.data)}`);
 
@@ -1129,12 +1152,10 @@ class Bmw extends utils.Adapter {
             containerId: containerId,
           },
         },
-        `get telematic data for ${vin}`,
+        `get telematic data for ${vin}`
       );
 
-      this.log.info(
-        `Telematic data retrieved successfully for ${vin} (${Object.keys(response.data.telematicData || {}).length} data points)`,
-      );
+      this.log.info(`Telematic data retrieved successfully for ${vin} (${Object.keys(response.data.telematicData || {}).length} data points)`);
       this.log.debug(`Telematic data: ${JSON.stringify(response.data)}`);
 
       return response.data;
@@ -1186,7 +1207,7 @@ class Bmw extends utils.Adapter {
           headers: headers,
           params: params,
         },
-        `fetch charging history for ${vin}${nextToken ? ' (paginated)' : ''}`,
+        `fetch charging history for ${vin}${nextToken ? ' (paginated)' : ''}`
       );
 
       const chargingData = response.data;
@@ -1217,29 +1238,43 @@ class Bmw extends utils.Adapter {
   }
 
   /**
-   * Setup telematic container by cleaning up existing ones and creating a new one
+   * Setup telematic container by reusing existing one or creating a new one
    */
   async setupTelematicContainer() {
     this.log.info('Setting up telematic container...');
 
-    // First cleanup all existing containers
-    const cleanupSuccess = await this.cleanupAllContainers();
-    if (!cleanupSuccess) {
-      this.log.warn('Container cleanup failed, proceeding with container creation anyway');
-    }
-
-    // Create new container with telematic data
+    // Try to create/reuse container (cleanup only happens if existing container is invalid)
     const createSuccess = await this.createTelematicContainer();
     if (createSuccess) {
       this.log.info(`Telematic container setup completed. Container ID: ${this.containerId}`);
 
-      // Optionally test the created container with first available VIN
+      // Optionally test the container with first available VIN
       if (this.vinArray.length > 0) {
         const testVin = this.vinArray[0];
         const telematicData = await this.getTelematicContainer(testVin, this.containerId);
         if (telematicData && telematicData.telematicData) {
+          // Store verification test data directly in stream folder
+          await this.json2iob.parse(`${testVin}.stream`, telematicData.telematicData, {
+            descriptions: this.description,
+            forceIndex: true,
+          });
+
+          // Add lastAPIUpdate timestamp for the verification test
+          await this.extendObject(`${testVin}.stream.lastAPIUpdate`, {
+            type: 'state',
+            common: {
+              name: 'Last Telematic API Update',
+              type: 'string',
+              role: 'date',
+              read: true,
+              write: false,
+            },
+            native: {},
+          });
+          await this.setState(`${testVin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
+
           this.log.info(
-            `Container verification successful: Retrieved ${Object.keys(telematicData.telematicData).length} telematic data points for ${testVin}`,
+            `Container verification successful: Retrieved ${Object.keys(telematicData.telematicData).length} telematic data points for ${testVin}`
           );
         } else {
           this.log.warn('Container created but no telematic data retrieved for verification');
@@ -1290,13 +1325,229 @@ class Bmw extends utils.Adapter {
    */
   async onStateChange(id, state) {
     if (state && !state.ack) {
-      // BMW CarData API is read-only, no remote controls available
+      // Handle remote button presses generically
+      if (id.includes('.remote.')) {
+        const idParts = id.split('.');
+        const vin = idParts[idParts.length - 3]; // Extract VIN from the ID (VIN.remote.buttonName)
+        const buttonName = idParts[idParts.length - 1]; // Extract button name
+
+        this.log.info(`Remote button ${buttonName} pressed for vehicle ${vin}`);
+
+        try {
+          await this.handleRemoteApiCall(vin, buttonName);
+        } catch (error) {
+          this.log.error(`Failed to handle remote API call ${buttonName} for ${vin}: ${error.message}`);
+        }
+
+        // Reset the button state
+        this.setState(id, false, true);
+        return;
+      }
+
+      // For other states: BMW CarData API is read-only, no remote controls available
       this.log.warn('Remote controls not available in BMW CarData (read-only API)');
       this.log.info('BMW CarData only provides vehicle data, no command functionality');
 
       // Reset the state to acknowledge it
       this.setState(id, state.val, true);
     }
+  }
+
+  /**
+   * Handle remote API calls generically based on button name
+   * @param {string} vin - Vehicle VIN
+   * @param {string} buttonName - Name of the button pressed
+   */
+  async handleRemoteApiCall(vin, buttonName) {
+    const headers = {
+      Authorization: `Bearer ${this.session.access_token}`,
+      'x-version': 'v1',
+      Accept: 'application/json',
+    };
+
+    switch (buttonName) {
+      case 'fetchViaAPI':
+        // Handle telematic data fetching
+        if (!this.containerId) {
+          this.log.warn('No container ID available, setting up telematic container first...');
+          const setupSuccess = await this.setupTelematicContainer();
+          if (!setupSuccess) {
+            throw new Error('Failed to setup telematic container');
+          }
+        }
+
+        const telematicData = await this.getTelematicContainer(vin, this.containerId);
+        if (telematicData && telematicData.telematicData) {
+          // Store telematic data directly in stream folder
+          await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
+            descriptions: this.description,
+            forceIndex: true,
+          });
+
+          // Update lastAPIUpdate timestamp
+          await this.extendObject(`${vin}.stream.lastAPIUpdate`, {
+            type: 'state',
+            common: {
+              name: 'Last Telematic API Update',
+              type: 'string',
+              role: 'date',
+              read: true,
+              write: false,
+            },
+            native: {},
+          });
+          await this.setState(`${vin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
+
+          this.log.info(`Successfully fetched ${Object.keys(telematicData.telematicData).length} telematic data points for ${vin}`);
+        } else {
+          this.log.warn(`No telematic data retrieved for vehicle ${vin}`);
+        }
+        break;
+
+      case 'basicData':
+        // Handle basicData endpoint
+        const basicResponse = await this.makeCarDataApiRequest(
+          {
+            method: 'get',
+            url: `${this.carDataApiBase}/customers/vehicles/${vin}/basicData`,
+            headers: headers,
+          },
+          `fetch basicData for ${vin}`
+        );
+
+        await this.json2iob.parse(`${vin}.api.basicData`, basicResponse.data, {
+          channelName: 'Basic Information',
+          descriptions: this.description,
+          forceIndex: true,
+        });
+
+        // Update vehicle name if we got basic data
+        if (basicResponse.data) {
+          const vehicleName = `${basicResponse.data.modelName || basicResponse.data.series || vin}`.trim();
+          await this.extendObject(vin, {
+            type: 'device',
+            common: {
+              name: vehicleName,
+            },
+            native: {
+              brand: basicResponse.data.brand,
+              model: basicResponse.data.modelName,
+              series: basicResponse.data.series,
+              vin: vin,
+            },
+          });
+          this.log.info(`Updated vehicle name: ${vehicleName} (${vin})`);
+        }
+
+        this.log.info(`Successfully fetched basic data for ${vin}`);
+        break;
+
+      case 'chargingHistory':
+        // Handle charging history endpoint with pagination
+        const now = new Date();
+        const fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
+
+        const chargingData = await this.fetchChargingHistory(vin, fromDate.toISOString(), now.toISOString());
+        if (chargingData) {
+          const responseData = {
+            data: chargingData.data,
+            totalSessions: chargingData.totalSessions,
+            dateRange: {
+              from: fromDate.toISOString(),
+              to: now.toISOString(),
+            },
+          };
+
+          await this.json2iob.parse(`${vin}.api.chargingHistory`, responseData, {
+            channelName: 'Charging History',
+            descriptions: this.description,
+            forceIndex: true,
+          });
+
+          this.log.info(`Successfully fetched charging history for ${vin}: ${chargingData.totalSessions} sessions`);
+        } else {
+          throw new Error('Failed to fetch charging history');
+        }
+        break;
+
+      case 'image':
+        // Handle vehicle image endpoint
+        const imageResponse = await this.makeCarDataApiRequest(
+          {
+            method: 'get',
+            url: `${this.carDataApiBase}/customers/vehicles/${vin}/image`,
+            headers: headers,
+          },
+          `fetch image for ${vin}`
+        );
+
+        await this.json2iob.parse(`${vin}.api.image`, imageResponse.data, {
+          channelName: 'Vehicle Image',
+          descriptions: this.description,
+          forceIndex: true,
+        });
+
+        this.log.info(`Successfully fetched vehicle image for ${vin}`);
+        break;
+
+      case 'locationBasedChargingSettings':
+        // Handle location-based charging settings endpoint
+        const locationResponse = await this.makeCarDataApiRequest(
+          {
+            method: 'get',
+            url: `${this.carDataApiBase}/customers/vehicles/${vin}/locationBasedChargingSettings`,
+            headers: headers,
+          },
+          `fetch locationBasedChargingSettings for ${vin}`
+        );
+
+        await this.json2iob.parse(`${vin}.api.locationBasedChargingSettings`, locationResponse.data, {
+          channelName: 'Location Based Charging Settings',
+          descriptions: this.description,
+          forceIndex: true,
+        });
+
+        this.log.info(`Successfully fetched location-based charging settings for ${vin}`);
+        break;
+
+      case 'smartMaintenanceTyreDiagnosis':
+        // Handle smart maintenance tyre diagnosis endpoint
+        const tyreResponse = await this.makeCarDataApiRequest(
+          {
+            method: 'get',
+            url: `${this.carDataApiBase}/customers/vehicles/${vin}/smartMaintenanceTyreDiagnosis`,
+            headers: headers,
+          },
+          `fetch smartMaintenanceTyreDiagnosis for ${vin}`
+        );
+
+        await this.json2iob.parse(`${vin}.api.smartMaintenanceTyreDiagnosis`, tyreResponse.data, {
+          channelName: 'Smart Maintenance Tyre Diagnosis',
+          descriptions: this.description,
+          forceIndex: true,
+        });
+
+        this.log.info(`Successfully fetched smart maintenance tyre diagnosis for ${vin}`);
+        break;
+
+      default:
+        this.log.warn(`Unknown remote button: ${buttonName}`);
+        break;
+    }
+
+    // Update lastUpdate timestamp for API data
+    await this.extendObject(`${vin}.lastUpdate`, {
+      type: 'state',
+      common: {
+        name: 'Last Update Time',
+        type: 'string',
+        role: 'date',
+        read: true,
+        write: false,
+      },
+      native: {},
+    });
+    await this.setState(`${vin}.lastUpdate`, new Date().toISOString(), true);
   }
 }
 
@@ -1305,7 +1556,7 @@ if (require.main !== module) {
   /**
    * @param {Partial<utils.AdapterOptions>} [options] - Optional adapter configuration options.
    */
-  module.exports = options => new Bmw(options);
+  module.exports = (options) => new Bmw(options);
 } else {
   // otherwise start the instance directly
   new Bmw();

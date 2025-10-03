@@ -161,30 +161,30 @@
     "interval": {
       "type": "number",
       "label": {
-        "en": "Update interval for static data (in minutes)",
-        "de": "Aktualisierungsintervall für statische Daten (in Minuten)",
-        "ru": "Интервал обновления для статических данных (в минутах)",
-        "pt": "Intervalo de atualização para dados estáticos (em minutos)",
-        "nl": "Update-interval voor statische gegevens (in minuten)",
-        "fr": "Intervalle de mise à jour pour les données statiques (en minutes)",
-        "it": "Intervallo di aggiornamento per dati statici (in minuti)",
-        "es": "Intervalo de actualización para datos estáticos (en minutos)",
-        "pl": "Interwał aktualizacji dla danych statycznych (w minutach)",
-        "zh-cn": "更新间隔（分钟）"
+        "en": "Update interval for telematic data (in minutes)",
+        "de": "Aktualisierungsintervall für Telematikdaten (in Minuten)",
+        "ru": "Интервал обновления для телематических данных (в минутах)",
+        "pt": "Intervalo de atualização para dados telemáticos (em minutos)",
+        "nl": "Update-interval voor telematicagegevens (in minuten)",
+        "fr": "Intervalle de mise à jour pour les données télématiques (en minutes)",
+        "it": "Intervallo di aggiornamento per dati telematici (in minuti)",
+        "es": "Intervalo de actualización para datos telemáticos (en minutos)",
+        "pl": "Interwał aktualizacji dla danych telematycznych (w minutach)",
+        "zh-cn": "远程信息处理数据更新间隔（分钟）"
       },
       "help": {
-        "en": "API polling interval for not important static data.. Minimum 10 minutes due to quota limits (50 calls per 24h). MQTT provides real-time data.",
-        "de": "API-Abfrageintervall für nicht relevante statische Information. Minimum 10 Minuten aufgrund Quota-Limits (50 Aufrufe pro 24h). MQTT liefert Echtzeitdaten.",
-        "ru": "Интервал опроса API. Минимум 10 минут из-за лимитов квот (50 вызовов за 24ч). MQTT предоставляет данные в реальном времени.",
-        "pt": "Intervalo de polling da API. Mínimo 10 minutos devido aos limites de quota (50 chamadas por 24h). MQTT fornece dados em tempo real.",
-        "nl": "API polling interval. Minimum 10 minuten vanwege quota limieten (50 oproepen per 24u). MQTT levert realtime data.",
-        "fr": "Intervalle de polling API. Minimum 10 minutes à cause des limites de quota (50 appels par 24h). MQTT fournit des données en temps réel.",
-        "it": "Intervallo di polling API. Minimo 10 minuti a causa dei limiti di quota (50 chiamate per 24h). MQTT fornisce dati in tempo reale.",
-        "es": "Intervalo de polling API. Mínimo 10 minutos debido a límites de cuota (50 llamadas por 24h). MQTT proporciona datos en tiempo real.",
-        "pl": "Interwał odpytywania API. Minimum 10 minut z powodu limitów kwot (50 wywołań na 24h). MQTT dostarcza dane w czasie rzeczywistym.",
-        "zh-cn": "API轮询间隔。由于配额限制（24小时50次调用），最少10分钟。MQTT提供实时数据。"
+        "en": "Automatic telematic data fetching interval. Set to 0 to disable automatic updates. Minimum 10 minutes due to quota limits (50 calls per 24h). Other API endpoints can be triggered manually via bmw.0.VIN.remote.",
+        "de": "Automatisches Abrufintervall für Telematikdaten. Auf 0 setzen um automatische Updates zu deaktivieren. Minimum 10 Minuten aufgrund Quota-Limits (50 Aufrufe pro 24h). Andere API-Endpunkte können manuell über bmw.0.VIN.remote. ausgelöst werden.",
+        "ru": "Интервал автоматического получения телематических данных. Установите 0 для отключения автоматических обновлений. Минимум 10 минут из-за лимитов квот (50 вызовов за 24ч). Другие конечные точки API можно запускать вручную через bmw.0.VIN.remote.",
+        "pt": "Intervalo de busca automática de dados telemáticos. Defina como 0 para desabilitar atualizações automáticas. Mínimo 10 minutos devido aos limites de quota (50 chamadas por 24h). Outros endpoints da API podem ser acionados manualmente via bmw.0.VIN.remote.",
+        "nl": "Automatisch ophaalinterval voor telematicagegevens. Stel in op 0 om automatische updates uit te schakelen. Minimum 10 minuten vanwege quota limieten (50 oproepen per 24u). Andere API endpoints kunnen handmatig worden geactiveerd via bmw.0.VIN.remote.",
+        "fr": "Intervalle de récupération automatique des données télématiques. Définir à 0 pour désactiver les mises à jour automatiques. Minimum 10 minutes à cause des limites de quota (50 appels par 24h). D'autres endpoints API peuvent être déclenchés manuellement via bmw.0.VIN.remote.",
+        "it": "Intervallo di recupero automatico dei dati telematici. Impostare a 0 per disabilitare gli aggiornamenti automatici. Minimo 10 minuti a causa dei limiti di quota (50 chiamate per 24h). Altri endpoint API possono essere attivati manualmente tramite bmw.0.VIN.remote.",
+        "es": "Intervalo de obtención automática de datos telemáticos. Establecer en 0 para deshabilitar actualizaciones automáticas. Mínimo 10 minutos debido a límites de cuota (50 llamadas por 24h). Otros endpoints de API pueden activarse manualmente via bmw.0.VIN.remote.",
+        "pl": "Interwał automatycznego pobierania danych telematycznych. Ustaw na 0 aby wyłączyć automatyczne aktualizacje. Minimum 10 minut z powodu limitów kwot (50 wywołań na 24h). Inne punkty końcowe API można wyzwalać ręcznie za pomocą bmw.0.VIN.remote.",
+        "zh-cn": "自动获取远程信息处理数据的间隔。设置为0以禁用自动更新。由于配额限制（24小时50次调用），最少10分钟。其他API端点可以通过bmw.0.VIN.remote.手动触发。"
       },
-      "min": 10,
+      "min": 0,
       "max": 1440,
       "default": 60,
       "newLine": true,
@@ -223,32 +223,32 @@
     "_api_endpoints": {
       "type": "header",
       "text": {
-        "en": "API Endpoints Configuration",
-        "de": "API Endpunkt Konfiguration",
-        "ru": "Конфигурация API Endpoints",
-        "pt": "Configuração de Endpoints API",
-        "nl": "API Endpoints Configuratie",
-        "fr": "Configuration des Endpoints API",
-        "it": "Configurazione Endpoints API",
-        "es": "Configuración de Endpoints API",
-        "pl": "Konfiguracja Punktów Końcowych API",
-        "zh-cn": "API端点配置"
+        "en": "Remote Control Information",
+        "de": "Fernbedienung Information",
+        "ru": "Информация о дистанционном управлении",
+        "pt": "Informações de Controle Remoto",
+        "nl": "Afstandsbediening Informatie",
+        "fr": "Informations de Contrôle à Distance",
+        "it": "Informazioni Controllo Remoto",
+        "es": "Información de Control Remoto",
+        "pl": "Informacje o Zdalnym Sterowaniu",
+        "zh-cn": "远程控制信息"
       },
       "size": 4
     },
     "_api_note": {
       "type": "staticText",
       "text": {
-        "en": "Select which BMW CarData API endpoints to fetch. No important data is fetched. Each endpoint uses one API call from your 50 calls/24h quota. MQTT streaming provides real-time updates and doesn't count against quota.",
-        "de": "Wählen Sie aus, welche BMW CarData API Endpunkte abgerufen werden sollen. Es werden nur statische Daten abgerufen. Jeder Endpunkt verwendet einen API-Aufruf aus Ihrem 50 Aufrufe/24h Kontingent. MQTT-Streaming bietet Echtzeit-Updates und zählt nicht gegen das Kontingent.",
-        "ru": "Выберите, какие конечные точки BMW CarData API загружать. Важные данные не загружаются. Каждая конечная точка использует один API вызов из вашей квоты 50 вызовов/24ч. MQTT потоковая передача обеспечивает обновления в реальном времени и не засчитывается в квоту.",
-        "pt": "Selecione quais endpoints da API BMW CarData buscar. Nenhum dado importante é buscado. Cada endpoint usa uma chamada API de sua cota de 50 chamadas/24h. O streaming MQTT fornece atualizações em tempo real e não conta contra a cota.",
-        "nl": "Selecteer welke BMW CarData API endpoints op te halen. Er worden geen belangrijke gegevens opgehaald. Elke endpoint gebruikt één API oproep van uw 50 oproepen/24u quota. MQTT streaming biedt realtime updates en telt niet mee tegen quota.",
-        "fr": "Sélectionnez quels endpoints de l'API BMW CarData récupérer. Aucune donnée importante n'est récupérée. Chaque endpoint utilise un appel API de votre quota de 50 appels/24h. Le streaming MQTT fournit des mises à jour en temps réel et ne compte pas contre le quota.",
-        "it": "Seleziona quali endpoint dell'API BMW CarData recuperare. Ogni endpoint utilizza una chiamata API dalla tua quota di 50 chiamate/24h. Lo streaming MQTT fornisce aggiornamenti in tempo reale e non conta contro la quota.",
-        "es": "Selecciona qué endpoints de la API BMW CarData obtener. Cada endpoint usa una llamada API de tu cuota de 50 llamadas/24h. El streaming MQTT proporciona actualizaciones en tiempo real y no cuenta contra la cuota.",
-        "pl": "Wybierz które punkty końcowe API BMW CarData pobrać. Każdy punkt końcowy używa jednego wywołania API z twojej kwoty 50 wywołań/24h. Streaming MQTT zapewnia aktualizacje w czasie rzeczywistym i nie liczy się do kwoty.",
-        "zh-cn": "选择要获取的BMW CarData API端点。每个端点使用您50次调用/24小时配额中的一次API调用。MQTT流提供实时更新，不计入配额。"
+        "en": "Telematic data is fetched automatically based on the interval above. Other API endpoints (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) can be triggered manually via bmw.0.VIN.remote. in each vehicle. BasicData is fetched once after login.",
+        "de": "Telematikdaten werden automatisch basierend auf dem obigen Intervall abgerufen. Andere API-Endpunkte (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) können manuell über bmw.0.VIN.remote. in jedem Fahrzeug ausgelöst werden. BasicData wird einmal nach dem Login abgerufen.",
+        "ru": "Телематические данные получаются автоматически на основе интервала выше. Другие конечные точки API (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) можно запускать вручную через bmw.0.VIN.remote. в каждом транспортном средстве. BasicData получается один раз после входа в систему.",
+        "pt": "Dados telemáticos são buscados automaticamente com base no intervalo acima. Outros endpoints da API (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) podem ser acionados manualmente via bmw.0.VIN.remote. em cada veículo. BasicData é buscado uma vez após o login.",
+        "nl": "Telematicagegevens worden automatisch opgehaald op basis van het bovenstaande interval. Andere API endpoints (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) kunnen handmatig worden geactiveerd via bmw.0.VIN.remote. in elk voertuig. BasicData wordt eenmaal opgehaald na login.",
+        "fr": "Les données télématiques sont récupérées automatiquement selon l'intervalle ci-dessus. D'autres endpoints API (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) peuvent être déclenchés manuellement via bmw.0.VIN.remote. dans chaque véhicule. BasicData est récupéré une fois après la connexion.",
+        "it": "I dati telematici vengono recuperati automaticamente in base all'intervallo sopra. Altri endpoint API (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) possono essere attivati manualmente tramite bmw.0.VIN.remote. in ogni veicolo. BasicData viene recuperato una volta dopo il login.",
+        "es": "Los datos telemáticos se obtienen automáticamente basándose en el intervalo anterior. Otros endpoints de API (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) pueden activarse manualmente via bmw.0.VIN.remote. en cada vehículo. BasicData se obtiene una vez después del login.",
+        "pl": "Dane telematyczne są pobierane automatycznie na podstawie powyższego interwału. Inne punkty końcowe API (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) można wyzwalać ręcznie za pomocą bmw.0.VIN.remote. w każdym pojeździe. BasicData jest pobierane raz po zalogowaniu.",
+        "zh-cn": "远程信息处理数据根据上述间隔自动获取。其他API端点（basicData、chargingHistory、image、locationBasedChargingSettings、smartMaintenanceTyreDiagnosis）可以通过bmw.0.VIN.remote.在每个车辆中手动触发。BasicData在登录后获取一次。"
       },
       "style": {
         "fontSize": "smaller",
@@ -256,186 +256,6 @@
         "color": "#666"
       },
       "newLine": true
-    },
-    "fetchBasicData": {
-      "type": "checkbox",
-      "label": {
-        "en": "Fetch Basic Data",
-        "de": "Grunddaten abrufen",
-        "ru": "Получать базовые данные",
-        "pt": "Buscar dados básicos",
-        "nl": "Basisgegevens ophalen",
-        "fr": "Récupérer les données de base",
-        "it": "Recupera dati di base",
-        "es": "Obtener datos básicos",
-        "pl": "Pobierz dane podstawowe",
-        "zh-cn": "获取基本数据"
-      },
-      "help": {
-        "en": "Vehicle information, model, brand, series, VIN details",
-        "de": "Fahrzeuginformationen, Modell, Marke, Serie, VIN-Details",
-        "ru": "Информация о транспортном средстве, модель, бренд, серия, детали VIN",
-        "pt": "Informações do veículo, modelo, marca, série, detalhes VIN",
-        "nl": "Voertuiginformatie, model, merk, serie, VIN details",
-        "fr": "Informations sur le véhicule, modèle, marque, série, détails VIN",
-        "it": "Informazioni veicolo, modello, marca, serie, dettagli VIN",
-        "es": "Información del vehículo, modelo, marca, serie, detalles VIN",
-        "pl": "Informacje o pojeździe, model, marka, seria, szczegóły VIN",
-        "zh-cn": "车辆信息、型号、品牌、系列、VIN详细信息"
-      },
-      "default": true,
-      "newLine": true,
-      "sm": 4
-    },
-    "fetchChargingHistory": {
-      "type": "checkbox",
-      "label": {
-        "en": "Fetch Charging History",
-        "de": "Ladehistorie abrufen",
-        "ru": "Получать историю зарядки",
-        "pt": "Buscar histórico de carregamento",
-        "nl": "Laadgeschiedenis ophalen",
-        "fr": "Récupérer l'historique de charge",
-        "it": "Recupera cronologia ricarica",
-        "es": "Obtener historial de carga",
-        "pl": "Pobierz historię ładowania",
-        "zh-cn": "获取充电历史"
-      },
-      "help": {
-        "en": "Charging sessions and history data",
-        "de": "Ladesitzungen und Verlaufsdaten",
-        "ru": "Сессии зарядки и исторические данные",
-        "pt": "Sessões de carregamento e dados históricos",
-        "nl": "Laadsessies en historische gegevens",
-        "fr": "Sessions de charge et données historiques",
-        "it": "Sessioni di ricarica e dati storici",
-        "es": "Sesiones de carga y datos históricos",
-        "pl": "Sesje ładowania i dane historyczne",
-        "zh-cn": "充电会话和历史数据"
-      },
-      "default": true,
-      "newLine": false,
-      "sm": 4
-    },
-    "fetchImage": {
-      "type": "checkbox",
-      "label": {
-        "en": "Fetch Vehicle Image",
-        "de": "Fahrzeugbild abrufen",
-        "ru": "Получать изображение автомобиля",
-        "pt": "Buscar imagem do veículo",
-        "nl": "Voertuigafbeelding ophalen",
-        "fr": "Récupérer l'image du véhicule",
-        "it": "Recupera immagine veicolo",
-        "es": "Obtener imagen del vehículo",
-        "pl": "Pobierz obraz pojazdu",
-        "zh-cn": "获取车辆图像"
-      },
-      "help": {
-        "en": "Vehicle image for display purposes",
-        "de": "Fahrzeugbild für Anzeigezwecke",
-        "ru": "Изображение автомобиля для отображения",
-        "pt": "Imagem do veículo para fins de exibição",
-        "nl": "Voertuigafbeelding voor weergavedoeleinden",
-        "fr": "Image du véhicule à des fins d'affichage",
-        "it": "Immagine del veicolo per scopi di visualizzazione",
-        "es": "Imagen del vehículo para fines de visualización",
-        "pl": "Obraz pojazdu do celów wyświetlania",
-        "zh-cn": "用于显示目的的车辆图像"
-      },
-      "default": false,
-      "newLine": false,
-      "sm": 4
-    },
-    "fetchLocationBasedChargingSettings": {
-      "type": "checkbox",
-      "label": {
-        "en": "Fetch Location Based Charging Settings",
-        "de": "Standortbasierte Ladeeinstellungen abrufen",
-        "ru": "Получать настройки зарядки на основе местоположения",
-        "pt": "Buscar configurações de carregamento baseadas em localização",
-        "nl": "Locatiegebaseerde laadinstellingen ophalen",
-        "fr": "Récupérer les paramètres de charge basés sur l'emplacement",
-        "it": "Recupera impostazioni ricarica basate sulla posizione",
-        "es": "Obtener configuraciones de carga basadas en ubicación",
-        "pl": "Pobierz ustawienia ładowania oparte na lokalizacji",
-        "zh-cn": "获取基于位置的充电设置"
-      },
-      "help": {
-        "en": "Location-specific charging preferences and settings",
-        "de": "Standortspezifische Ladepräferenzen und -einstellungen",
-        "ru": "Предпочтения и настройки зарядки для конкретных местоположений",
-        "pt": "Preferências e configurações de carregamento específicas do local",
-        "nl": "Locatiespecifieke laadvoorkeuren en -instellingen",
-        "fr": "Préférences et paramètres de charge spécifiques à l'emplacement",
-        "it": "Preferenze e impostazioni di ricarica specifiche per la posizione",
-        "es": "Preferencias y configuraciones de carga específicas de ubicación",
-        "pl": "Preferencje i ustawienia ładowania specyficzne dla lokalizacji",
-        "zh-cn": "特定位置的充电偏好和设置"
-      },
-      "default": false,
-      "newLine": true,
-      "sm": 4
-    },
-    "fetchSmartMaintenanceTyreDiagnosis": {
-      "type": "checkbox",
-      "label": {
-        "en": "Fetch Smart Maintenance Tyre Diagnosis",
-        "de": "Smart Maintenance Reifendiagnose abrufen",
-        "ru": "Получать диагностику шин Smart Maintenance",
-        "pt": "Buscar diagnóstico de pneus Smart Maintenance",
-        "nl": "Smart Maintenance bandendiagnose ophalen",
-        "fr": "Récupérer le diagnostic des pneus Smart Maintenance",
-        "it": "Recupera diagnosi pneumatici Smart Maintenance",
-        "es": "Obtener diagnóstico de neumáticos Smart Maintenance",
-        "pl": "Pobierz diagnozę opon Smart Maintenance",
-        "zh-cn": "获取智能维护轮胎诊断"
-      },
-      "help": {
-        "en": "Smart maintenance system tyre condition and diagnosis data",
-        "de": "Smart Maintenance System Reifenzustand und Diagnosedaten",
-        "ru": "Данные состояния и диагностики шин системы Smart Maintenance",
-        "pt": "Dados de condição e diagnóstico de pneus do sistema Smart Maintenance",
-        "nl": "Smart Maintenance systeem bandentoestand en diagnosegegevens",
-        "fr": "Données de condition et de diagnostic des pneus du système Smart Maintenance",
-        "it": "Dati di condizione e diagnosi pneumatici del sistema Smart Maintenance",
-        "es": "Datos de condición y diagnóstico de neumáticos del sistema Smart Maintenance",
-        "pl": "Dane stanu i diagnozy opon systemu Smart Maintenance",
-        "zh-cn": "智能维护系统轮胎状况和诊断数据"
-      },
-      "default": false,
-      "newLine": false,
-      "sm": 4
-    },
-    "fetchTelematicData": {
-      "type": "checkbox",
-      "label": {
-        "en": "Fetch Telematic Data",
-        "de": "Telematikdaten abrufen",
-        "ru": "Получать телематические данные",
-        "pt": "Buscar dados telemáticos",
-        "nl": "Telematicagegevens ophalen",
-        "fr": "Récupérer les données télématiques",
-        "it": "Recupera dati telematici",
-        "es": "Obtener datos telemáticos",
-        "pl": "Pobierz dane telematyczne",
-        "zh-cn": "获取远程信息处理数据"
-      },
-      "help": {
-        "en": "Vehicle telematic data including trip information and driving behavior",
-        "de": "Fahrzeugtelematikdaten einschließlich Reiseinformationen und Fahrverhalten",
-        "ru": "Телематические данные автомобиля, включая информацию о поездках и поведении при вождении",
-        "pt": "Dados telemáticos do veículo incluindo informações de viagem e comportamento de direção",
-        "nl": "Voertuigtelematicagegevens inclusief reisinformatie en rijgedrag",
-        "fr": "Données télématiques du véhicule incluant les informations de voyage et le comportement de conduite",
-        "it": "Dati telematici del veicolo incluse informazioni di viaggio e comportamento di guida",
-        "es": "Datos telemáticos del vehículo incluyendo información de viaje y comportamiento de conducción",
-        "pl": "Dane telematyczne pojazdu obejmujące informacje o podróży i zachowanie podczas jazdy",
-        "zh-cn": "车辆远程信息处理数据，包括行程信息和驾驶行为"
-      },
-      "default": false,
-      "newLine": false,
-      "sm": 4
     }
   }
 }
