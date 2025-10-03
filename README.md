@@ -161,7 +161,7 @@ The BMW CarData API is read-only, so this adapter does not provide vehicle comma
 - `locationBasedChargingSettings` - Get location-based charging preferences
 - `smartMaintenanceTyreDiagnosis` - Fetch tyre diagnosis data
 
-*Note: These are data retrieval commands only - no vehicle control commands are supported by the BMW CarData API.*
+_Note: These are data retrieval commands only - no vehicle control commands are supported by the BMW CarData API._
 
 ## Troubleshooting
 
@@ -213,6 +213,9 @@ If you're not seeing expected data in `VIN.api.*`:
 This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://github.com/TA2k/ioBroker.bmw)
 
 ## Changelog
+### 4.1.0 (2025-10-03)
+
+- Add API fetching via Container and move other apis to manually fetching
 
 ### 4.0.5 (2025-10-01)
 
