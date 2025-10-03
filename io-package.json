@@ -5,20 +5,29 @@
     "news": {
       "4.0.5": {
         "en": "BREAKING: Complete migration to BMW CarData API\nBREAKING: OAuth2 device flow authentication (no more username/password)\nBREAKING: Remote controls removed (CarData API is read-only)\nNEW: Real-time MQTT streaming for instant updates\nNEW: 50 API calls per 24h quota management\nNEW: Comprehensive data collection from all CarData endpoints",
-        "de": "BREAKING: Vollständige Migration zur BMW CarData API\nBREAKING: OAuth2 Device Flow Authentifizierung (keine Benutzername/Passwort mehr)\nBREAKING: Fernbedienungen entfernt (CarData API ist nur lesend)\nNEU: Echtzeit MQTT Streaming für sofortige Updates\nNEU: 50 API Aufrufe pro 24h Quota Management\nNEU: Umfassende Datensammlung von allen CarData Endpunkten"
+        "de": "BREAKING: Vollständige Migration zur BMW CarData API\nBREAKING: OAuth2 Device Flow Authentifizierung (keine Benutzername/Passwort mehr)\nBREAKING: Fernbedienungen entfernt (CarData API ist nur lesend)\nNEU: Echtzeit MQTT Streaming für sofortige Updates\nNEU: 50 API Aufrufe pro 24h Quota Management\nNEU: Umfassende Datensammlung von allen CarData Endpunkten",
+        "ru": "BREAKING: Полная миграция на BMW CarData API\nBREAKING: Аутентификация через OAuth2 device flow (без имени пользователя/пароля)\nBREAKING: Удалено дистанционное управление (CarData API только для чтения)\nNEW: Потоковая передача MQTT в реальном времени для мгновенных обновлений\nNEW: Управление квотой 50 API вызовов за 24 часа\nNEW: Полный сбор данных со всех конечных точек CarData",
+        "pt": "BREAKING: Migração completa para a BMW CarData API\nBREAKING: Autenticação OAuth2 device flow (sem mais utilizador/senha)\nBREAKING: Controles remotos removidos (CarData API é apenas leitura)\nNEW: Streaming MQTT em tempo real para atualizações instantâneas\nNEW: Gestão de quota de 50 chamadas API por 24h\nNEW: Coleta abrangente de dados de todos os endpoints CarData",
+        "nl": "BREAKING: Volledige migratie naar de BMW CarData API\nBREAKING: OAuth2 device flow authenticatie (geen gebruikersnaam/wachtwoord meer)\nBREAKING: Afstandsbedieningen verwijderd (CarData API is alleen-lezen)\nNEW: Real-time MQTT streaming voor directe updates\nNEW: Quota van 50 API-aanroepen per 24u\nNEW: Uitgebreide gegevensverzameling van alle CarData endpoints",
+        "fr": "BREAKING : Migration complète vers l’API BMW CarData\nBREAKING : Authentification par OAuth2 device flow (plus de nom d’utilisateur/mot de passe)\nBREAKING : Commandes à distance supprimées (CarData API est en lecture seule)\nNEW : Streaming MQTT en temps réel pour des mises à jour instantanées\nNEW : Gestion du quota de 50 appels API par 24h\nNEW : Collecte complète des données de tous les endpoints CarData",
+        "it": "BREAKING: Migrazione completa alla BMW CarData API\nBREAKING: Autenticazione OAuth2 device flow (niente più nome utente/password)\nBREAKING: Controlli remoti rimossi (CarData API è solo in lettura)\nNEW: Streaming MQTT in tempo reale per aggiornamenti istantanei\nNEW: Gestione quota di 50 chiamate API per 24h\nNEW: Raccolta completa dei dati da tutti gli endpoint CarData",
+        "es": "BREAKING: Migración completa a la BMW CarData API\nBREAKING: Autenticación OAuth2 device flow (sin más usuario/contraseña)\nBREAKING: Controles remotos eliminados (CarData API es solo lectura)\nNEW: Streaming MQTT en tiempo real para actualizaciones instantáneas\nNEW: Gestión de cuota de 50 llamadas API por 24h\nNEW: Recolección completa de datos de todos los endpoints CarData",
+        "pl": "BREAKING: Pełna migracja do BMW CarData API\nBREAKING: Uwierzytelnianie OAuth2 device flow (bez nazwy użytkownika/hasła)\nBREAKING: Usunięto zdalne sterowanie (CarData API tylko do odczytu)\nNEW: Strumieniowanie MQTT w czasie rzeczywistym dla natychmiastowych aktualizacji\nNEW: Zarządzanie limitem 50 wywołań API na 24h\nNEW: Kompleksowe zbieranie danych ze wszystkich endpointów CarData",
+        "uk": "BREAKING: Повна міграція на BMW CarData API\nBREAKING: Автентифікація через OAuth2 device flow (без імені користувача/пароля)\nBREAKING: Видалено дистанційне керування (CarData API лише для читання)\nNEW: Потокове MQTT у реальному часі для миттєвих оновлень\nNEW: Керування квотою 50 викликів API на 24 години\nNEW: Повний збір даних з усіх кінцевих точок CarData",
+        "zh-cn": "BREAKING：完全迁移到 BMW CarData API\nBREAKING：OAuth2 device flow 身份验证（不再需要用户名/密码）\nBREAKING：远程控制已移除（CarData API 仅支持读取）\nNEW：实时 MQTT 流式传输，立即更新\nNEW：24 小时内 50 次 API 调用配额管理\nNEW：从所有 CarData 端点全面收集数据"
       },
       "3.0.1": {
         "en": "change to recommended stable admin 7.6.17 (#159)\nmigrate to iobroker/eslint-config (#146)\nfix form-data vulnerability\ncode cleanups\nupdate axios\nbump adapter-core\nfix issues detected by repository checker (#170)\nbump dependencies",
-        "de": "admin 7.6.17 (#159) zu empfehlen\nmigrieren zu iobroker/eslint-config (#146)\nfehler bei formdaten beheben\ncode-reinigung\naxios\nstoßadapter-kern\nfehler, die durch repository checker erkannt werden (#170)\nbumpabhängigkeiten",
-        "ru": "изменение на рекомендуемый стабильный админ 7.6.17 (#159)\niobroker/eslint-config (#146)\nисправление уязвимости форм-данных\nочистка кода\nобновление axios\nбамперный адаптер\nисправление проблем, обнаруженных с помощью проверки репозитория (#170)\nбамп зависимости",
-        "pt": "alteração para o administrador estável recomendado 7.6.17 (# 159)\nmigrar para iobroker/eslint-config (# 146)\ncorrigir vulnerabilidade de forma-dados\nlimpeza de código\natualizar axios\nnúcleo do adaptador de colisão\ncorrigir problemas detectados pelo verificador de repositórios (# 170)\ndependências de colisão",
-        "nl": "verandering in de aanbevolen stabiele toediening 7.6.17 (#159)\nmigreren naar iobroker/eslint-config (#146)\nfix vorm-data kwetsbaarheid\ncode opruimen\naxios bijwerken\nbump adapter-core\nfix problemen gedetecteerd door repository checker (#170)\nbump afhankelijkheden",
-        "fr": "changement à l'administration stable recommandée 7.6.17 (#159)\nmigrer vers iobroker/eslint-config (#146)\ncorriger la vulnérabilité des formulaires-données\nnettoyage du code\nmettre à jour axios\nadaptateur-cœur de bosse\ncorrection des problèmes détectés par le contrôleur du dépôt (#170)\ndépendances des bosses",
-        "it": "cambiamento a admin stabile raccomandata 7.6.17 (#159)\nmigrare a iobroker/eslint-config (#146)\ncorrezione della vulnerabilità form-data\npulizia del codice\naggiornamento assio\nadattatore paraurti-core\nrisolvere i problemi rilevati da repository checker (#170)\nindipendenza urto",
-        "es": "cambio al administrador estable recomendado 7.6.17 (#159)\nmigrar a iobroker/eslint-config (#146)\narreglar la vulnerabilidad de la forma-data\nlimpieza de códigos\nactualización axios\nadaptador de parachoques\nsolucionar problemas detectados por repositorio (#170)\ndependencia de los gastos",
-        "pl": "zmiana na zalecane stabilne admin 7.6.17 (# 159)\nmigrate to iobroker / eslint- config (# 146)\nustaw wrażliwość format- data\nczyszczenie kodu\naktualizacja axios\nadapter guza-rdzeń\nnaprawianie problemów wykrytych przez sprawdzacz repozytorium (# 170)\nuzależnienia od guza",
-        "uk": "змінити для рекомендованого стабільного адміністратора 7.6.17 (#159)\nmigrate до iobroker/eslint-config (#146)\nвиправити вразливість даних\nочищення коду\nоновлення axios\nbump адаптер-core\nвиправлено проблеми, виявлених репозиторійною перевіркою (#170)\nbump залежності",
-        "zh-cn": "改为建议的稳定管理7.6.17 (# 159)\n迁移到 iobus/slint- config (# 146)\n固定窗体数据脆弱性\n代码清理\n更新轴线\n缓冲适配器核心\n通过仓库检查器检测到的固定问题(# 170)\n意外依赖"
+        "de": "Wechsel auf empfohlenen stabilen Admin 7.6.17 (#159)\nMigration zu iobroker/eslint-config (#146)\nBehebung der Sicherheitslücke in form-data\nCode-Bereinigung\nUpdate von axios\nUpdate von adapter-core\nBehebung von Problemen, die durch den Repository Checker erkannt wurden (#170)\nAktualisierung von Abhängigkeiten",
+        "ru": "Переход на рекомендованную стабильную версию admin 7.6.17 (#159)\nМиграция на iobroker/eslint-config (#146)\nИсправление уязвимости form-data\nОчистка кода\nОбновление axios\nОбновление adapter-core\nИсправление проблем, обнаруженных проверкой репозитория (#170)\nОбновление зависимостей",
+        "pt": "Alteração para o administrador estável recomendado 7.6.17 (#159)\nMigração para iobroker/eslint-config (#146)\nCorreção da vulnerabilidade form-data\nLimpeza de código\nAtualização do axios\nAtualização do adapter-core\nCorreção de problemas detectados pelo verificador de repositório (#170)\nAtualização de dependências",
+        "nl": "Wijziging naar aanbevolen stabiele admin 7.6.17 (#159)\nMigratie naar iobroker/eslint-config (#146)\nKwetsbaarheid in form-data opgelost\nCode opgeschoond\nAxios bijgewerkt\nAdapter-core bijgewerkt\nProblemen opgelost die door de repository checker zijn gevonden (#170)\nAfhankelijkheden bijgewerkt",
+        "fr": "Passage à l’administration stable recommandée 7.6.17 (#159)\nMigration vers iobroker/eslint-config (#146)\nCorrection de la vulnérabilité form-data\nNettoyage du code\nMise à jour d’axios\nMise à jour d’adapter-core\nCorrection des problèmes détectés par le contrôleur de dépôt (#170)\nMise à jour des dépendances",
+        "it": "Passaggio all’admin stabile raccomandato 7.6.17 (#159)\nMigrazione a iobroker/eslint-config (#146)\nCorrezione della vulnerabilità form-data\nPulizia del codice\nAggiornamento di axios\nAggiornamento di adapter-core\nRisoluzione dei problemi rilevati dal repository checker (#170)\nAggiornamento delle dipendenze",
+        "es": "Cambio al administrador estable recomendado 7.6.17 (#159)\nMigración a iobroker/eslint-config (#146)\nCorrección de la vulnerabilidad form-data\nLimpieza de código\nActualización de axios\nActualización de adapter-core\nCorrección de problemas detectados por el comprobador de repositorios (#170)\nActualización de dependencias",
+        "pl": "Zmiana na zalecaną stabilną wersję admin 7.6.17 (#159)\nMigracja do iobroker/eslint-config (#146)\nNaprawa podatności w form-data\nCzyszczenie kodu\nAktualizacja axios\nAktualizacja adapter-core\nNaprawa problemów wykrytych przez sprawdzacz repozytorium (#170)\nAktualizacja zależności",
+        "uk": "Перехід на рекомендовану стабільну версію admin 7.6.17 (#159)\nМіграція на iobroker/eslint-config (#146)\nВиправлення вразливості form-data\nОчищення коду\nОновлення axios\nОновлення adapter-core\nВиправлення проблем, виявлених перевіркою репозиторію (#170)\nОновлення залежностей",
+        "zh-cn": "切换到推荐的稳定版 admin 7.6.17 (#159)\n迁移到 iobroker/eslint-config (#146)\n修复 form-data 漏洞\n代码清理\n更新 axios\n更新 adapter-core\n修复仓库检查器检测到的问题 (#170)\n更新依赖项"
       },
       "3.0.0": {
         "en": "BREAKING: Dropped support for Node.js 18 (#88)\nBREAKING: Dropped support for js-controller 5 (#111)\nBREAKING: change to admin 7.4.10 as recommended by ioBroker (#111)\nencrypt and protect second user password - has to be reentered (#111)\nbump dependencies",
@@ -84,19 +93,6 @@
         "pl": "dodano nowe piloty jako przełącznik i zaktualizowane wartości\ndodano logikę retry dla pilotów",
         "uk": "додано нові пульти як перемикач і оновлені значення\nдодана логіка для пультів",
         "zh-cn": "作为切换和更新值添加新远程\n为远程添加重试逻辑"
-      },
-      "2.8.4": {
-        "en": "improved charging sessios parsing\nadded remote to fetch charging session from a specific month\nadd raw JSON of charging session for export",
-        "de": "verbesserte charging sessios Import\nRemote hinzugefügt, um charging sessios aus einem bestimmten Monat abzurufen\nRohes JSON der charging sessios für den Export hinzugefügt",
-        "ru": "улучшенный сеанс зарядки\nдобавить удаленное к сеансу зарядки с определенного месяца\nдобавить сырой JSON зарядной сессии для экспорта",
-        "pt": "análise de sessão de carregamento melhorada\nadicionar remoto para buscar sessão de carregamento de um mês específico\nadicionar JSON cru da sessão de carregamento para exportação",
-        "nl": "verbeterde laadsessie ontleden\nremote toevoegen aan opladen van een bepaalde maand\nrauw JSON toevoegen van laadsessie voor export",
-        "fr": "amélioration de l'analyse des sessions de chargement\najouter distant pour récupérer la session de chargement à partir d'un mois spécifique\najouter JSON brut de la session de tarification pour l'exportation",
-        "it": "migliore sessione di ricarica\naggiungere la sessione di ricarica remota a fetch da un mese specifico\naggiungere grezzo JSON di sessione di ricarica per l'esportazione",
-        "es": "mejora de la sesión de carga\nañadir remoto para buscar sesión de carga de un mes específico\nañadir JSON crudo de la sesión de carga para la exportación",
-        "pl": "ulepszona sesja pobierania opłat\ndodaj zdalny do pobierania sesji ładowania z określonego miesiąca\ndodać surowy JSON sesji pobierania opłat za eksport",
-        "uk": "поліпшення зарядки сеансу\nдодати дистанційне сеанс зарядки fetch з конкретного місяця\nдодати сиру JSON на зарядку для експорту",
-        "zh-cn": "改进充值会话解析\n添加远程以获取特定月的充电会话\n添加用于导出的充电会话的原始 JSON"
       }
     },
     "titleLang": {
@@ -160,8 +156,7 @@
       {
         "admin": ">=7.6.17"
       }
-    ],
-    "installedFrom": "TA2k/ioBroker.bmw"
+    ]
   },
   "encryptedNative": [],
   "protectedNative": [],
