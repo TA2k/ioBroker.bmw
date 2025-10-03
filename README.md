@@ -139,7 +139,29 @@ The adapter receives real-time updates via MQTT streaming when:
 
 ## Remote Commands
 
-⚠️ **Remote controls have been removed in v4.0** as the BMW CarData API is read-only and does not support vehicle commands. For remote control functionality, you would need to use BMW's official mobile app.
+**Available Remote Controls:**
+
+The BMW CarData API is read-only, so this adapter does not provide vehicle command functionality. For remote control capabilities, use:
+
+**Official BMW Solutions:**
+
+- **MyBMW Mobile App** - Full remote control functionality
+- **BMW ConnectedDrive Portal** - Web-based vehicle management
+- **BMW Alexa Skill** - Voice control integration with Amazon Alexa for commands like:
+  - "Alexa, ask BMW to lock my car"
+  - "Alexa, ask BMW to start climate control"
+  - "Alexa, ask BMW to flash my lights"
+
+**Remote Controls Available in This Adapter:**
+
+- `fetchViaAPI` - Fetch latest telematic data via container API
+- `basicData` - Refresh vehicle basic information (model, brand, series)
+- `chargingHistory` - Fetch charging sessions from last 30 days
+- `image` - Retrieve current vehicle image
+- `locationBasedChargingSettings` - Get location-based charging preferences
+- `smartMaintenanceTyreDiagnosis` - Fetch tyre diagnosis data
+
+*Note: These are data retrieval commands only - no vehicle control commands are supported by the BMW CarData API.*
 
 ## Troubleshooting
 
