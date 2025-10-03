@@ -1017,6 +1017,26 @@ class Bmw extends utils.Adapter {
 
             const telematicData = await this.getTelematicContainer(testVin, this.containerId);
             if (telematicData && telematicData.telematicData) {
+              // Store validation data directly in stream folder to avoid duplicate API call
+              await this.json2iob.parse(`${testVin}.stream`, telematicData.telematicData, {
+                descriptions: this.description,
+                forceIndex: true,
+              });
+
+              // Add lastAPIUpdate timestamp
+              await this.extendObject(`${testVin}.stream.lastAPIUpdate`, {
+                type: 'state',
+                common: {
+                  name: 'Last Telematic API Update',
+                  type: 'string',
+                  role: 'date',
+                  read: true,
+                  write: false,
+                },
+                native: {},
+              });
+              await this.setState(`${testVin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
+
               this.log.info(
                 `Existing container is valid and working - retrieved ${Object.keys(telematicData.telematicData).length} telematic data points`
               );
@@ -1255,40 +1275,8 @@ class Bmw extends utils.Adapter {
     if (createSuccess) {
       this.log.info(`Telematic container setup completed. Container ID: ${this.containerId}`);
 
-      // Optionally test the container with first available VIN
-      if (this.vinArray.length > 0) {
-        const testVin = this.vinArray[0];
-        const telematicData = await this.getTelematicContainer(testVin, this.containerId);
-        if (telematicData && telematicData.telematicData) {
-          // Store verification test data directly in stream folder
-          await this.json2iob.parse(`${testVin}.stream`, telematicData.telematicData, {
-            descriptions: this.description,
-            forceIndex: true,
-          });
-
-          // Add lastAPIUpdate timestamp for the verification test
-          await this.extendObject(`${testVin}.stream.lastAPIUpdate`, {
-            type: 'state',
-            common: {
-              name: 'Last Telematic API Update',
-              type: 'string',
-              role: 'date',
-              read: true,
-              write: false,
-            },
-            native: {},
-          });
-          await this.setState(`${testVin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
-
-          this.log.info(
-            `Container verification successful: Retrieved ${Object.keys(telematicData.telematicData).length} telematic data points for ${testVin}`
-          );
-        } else {
-          this.log.warn('Container created but no telematic data retrieved for verification');
-        }
-      } else {
-        this.log.info('Container created successfully (no vehicles available for verification)');
-      }
+      // Container validation and data storage already handled in createTelematicContainer()
+      // No duplicate API call needed here - saving quota
     } else {
       this.log.error('Failed to setup telematic container');
     }
