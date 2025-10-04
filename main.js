@@ -1327,7 +1327,7 @@ class Bmw extends utils.Adapter {
     const headers = {
       Authorization: `Bearer ${this.session.access_token}`,
       'x-version': 'v1',
-      Accept: 'application/json',
+      Accept: '*/*',
     };
 
     switch (buttonName) {
