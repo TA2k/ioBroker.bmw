@@ -171,7 +171,7 @@ class Bmw extends utils.Adapter {
                   await this.extendObject(`${vin}.stream.lastAPIUpdate`, {
                     type: 'state',
                     common: {
-                      name: 'Last Telematic API Update',
+                      name: 'Last Stream data update via Telematic API',
                       type: 'string',
                       role: 'date',
                       read: true,
@@ -1014,7 +1014,7 @@ class Bmw extends utils.Adapter {
               await this.extendObject(`${testVin}.stream.lastAPIUpdate`, {
                 type: 'state',
                 common: {
-                  name: 'Last Telematic API Update',
+                  name: 'Last Stream data update via Telematic API',
                   type: 'string',
                   role: 'date',
                   read: true,
@@ -1373,7 +1373,7 @@ class Bmw extends utils.Adapter {
           await this.extendObject(`${vin}.stream.lastAPIUpdate`, {
             type: 'state',
             common: {
-              name: 'Last Telematic API Update',
+              name: 'Last Stream data update via Telematic API',
               type: 'string',
               role: 'date',
               read: true,
