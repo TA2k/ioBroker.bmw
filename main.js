@@ -1426,14 +1426,15 @@ class Bmw extends utils.Adapter {
 
       case 'image':
         // Handle vehicle image endpoint
-        const imageResponse = await this.makeCarDataApiRequest(
-          {
-            method: 'get',
-            url: `${this.carDataApiBase}/customers/vehicles/${vin}/image`,
-            headers: headers,
-          },
-          `fetch image for ${vin}`,
-        );
+        //special request to receive raw image data
+        const imageResponse = await this.requestClient({
+          method: 'get',
+          url: `${this.carDataApiBase}/customers/vehicles/${vin}/image`,
+          headers: headers,
+          responseType: 'arraybuffer', // Important to get raw binary data
+        });
+        this.apiCalls.push(Date.now());
+        this.setState('info.apiCallsHistory', JSON.stringify(this.apiCalls), true);
 
         if (imageResponse.data) {
           await this.extendObject(`${vin}.api.image`, {
