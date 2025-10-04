@@ -168,17 +168,6 @@ class Bmw extends utils.Adapter {
                   });
 
                   // Update lastAPIUpdate timestamp
-                  await this.extendObject(`${vin}.stream.lastAPIUpdate`, {
-                    type: 'state',
-                    common: {
-                      name: 'Last Stream data update via Telematic API',
-                      type: 'string',
-                      role: 'date',
-                      read: true,
-                      write: false,
-                    },
-                    native: {},
-                  });
                   await this.setState(`${vin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
 
                   this.log.debug(
@@ -458,31 +447,9 @@ class Bmw extends utils.Adapter {
             if (firstStart) {
               this.cleanObjects(vin);
             }
-            // Create vehicle device
-            await this.extendObject(vin, {
-              type: 'device',
-              common: {
-                name: vin, // Will be updated with model name when basic data is fetched
-              },
-              native: {},
-            });
-            await this.extendObject(`${vin}.vin`, {
-              type: 'state',
-              common: {
-                name: 'Vehicle Identification Number',
-                type: 'string',
-                role: 'info.vin',
-                read: true,
-                write: false,
-              },
-              native: {},
-            });
-            await this.setState(`${vin}.vin`, vin, true);
 
-            // Fetch all initial data for this vehicle on first start
-            if (firstStart) {
-              await this.createVehicleRemotes(vin);
-            }
+            // Create complete vehicle structure (device, states, channels, and remotes)
+            await this.createVehicleStates(vin);
 
             // Fetch basicData only after real login (not adapter restart)
             if (this.initialLogin) {
@@ -515,8 +482,31 @@ class Bmw extends utils.Adapter {
     await this.sleep(2000);
   }
 
-  // Create vehicle structure and remote buttons (no automatic API fetching)
-  async createVehicleRemotes(vin) {
+  // Create complete vehicle structure including basic states and remote buttons
+  async createVehicleStates(vin) {
+    // Create vehicle device
+    await this.extendObject(vin, {
+      type: 'device',
+      common: {
+        name: vin, // Will be updated with model name when basic data is fetched
+      },
+      native: {},
+    });
+
+    // Create VIN state
+    await this.extendObject(`${vin}.vin`, {
+      type: 'state',
+      common: {
+        name: 'Vehicle Identification Number',
+        type: 'string',
+        role: 'info.vin',
+        read: true,
+        write: false,
+      },
+      native: {},
+    });
+    await this.setState(`${vin}.vin`, vin, true);
+
     // Create main folder structure
     await this.extendObject(`${vin}.api`, {
       type: 'channel',
@@ -530,6 +520,32 @@ class Bmw extends utils.Adapter {
       type: 'channel',
       common: {
         name: 'Stream Data (Real-time MQTT)',
+      },
+      native: {},
+    });
+
+    // Create lastAPIUpdate state for telematic API updates
+    await this.extendObject(`${vin}.stream.lastAPIUpdate`, {
+      type: 'state',
+      common: {
+        name: 'Last Stream data update via Telematic API',
+        type: 'string',
+        role: 'date',
+        read: true,
+        write: false,
+      },
+      native: {},
+    });
+
+    // Create lastStreamUpdate state for MQTT updates
+    await this.extendObject(`${vin}.lastStreamUpdate`, {
+      type: 'state',
+      common: {
+        name: 'Last Stream Update Time',
+        type: 'string',
+        role: 'date',
+        read: true,
+        write: false,
       },
       native: {},
     });
@@ -881,26 +897,12 @@ class Bmw extends utils.Adapter {
         if (data.vin && data.data) {
           this.log.debug(`MQTT: ${vin} - ${Object.keys(data.data).length} data points`);
 
-          // Ensure VIN is in our array
+          // Ensure VIN is in our array and create structure if new
           if (!this.vinArray.includes(vin)) {
             this.vinArray.push(vin);
+            // Create complete vehicle structure for newly discovered vehicle
+            await this.createVehicleStates(vin);
           }
-
-          // Create vehicle device if not exists
-          await this.extendObject(vin, {
-            type: 'device',
-            common: { name: vin },
-            native: {},
-          });
-
-          // Ensure stream folder exists
-          await this.extendObject(`${vin}.stream`, {
-            type: 'channel',
-            common: {
-              name: 'Stream Data (Real-time MQTT)',
-            },
-            native: {},
-          });
 
           // Process data in stream/ folder with json2iob
           await this.json2iob.parse(`${vin}.stream`, data.data, {
@@ -909,17 +911,6 @@ class Bmw extends utils.Adapter {
             channelName: 'MQTT Stream Data',
           });
 
-          await this.extendObject(`${vin}.lastStreamUpdate`, {
-            type: 'state',
-            common: {
-              name: 'Last Stream Update Time',
-              type: 'string',
-              role: 'date',
-              read: true,
-              write: false,
-            },
-            native: {},
-          });
           await this.setState(`${vin}.lastStreamUpdate`, new Date().toISOString(), true);
         }
       }
@@ -1010,18 +1001,7 @@ class Bmw extends utils.Adapter {
                 forceIndex: true,
               });
 
-              // Add lastAPIUpdate timestamp
-              await this.extendObject(`${testVin}.stream.lastAPIUpdate`, {
-                type: 'state',
-                common: {
-                  name: 'Last Stream data update via Telematic API',
-                  type: 'string',
-                  role: 'date',
-                  read: true,
-                  write: false,
-                },
-                native: {},
-              });
+              // Update lastAPIUpdate timestamp
               await this.setState(`${testVin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
 
               this.log.info(
@@ -1370,17 +1350,6 @@ class Bmw extends utils.Adapter {
           });
 
           // Update lastAPIUpdate timestamp
-          await this.extendObject(`${vin}.stream.lastAPIUpdate`, {
-            type: 'state',
-            common: {
-              name: 'Last Stream data update via Telematic API',
-              type: 'string',
-              role: 'date',
-              read: true,
-              write: false,
-            },
-            native: {},
-          });
           await this.setState(`${vin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
 
           this.log.info(`Successfully fetched ${Object.keys(telematicData.telematicData).length} telematic data points for ${vin}`);
