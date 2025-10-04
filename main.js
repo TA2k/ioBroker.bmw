@@ -1435,7 +1435,7 @@ class Bmw extends utils.Adapter {
           `fetch image for ${vin}`,
         );
 
-        if (imageResponse.data && imageResponse.data.image) {
+        if (imageResponse.data) {
           await this.extendObject(`${vin}.api.image`, {
             type: 'state',
             common: {
@@ -1449,7 +1449,7 @@ class Bmw extends utils.Adapter {
             native: {},
           });
           //convert raw png string to base64
-          const base64Image = `data:image/png;base64,${Buffer.from(imageResponse.data.image, 'binary').toString('base64')}`;
+          const base64Image = `data:image/png;base64,${Buffer.from(imageResponse.data, 'binary').toString('base64')}`;
           await this.setState(`${vin}.api.image`, base64Image, true);
         }
 
