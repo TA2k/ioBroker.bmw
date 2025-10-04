@@ -73,7 +73,7 @@ class Bmw extends utils.Adapter {
       return;
     }
 
-    if (this.config.interval < 10) {
+    if (this.config.interval < 10 && this.config.interval !== 0) {
       this.log.info('Setting minimum interval to 10 minutes due to API quota limits');
       this.config.interval = 10;
     }
