@@ -592,22 +592,7 @@ class Bmw extends utils.Adapter {
         native: {},
       });
     }
-
-    // No automatic fetching - all endpoints are now available via remote buttons
-
-    // Update lastUpdate after all API data is fetched
-    await this.extendObject(`${vin}.lastUpdate`, {
-      type: 'state',
-      common: {
-        name: 'Last Update Time',
-        type: 'string',
-        role: 'date',
-        read: true,
-        write: false,
-      },
-      native: {},
-    });
-    await this.setState(`${vin}.lastUpdate`, new Date().toISOString(), true);
+    this.delObjectAsync(`${vin}.lastUpdate`);
   }
 
   updateQuotaStates() {
@@ -923,20 +908,6 @@ class Bmw extends utils.Adapter {
             descriptions: this.description,
             channelName: 'MQTT Stream Data',
           });
-
-          // Create and update metadata states
-          await this.extendObject(`${vin}.lastUpdate`, {
-            type: 'state',
-            common: {
-              name: 'Last Update Time',
-              type: 'string',
-              role: 'date',
-              read: true,
-              write: false,
-            },
-            native: {},
-          });
-          await this.setState(`${vin}.lastUpdate`, new Date().toISOString(), true);
 
           await this.extendObject(`${vin}.lastStreamUpdate`, {
             type: 'state',
@@ -1549,19 +1520,7 @@ class Bmw extends utils.Adapter {
         break;
     }
 
-    // Update lastUpdate timestamp for API data
-    await this.extendObject(`${vin}.lastUpdate`, {
-      type: 'state',
-      common: {
-        name: 'Last Update Time',
-        type: 'string',
-        role: 'date',
-        read: true,
-        write: false,
-      },
-      native: {},
-    });
-    await this.setState(`${vin}.lastUpdate`, new Date().toISOString(), true);
+    await this.delObjectAsync(`${vin}.lastUpdate`);
   }
 }
 
