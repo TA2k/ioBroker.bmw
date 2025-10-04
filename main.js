@@ -168,7 +168,7 @@ class Bmw extends utils.Adapter {
                   });
 
                   // Update lastAPIUpdate timestamp
-                  await this.setState(`${vin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
+                  await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
 
                   this.log.debug(
                     `✓ Periodic telematic data update for ${vin}: ${Object.keys(telematicData.telematicData).length} data points`,
@@ -525,7 +525,7 @@ class Bmw extends utils.Adapter {
     });
 
     // Create lastAPIUpdate state for telematic API updates
-    await this.extendObject(`${vin}.stream.lastAPIUpdate`, {
+    await this.extendObject(`${vin}.lastStreamViaAPIUpdate`, {
       type: 'state',
       common: {
         name: 'Last Stream data update via Telematic API',
@@ -1002,7 +1002,7 @@ class Bmw extends utils.Adapter {
               });
 
               // Update lastAPIUpdate timestamp
-              await this.setState(`${testVin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
+              await this.setState(`${testVin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
 
               this.log.info(
                 `Existing container is valid and working - retrieved ${Object.keys(telematicData.telematicData).length} telematic data points`,
@@ -1350,7 +1350,7 @@ class Bmw extends utils.Adapter {
           });
 
           // Update lastAPIUpdate timestamp
-          await this.setState(`${vin}.stream.lastAPIUpdate`, new Date().toISOString(), true);
+          await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
 
           this.log.info(`Successfully fetched ${Object.keys(telematicData.telematicData).length} telematic data points for ${vin}`);
         } else {
