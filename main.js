@@ -129,9 +129,12 @@ class Bmw extends utils.Adapter {
       // Connect MQTT after successful auth
       await this.connectMQTT();
       // Start periodic token refresh (every 45 minutes)
-      this.refreshTokenInterval = setInterval(async () => {
-        await this.refreshToken();
-      }, 60 * 1000);
+      this.refreshTokenInterval = setInterval(
+        async () => {
+          await this.refreshToken();
+        },
+        50 * 60 * 1000,
+      );
 
       // Start periodic telematic data updates (respecting quota limits)
       if (this.vinArray.length > 0 && this.config.interval > 0) {
