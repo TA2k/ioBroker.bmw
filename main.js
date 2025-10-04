@@ -481,7 +481,7 @@ class Bmw extends utils.Adapter {
 
             // Fetch all initial data for this vehicle on first start
             if (firstStart) {
-              await this.fetchAllVehicleData(vin);
+              await this.createVehicleRemotes(vin);
             }
 
             // Fetch basicData only after real login (not adapter restart)
@@ -516,7 +516,7 @@ class Bmw extends utils.Adapter {
   }
 
   // Create vehicle structure and remote buttons (no automatic API fetching)
-  async fetchAllVehicleData(vin) {
+  async createVehicleRemotes(vin) {
     // Create main folder structure
     await this.extendObject(`${vin}.api`, {
       type: 'channel',
@@ -1136,7 +1136,10 @@ class Bmw extends utils.Adapter {
       });
 
       await this.setState('containerInfo.containerId', this.containerId, true);
-
+      for (const vin of this.vinArray) {
+        this.log.info(`Fetching initial telematic data for ${vin} using new container`);
+        this.getTelematicContainer(vin, this.containerId);
+      }
       return true;
     } catch (error) {
       this.log.error(`Failed to create telematic container: ${error.message}`);
