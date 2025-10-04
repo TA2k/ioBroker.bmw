@@ -133,7 +133,7 @@ class Bmw extends utils.Adapter {
         async () => {
           await this.refreshToken();
         },
-        50 * 60 * 1000,
+        56 * 60 * 1000,
       );
 
       // Start periodic telematic data updates (respecting quota limits)
@@ -767,13 +767,13 @@ class Bmw extends utils.Adapter {
         this.session = res.data;
         this.setState('cardataauth.session', JSON.stringify(this.session), true);
         this.setState('info.connection', true, true);
-        this.log.debug('Tokens refreshed successfully - MQTT will auto-reconnect with new credentials via transformWsUrl');
-
+        this.log.debug('Tokens refreshed successfully - MQTT will auto-reconnect with new credentials');
+        this.mqtt?.options && (this.mqtt.options.password = this.session.id_token);
         return res.data;
       })
       .catch(async error => {
         // Log complete error object first
-        this.log.error(`Token refresh failed - complete error: ${error}`);
+        this.log.error(error);
 
         // HTTP response errors - check status code
         if (error.response) {
@@ -809,14 +809,6 @@ class Bmw extends utils.Adapter {
 
     const mqtt = require('mqtt');
 
-    // Transform function to refresh credentials on each reconnection attempt
-    const transformWsUrl = (url, options, client) => {
-      // Update password with the latest id_token on each reconnect
-      client.options.password = this.session.id_token;
-      this.log.debug('MQTT transformWsUrl: Updated credentials with latest token');
-      return url; // URL stays the same, just update credentials
-    };
-
     const options = {
       host: 'customer.streaming-cardata.bmwgroup.com',
       port: 9000,
@@ -828,7 +820,6 @@ class Bmw extends utils.Adapter {
       rejectUnauthorized: true,
       reconnectPeriod: 30000, // Built-in reconnection every 30 seconds
       connectTimeout: 30000,
-      transformWsUrl: transformWsUrl, // Hook to refresh credentials on reconnect
     };
 
     this.log.debug(`Connecting to BMW MQTT: ${options.host}:${options.port}`);
