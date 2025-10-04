@@ -1435,11 +1435,23 @@ class Bmw extends utils.Adapter {
           `fetch image for ${vin}`,
         );
 
-        await this.json2iob.parse(`${vin}.api.image`, imageResponse.data, {
-          channelName: 'Vehicle Image',
-          descriptions: this.description,
-          forceIndex: true,
-        });
+        if (imageResponse.data && imageResponse.data.image) {
+          await this.extendObject(`${vin}.api.image`, {
+            type: 'state',
+            common: {
+              name: 'Vehicle Image',
+              type: 'string',
+              role: 'image',
+              read: true,
+              write: false,
+              desc: 'Base64 encoded vehicle image',
+            },
+            native: {},
+          });
+          //convert raw png string to base64
+          const base64Image = `data:image/png;base64,${Buffer.from(imageResponse.data.image, 'binary').toString('base64')}`;
+          await this.setState(`${vin}.api.image`, base64Image, true);
+        }
 
         this.log.info(`Successfully fetched vehicle image for ${vin}`);
         break;
