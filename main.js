@@ -563,7 +563,7 @@ class Bmw extends utils.Adapter {
     const apiEndpoints = [
       {
         name: 'fetchViaAPI',
-        label: 'Fetch Telematic Data via API',
+        label: 'Fetch Telematic Data via API into stream',
         desc: 'Trigger fetching telematic container data for this vehicle',
       },
       {
