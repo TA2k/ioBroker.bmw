@@ -213,7 +213,8 @@ If you're not seeing expected data in `VIN.api.*`:
 This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://github.com/TA2k/ioBroker.bmw)
 
 ## Changelog
-### 4.1.0 (2025-10-03)
+
+### 4.1.1 (2025-10-03)
 
 - Add API fetching via Container and move other apis to manually fetching
 
