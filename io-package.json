@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "4.1.1",
+    "version": "4.2.0",
     "news": {
+      "4.2.0": {
+        "en": "improve token refresh\nfix image fetching",
+        "de": "verbessern sie die token-erfrischung\nbild-feeding fixieren",
+        "ru": "улучшить обновлениеken\nфиксировать изображение",
+        "pt": "melhorar a atualização do token\ncorrigir a obtenção da imagem",
+        "nl": "token vernieuwen verbeteren\nafbeelding ophalen herstellen",
+        "fr": "améliorer le jeton rafraîchissement\ncorrection de la récupération d'image",
+        "it": "migliorare il rinfresco token\ncorrezione immagine fetching",
+        "es": "mejorar el refresco de token\narreglar la captura de imagen",
+        "pl": "poprawić odświeżanie symboli\nnaprawić pobieranie obrazu",
+        "uk": "поліпшення освіження токени\nфіксація зображення fetching",
+        "zh-cn": "改进符号刷新\n固定图像获取"
+      },
       "4.1.1": {
         "en": "Add API fetching via Container and move other apis to manually fetching",
         "de": "Fügen Sie API-Fetching über Container hinzu und verschieben Sie andere Apis, um manuelles Abholen",
@@ -80,19 +93,6 @@
         "pl": "fix dla Mitbenutzer Feature",
         "uk": "фіксатор для функції Mitbenutzer",
         "zh-cn": "用于 Mitbenutzer 特性的固定"
-      },
-      "2.9.3": {
-        "en": "fix Remote Controls\nadd Mitbenutzer Login for remote controls",
-        "de": "remote Controls reparieren\nmitbenutzer Login für Fernbedienungen hinzufügen",
-        "ru": "починить удаленные управления\nдобавить логин Mitbenutzer для дистанционного управления",
-        "pt": "corrigir controles remotos\nadicionar Mitbenutzer Login para controles remotos",
-        "nl": "fix afstandsbedieningen\nmitbenutzer Login toevoegen voor afstandsbedieningen",
-        "fr": "correction des télécommandes\najouter Mitbenutzer Login pour les télécommandes",
-        "it": "correzione di controlli remoti\naggiungere Mitbenutzer Login per i comandi remoti",
-        "es": "controles remotos de fijación\nañadir Mitbenutzer Login para controles remotos",
-        "pl": "naprawić zdalne sterowanie\ndodaj Mitbenutzer Login do zdalnego sterowania",
-        "uk": "виправити дистанційні керування\nдодати Mitbenutzer Увійти для дистанційного керування",
-        "zh-cn": "修复远程控制\n添加远程控制的 Mitbenutzer 登录"
       }
     },
     "titleLang": {
@@ -121,8 +121,12 @@
       "uk": "Adapter for BMW CarData API з потоком MQTT в реальному часі",
       "zh-cn": "带有实时MQTT流的BMW CarData API适配器"
     },
-    "authors": ["TA2k <tombox2020@gmail.com>"],
-    "keywords": ["BMW"],
+    "authors": [
+      "TA2k <tombox2020@gmail.com>"
+    ],
+    "keywords": [
+      "BMW"
+    ],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"

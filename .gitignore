@@ -23,3 +23,6 @@ Thumbs.db
 admin/i18n/flat.txt
 admin/i18n/*/flat.txt
 .DS_Store
+/convert_table.py
+/telematic_de.html
+/telematic.html
