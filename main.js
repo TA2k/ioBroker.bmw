@@ -1020,9 +1020,8 @@ class Bmw extends utils.Adapter {
 
             if (containerValid) {
               return true;
-            } else {
-              this.log.warn('Container exists but failed to retrieve telematic data for any vehicle, will recreate');
             }
+            this.log.warn('Container exists but failed to retrieve telematic data for any vehicle, will recreate');
           } else {
             this.log.info('Existing container exists, reusing it (no vehicles available for telematic test)');
             return true;
@@ -1390,7 +1389,7 @@ class Bmw extends utils.Adapter {
         }
         break;
 
-      case 'basicData':
+      case 'basicData': {
         // Handle basicData endpoint
         const basicResponse = await this.makeCarDataApiRequest(
           {
@@ -1427,8 +1426,9 @@ class Bmw extends utils.Adapter {
 
         this.log.info(`Successfully fetched basic data for ${vin}`);
         break;
+      }
 
-      case 'chargingHistory':
+      case 'chargingHistory': {
         // Handle charging history endpoint with pagination
         const now = new Date();
         const fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
@@ -1455,8 +1455,9 @@ class Bmw extends utils.Adapter {
           throw new Error('Failed to fetch charging history');
         }
         break;
+      }
 
-      case 'image':
+      case 'image': {
         // Handle vehicle image endpoint
         //special request to receive raw image data
         const imageResponse = await this.requestClient({
@@ -1488,8 +1489,9 @@ class Bmw extends utils.Adapter {
 
         this.log.info(`Successfully fetched vehicle image for ${vin}`);
         break;
+      }
 
-      case 'locationBasedChargingSettings':
+      case 'locationBasedChargingSettings': {
         // Handle location-based charging settings endpoint
         const locationResponse = await this.makeCarDataApiRequest(
           {
@@ -1508,8 +1510,9 @@ class Bmw extends utils.Adapter {
 
         this.log.info(`Successfully fetched location-based charging settings for ${vin}`);
         break;
+      }
 
-      case 'smartMaintenanceTyreDiagnosis':
+      case 'smartMaintenanceTyreDiagnosis': {
         // Handle smart maintenance tyre diagnosis endpoint
         const tyreResponse = await this.makeCarDataApiRequest(
           {
@@ -1528,6 +1531,7 @@ class Bmw extends utils.Adapter {
 
         this.log.info(`Successfully fetched smart maintenance tyre diagnosis for ${vin}`);
         break;
+      }
 
       default:
         this.log.warn(`Unknown remote button: ${buttonName}`);
