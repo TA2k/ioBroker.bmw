@@ -28,6 +28,10 @@
 
 This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API with OAuth2 authentication and real-time MQTT streaming. It provides comprehensive vehicle data monitoring for all BMW models linked to your BMW account.
 
+## Data Updata while charging
+
+While charging it can happens that the battery level is not updated via stream because the car is sleeping/standby when turn on the car the data will be updated. You can trigger an update via API `bmw.0.vin.remote.fetchViaAPI`
+
 ## Setup Instructions
 
 ### 1. BMW ConnectedDrive Portal Setup
@@ -63,7 +67,7 @@ After creating your Client ID, configure streaming:
 4. Click **"Datenauswahl ändern"** (Change Data Selection) button
 5. **Select ALL categories** (Vehicle Status, Charging, Trip Data, etc.)
 6. **Manually check ALL 244 individual data points**
-7. Or enter this in Google Developer Console `document.querySelectorAll('label.chakra-checkbox:not([data-checked])').forEach(l => l.click());`
+7. Or enter this in Google Developer Console press F12 `document.querySelectorAll('label.chakra-checkbox:not([data-checked])').forEach(l => l.click());`
 8. Save your configuration by clicking **"Stream löschen"** if needed to reset, then reconfigure
 
 **Without selecting all data points, MQTT streaming will not provide complete data!**
@@ -74,16 +78,7 @@ After creating your Client ID, configure streaming:
 2. Enter your **CarData Streaming Username** (found in BMW portal under CarData > Streaming section)
 3. Select your vehicle **brand** (BMW, Mini, Toyota Supra)
 4. Set **update interval** (minimum 10 minutes due to API quota)
-5. **Configure API Endpoints** - Select which data to fetch:
-   - **Basic Data** ✅ - Essential vehicle information (recommended)
-   - **Charging History** ✅ - Charging sessions and history (recommended)
-   - **Vehicle Image** - Vehicle image for display purposes
-   - **Location Based Charging Settings** - Location-specific charging preferences
-   - **Smart Maintenance Tyre Diagnosis** - Tyre condition and diagnosis data
-   - **Telematic Data** - Trip information and driving behavior analytics
-6. Configure **VIN ignore list** if needed
-
-**💡 Tip:** Only enable endpoints you actually need to conserve your 50 API calls per 24-hour quota. MQTT streaming provides real-time data without using quota.
+5. Configure **VIN ignore list** if needed
 
 ### 4. Authentication Process
 
@@ -100,14 +95,11 @@ Vehicle data is organized under `bmw.0.VIN.*` where `VIN` represents your Vehicl
 ### Main Folder Structure
 
 - **`bmw.0.VIN.api.*`** - API Data (Periodic Updates)
-  - Data fetched via BMW CarData REST API
+  - Data fetched via BMW CarData REST API via .remote.
   - Uses API quota (50 calls per 24 hours)
-  - Updated based on configured interval
-  - Only includes endpoints you've enabled in settings
 
 - **`bmw.0.VIN.stream.*`** - Stream Data (Real-time MQTT)
-  - Data received via real-time MQTT streaming
-  - No API quota consumption
+  - Data received via real-time MQTT streaming or remote.fetchViaAPI
   - Instant updates when vehicle data changes
   - Includes all 244 configured data points
 
@@ -120,17 +112,17 @@ You can enable/disable these endpoints in adapter settings (BMW CarData API v1):
 - `bmw.0.VIN.api.image.*` - Vehicle image for display purposes
 - `bmw.0.VIN.api.locationBasedChargingSettings.*` - Location-specific charging preferences and settings
 - `bmw.0.VIN.api.smartMaintenanceTyreDiagnosis.*` - Smart maintenance system tyre condition and diagnosis
-- `bmw.0.VIN.api.telematicData.*` - Vehicle telematic data including trip information and driving behavior
 
 ### Metadata
 
-- `bmw.0.VIN.lastUpdate` - Timestamp of last data update (API or MQTT)
+- `bmw.0.VIN.lastStreamViaAPIUpdate` - Timestamp of last data update (API)
 - `bmw.0.VIN.lastStreamUpdate` - Timestamp of last MQTT stream update
 
 ## Real-time Updates
 
 The adapter receives real-time updates via MQTT streaming when:
 
+- The car is not in sleep/standby
 - Vehicle status changes (doors, windows, lights)
 - Charging status updates
 - Location changes during driving
@@ -213,6 +205,7 @@ If you're not seeing expected data in `VIN.api.*`:
 This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://github.com/TA2k/ioBroker.bmw)
 
 ## Changelog
+
 ### 4.2.0 (2025-10-04)
 
 - improve token refresh
