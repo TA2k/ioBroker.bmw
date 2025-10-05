@@ -179,7 +179,6 @@ class Bmw extends utils.Adapter {
               } catch (error) {
                 this.log.error(`Periodic telematic data fetch failed for ${vin}: ${error.message}`);
               }
-              break; // Only one vehicle per interval to conserve quota
             }
           },
           this.config.interval * 60 * 1000,
@@ -990,26 +989,39 @@ class Bmw extends utils.Adapter {
         try {
           // Container exists, now test with real telematic data fetching if we have vehicles
           if (this.vinArray && this.vinArray.length > 0) {
-            const testVin = this.vinArray[0];
-            this.log.debug(`Testing container ${this.containerId} with real telematic data fetch for ${testVin}`);
+            this.log.debug(`Testing container ${this.containerId} with real telematic data fetch`);
 
-            const telematicData = await this.getTelematicContainer(testVin, this.containerId);
-            if (telematicData && telematicData.telematicData) {
-              // Store validation data directly in stream folder to avoid duplicate API call
-              await this.json2iob.parse(`${testVin}.stream`, telematicData.telematicData, {
-                descriptions: this.description,
-                forceIndex: true,
-              });
+            // Try to validate container by fetching data for any available vehicle
+            let containerValid = false;
+            for (const vin of this.vinArray) {
+              try {
+                const telematicData = await this.getTelematicContainer(vin, this.containerId);
+                if (telematicData && telematicData.telematicData) {
+                  // Store validation data directly in stream folder to avoid duplicate API call
+                  await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
+                    descriptions: this.description,
+                    forceIndex: true,
+                  });
 
-              // Update lastAPIUpdate timestamp
-              await this.setState(`${testVin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
+                  // Update lastAPIUpdate timestamp
+                  await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
 
-              this.log.info(
-                `Existing container is valid and working - retrieved ${Object.keys(telematicData.telematicData).length} telematic data points`,
-              );
+                  this.log.info(
+                    `Existing container is valid and working - retrieved ${Object.keys(telematicData.telematicData).length} telematic data points`,
+                  );
+                  containerValid = true;
+                  break; // Container is valid, no need to test other vehicles
+                }
+              } catch (vinError) {
+                this.log.debug(`Container validation failed for ${vin}: ${vinError.message}`);
+                // Continue testing with other vehicles
+              }
+            }
+
+            if (containerValid) {
               return true;
             } else {
-              this.log.warn('Container exists but failed to retrieve telematic data, will recreate');
+              this.log.warn('Container exists but failed to retrieve telematic data for any vehicle, will recreate');
             }
           } else {
             this.log.info('Existing container exists, reusing it (no vehicles available for telematic test)');
@@ -1087,9 +1099,29 @@ class Bmw extends utils.Adapter {
       });
 
       await this.setState('containerInfo.containerId', this.containerId, true);
+
+      // Fetch initial telematic data for all vehicles with new container
       for (const vin of this.vinArray) {
         this.log.info(`Fetching initial telematic data for ${vin} using new container`);
-        this.getTelematicContainer(vin, this.containerId);
+        try {
+          const telematicData = await this.getTelematicContainer(vin, this.containerId);
+          if (telematicData && telematicData.telematicData) {
+            // Store telematic data directly in stream folder
+            await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
+              descriptions: this.description,
+              forceIndex: true,
+            });
+
+            // Update lastAPIUpdate timestamp
+            await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
+
+            this.log.info(`✓ Initial telematic data fetched for ${vin}: ${Object.keys(telematicData.telematicData).length} data points`);
+          } else {
+            this.log.warn(`No initial telematic data retrieved for ${vin}`);
+          }
+        } catch (error) {
+          this.log.error(`Failed to fetch initial telematic data for ${vin}: ${error.message}`);
+        }
       }
       return true;
     } catch (error) {
