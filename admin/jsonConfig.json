@@ -21,7 +21,12 @@
         "pl": "Ten adapter używa nowego BMW CarData API z uwierzytelnianiem OAuth2 i strumieniem MQTT w czasie rzeczywistym.",
         "zh-cn": "此适配器使用新的BMW CarData API，具有OAuth2身份验证和实时MQTT流。"
       },
-      "newLine": true
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
     },
     "_setup": {
       "type": "staticText",
@@ -41,7 +46,12 @@
         "fontSize": "smaller",
         "fontStyle": "italic"
       },
-      "newLine": true
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 6,
+      "xl": 6
     },
     "_cardata_setup": {
       "type": "staticText",
