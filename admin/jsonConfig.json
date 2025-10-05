@@ -290,7 +290,12 @@
         "fontStyle": "italic",
         "color": "#666"
       },
-      "newLine": true
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
     }
   }
 }
