@@ -788,7 +788,7 @@ class Bmw extends utils.Adapter {
         }
 
         this.log.warn(
-          'Token refresh failed, will retry on next refresh cycle. You can also delete bmw.0.cardataauth.session state to force re-login.',
+          `Token refresh failed, will retry on next refresh cycle. You can also delete bmw.0.cardataauth.session state to force re-login.`,
         );
         this.setState('info.connection', false, true);
         return;
@@ -856,16 +856,16 @@ class Bmw extends utils.Adapter {
           error.message.includes('Connection refused') ||
           error.message.includes('Not authorized'))
       ) {
-        this.log.warn('MQTT authentication failed - refreshing token for next auto-reconnect');
+        this.log.warn(`MQTT authentication failed - refreshing token for next auto-reconnect`);
         try {
           await this.refreshToken();
-          this.log.info('Token refreshed successfully - MQTT client will auto-reconnect with new credentials');
+          this.log.info(`Token refreshed successfully - MQTT client will auto-reconnect with new credentials`);
         } catch (refreshError) {
           this.log.error(`Token refresh failed: ${refreshError}`);
-          this.log.warn('MQTT will retry connection with current token via built-in reconnection');
+          this.log.warn(`MQTT will retry connection with current token via built-in reconnection`);
         }
       } else {
-        this.log.debug('Non-authentication MQTT error - letting built-in client handle reconnection');
+        this.log.debug(`Non-authentication MQTT error - letting built-in client handle reconnection`);
       }
     });
 
@@ -929,7 +929,7 @@ class Bmw extends utils.Adapter {
         Accept: 'application/json',
       };
 
-      this.log.info('Cleaning up existing ioBroker containers...');
+      this.log.info(`Cleaning up existing ioBroker containers...`);
 
       // Get all existing containers
       const response = await this.makeCarDataApiRequest(
@@ -1021,14 +1021,14 @@ class Bmw extends utils.Adapter {
             if (containerValid) {
               return true;
             }
-            this.log.warn('Container exists but failed to retrieve telematic data for any vehicle, will recreate');
+            this.log.warn(`Container exists but failed to retrieve telematic data for any vehicle, will recreate`);
           } else {
-            this.log.info('Existing container exists, reusing it (no vehicles available for telematic test)');
+            this.log.info(`Existing container exists, reusing it (no vehicles available for telematic test)`);
             return true;
           }
         } catch (validationError) {
           this.log.warn(`Existing container ID ${this.containerId} validation failed: ${validationError.message}`);
-          this.log.info('Will create a new container');
+          this.log.info(`Will create a new container`);
         }
       }
 
@@ -1045,7 +1045,7 @@ class Bmw extends utils.Adapter {
       const telematicPath = path.join(__dirname, 'telematic.json');
 
       if (!fs.existsSync(telematicPath)) {
-        this.log.error('telematic.json file not found');
+        this.log.error(`telematic.json file not found`);
         return false;
       }
 
@@ -1269,7 +1269,7 @@ class Bmw extends utils.Adapter {
    * Setup telematic container by reusing existing one or creating a new one
    */
   async setupTelematicContainer() {
-    this.log.info('Setting up telematic container...');
+    this.log.info(`Setting up telematic container...`);
 
     // Try to create/reuse container (cleanup only happens if existing container is invalid)
     const createSuccess = await this.createTelematicContainer();
@@ -1279,7 +1279,7 @@ class Bmw extends utils.Adapter {
       // Container validation and data storage already handled in createTelematicContainer()
       // No duplicate API call needed here - saving quota
     } else {
-      this.log.error('Failed to setup telematic container');
+      this.log.error(`Failed to setup telematic container`);
     }
 
     return createSuccess;
@@ -1341,8 +1341,8 @@ class Bmw extends utils.Adapter {
       }
 
       // For other states: BMW CarData API is read-only, no remote controls available
-      this.log.warn('Remote controls not available in BMW CarData (read-only API)');
-      this.log.info('BMW CarData only provides vehicle data, no command functionality');
+      this.log.warn(`Remote controls not available in BMW CarData (read-only API)`);
+      this.log.info(`BMW CarData only provides vehicle data, no command functionality`);
 
       // Reset the state to acknowledge it
       this.setState(id, state.val, true);
@@ -1351,6 +1351,7 @@ class Bmw extends utils.Adapter {
 
   /**
    * Handle remote API calls generically based on button name
+   *
    * @param {string} vin - Vehicle VIN
    * @param {string} buttonName - Name of the button pressed
    */
@@ -1362,7 +1363,7 @@ class Bmw extends utils.Adapter {
     };
 
     switch (buttonName) {
-      case 'fetchViaAPI':
+      case 'fetchViaAPI': {
         // Handle telematic data fetching
         if (!this.containerId) {
           this.log.warn('No container ID available, setting up telematic container first...');
@@ -1388,6 +1389,7 @@ class Bmw extends utils.Adapter {
           this.log.warn(`No telematic data retrieved for vehicle ${vin}`);
         }
         break;
+      }
 
       case 'basicData': {
         // Handle basicData endpoint
