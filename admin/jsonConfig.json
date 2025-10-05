@@ -75,7 +75,12 @@
         "padding": "10px",
         "borderRadius": "4px"
       },
-      "newLine": true
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 6,
+      "xl": 6
     },
     "clientId": {
       "type": "text",
