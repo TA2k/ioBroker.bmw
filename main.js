@@ -1136,7 +1136,7 @@ class Bmw extends utils.Adapter {
         const filteredTelematicData = {};
 
         for (const [key, data] of Object.entries(response.data.telematicData)) {
-          if (data.timestamp !== null) {
+          if (data.timestamp !== null || data.value !== null) {
             filteredTelematicData[key] = data;
           }
         }
