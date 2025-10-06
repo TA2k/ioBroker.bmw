@@ -32,6 +32,10 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 
 While charging it can happens that the battery level is not updated via stream because the car is sleeping/standby when turn on the car the data will be updated. You can trigger an update via API `bmw.0.vin.remote.fetchViaAPI`
 
+## Datapoint Description
+
+A detailed datapoint description you can find here [telematic.json](telematic.json)
+
 ## Setup Instructions
 
 ### 1. BMW ConnectedDrive Portal Setup
