@@ -121,12 +121,8 @@
       "uk": "Adapter for BMW CarData API з потоком MQTT в реальному часі",
       "zh-cn": "带有实时MQTT流的BMW CarData API适配器"
     },
-    "authors": [
-      "TA2k <tombox2020@gmail.com>"
-    ],
-    "keywords": [
-      "BMW"
-    ],
+    "authors": ["TA2k <tombox2020@gmail.com>"],
+    "keywords": ["BMW"],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"
@@ -166,6 +162,7 @@
   "protectedNative": [],
   "native": {
     "clientId": "",
+    "cardataStreamingUsername": "",
     "interval": 60,
     "brand": "bmw",
     "ignorelist": ""
