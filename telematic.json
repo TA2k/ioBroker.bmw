@@ -6,7 +6,11 @@
     "description_de": "Aktueller Zustand des Ladesteckers in allen Ladebetriebsarten, der angibt, ob ein Stecker aktuell angeschlossen ist. Der Wert INVALID kann verschiedene Ursachen haben, z. B. kein Sensor, defekter Sensor, kein Wert, Decodierungsfehler etc. Kombiniert Vehicle.Body.ChargingPort.Status/.DcStatus.",
     "technical_identifier": "vehicle.body.chargingPort.combinedStatus",
     "data_type": "string",
-    "typical_value_range": "DISCONNECTED, CONNECTED, INVALID",
+    "typical_value_range": [
+      "DISCONNECTED",
+      "CONNECTED",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -17,7 +21,11 @@
     "description_de": "Der Wert gibt an, ob das Fahrzeug zum Zeitpunkt der Datenerfassung mit einem DC-Ladestecker verbunden war (CONNECTED) oder nicht (DISCONNECTED).",
     "technical_identifier": "vehicle.body.chargingPort.dcStatus",
     "data_type": "string",
-    "typical_value_range": "DISCONNECTED, CONNECTED, INVALID",
+    "typical_value_range": [
+      "DISCONNECTED",
+      "CONNECTED",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -28,7 +36,11 @@
     "description_de": "Der Wert gibt an, ob der Ladestecker nach vollständiger Ladung automatisch entriegelt wird (HOSPITALITY_ACTIVE) oder verriegelt bleibt (HOSPITALITY_INACTIVE).",
     "technical_identifier": "vehicle.body.chargingPort.isHospitalityActive",
     "data_type": "boolean",
-    "typical_value_range": "HOSPITALITY_INACTIVE, HOSPITALITY_ACTIVE, INVALID",
+    "typical_value_range": [
+      "HOSPITALITY_INACTIVE",
+      "HOSPITALITY_ACTIVE",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -50,7 +62,12 @@
     "description_de": "Dieses Signal zeigt an, ob der Ladestecker verriegelt, entriegelt, ein Fehler gesendet wurde oder keine Aktion erfolgt ist. Beim Verwenden dieses Wertes siehe auch Vehicle.Body.ChargingPort.PlugStatus.",
     "technical_identifier": "vehicle.body.chargingPort.lockedStatus",
     "data_type": "string",
-    "typical_value_range": "CHARGING_CABLE_NOT_LOCKED, CHARGING_CABLE_LOCKED, CHARGING_CABLE_LOCKING_ERROR_DETECTED, UNKNOWN",
+    "typical_value_range": [
+      "CHARGING_CABLE_NOT_LOCKED",
+      "CHARGING_CABLE_LOCKED",
+      "CHARGING_CABLE_LOCKING_ERROR_DETECTED",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -72,7 +89,12 @@
     "description_de": "Der Wert gibt an, ob das Fahrzeug zum Zeitpunkt der Datenerfassung mit einem Ladestecker verbunden war (CONNECTED) oder nicht (DISCONNECTED).",
     "technical_identifier": "vehicle.body.chargingPort.status",
     "data_type": "string",
-    "typical_value_range": "CONNECTED, DISCONNECTED, INVALID, -NA-",
+    "typical_value_range": [
+      "CONNECTED",
+      "DISCONNECTED",
+      "INVALID",
+      "-NA-"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -83,7 +105,10 @@
     "description_de": "Erforderlich zusammen mit Vehicle.Body.ChargingPort.Status, um eine korrekte Handhabbarkeit der Ladesitzungen bei G08 BEV Fahrzeugen sicherzustellen (für Details bitte DE-3-E kontaktieren; Korrektur im Fahrzeug bis 2021-03 erwartet)",
     "technical_identifier": "vehicle.body.chargingPort.statusClearText",
     "data_type": "string",
-    "typical_value_range": "DISCONNECTED, CONNECTED",
+    "typical_value_range": [
+      "DISCONNECTED",
+      "CONNECTED"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -94,7 +119,11 @@
     "description_de": "Der Wert gibt an, ob die Ladeklappe zum Zeitpunkt der Datenerfassung verriegelt ist.",
     "technical_identifier": "vehicle.body.flap.isLocked",
     "data_type": "boolean",
-    "typical_value_range": "FLAP_UNLOCKED, FLAP_LOCKED, INVALID",
+    "typical_value_range": [
+      "FLAP_UNLOCKED",
+      "FLAP_LOCKED",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -105,7 +134,12 @@
     "description_de": "Der Wert gibt an, ob die Ladeklappe unabhängig von der Zentralverriegelung zum Zeitpunkt der Datenerfassung verriegelt ist.",
     "technical_identifier": "vehicle.body.flap.isPermanentlyUnlocked",
     "data_type": "boolean",
-    "typical_value_range": "NO_ACTION, FLAP_UNLOCKED, FLAP_LOCKED, INVALID",
+    "typical_value_range": [
+      "NO_ACTION",
+      "FLAP_UNLOCKED",
+      "FLAP_LOCKED",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -116,7 +150,11 @@
     "description_de": "Der Wert gibt an, ob die Motorhaube zum Zeitpunkt der Datenerfassung geschlossen (CLOSED) oder geöffnet (OPEN) war.",
     "technical_identifier": "vehicle.body.hood.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "CLOSED, OPEN, INVALID",
+    "typical_value_range": [
+      "CLOSED",
+      "OPEN",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -127,7 +165,11 @@
     "description_de": "Der Wert gibt an, ob das Fahrzeuglicht zum Zeitpunkt der Datenerfassung aus oder an oder ob der Status unbekannt ist.",
     "technical_identifier": "vehicle.body.lights.isRunningOn",
     "data_type": "boolean",
-    "typical_value_range": "ASN_isFalse, ASN_isTrue, ASN_isUnknown",
+    "typical_value_range": [
+      "ASN_isFalse",
+      "ASN_isTrue",
+      "ASN_isUnknown"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -138,7 +180,10 @@
     "description_de": "Zustand der Kofferraumtür.",
     "technical_identifier": "vehicle.body.trunk.door.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -149,7 +194,10 @@
     "description_de": "Gibt an, ob der Kofferraum verriegelt ist oder nicht.",
     "technical_identifier": "vehicle.body.trunk.isLocked",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -160,7 +208,11 @@
     "description_de": "Der Wert gibt an, ob der Kofferraum Deckel zum Zeitpunkt der Datenerfassung geöffnet (OPEN), halb geöffnet (INTERMEDIATE) oder geschlossen (CLOSED) war.",
     "technical_identifier": "vehicle.body.trunk.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "CLOSED, OPEN, INVALID",
+    "typical_value_range": [
+      "CLOSED",
+      "OPEN",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -171,7 +223,10 @@
     "description_de": "Zustand der linken Kofferraumtür.",
     "technical_identifier": "vehicle.body.trunk.left.door.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -182,7 +237,10 @@
     "description_de": "Zustand der unteren Kofferraumtür.",
     "technical_identifier": "vehicle.body.trunk.lower.door.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -193,7 +251,10 @@
     "description_de": "Zustand der rechten Kofferraumtür.",
     "technical_identifier": "vehicle.body.trunk.right.door.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -204,7 +265,10 @@
     "description_de": "Zustand der oberen Kofferraumtür.",
     "technical_identifier": "vehicle.body.trunk.upper.door.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -215,7 +279,11 @@
     "description_de": "Der Wert gibt an, ob die Heckscheibe entriegelt (TRUE) oder geschlossen (FALSE) ist.",
     "technical_identifier": "vehicle.body.trunk.window.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "CLOSED, OPEN, INVALID",
+    "typical_value_range": [
+      "CLOSED",
+      "OPEN",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -226,7 +294,11 @@
     "description_de": "Status/Aktion der Zeitautomatik mit den Zuständen Activate (Ein), Deactivate (Aus) und NoAction (wird nur beim Übermitteln der Zeitautomatik an das Fahrzeug verwendet).",
     "technical_identifier": "vehicle.cabin.climate.timers.overwriteTimer.action",
     "data_type": "string",
-    "typical_value_range": "ACTIVATE, DEACTIVATE, NO_ACTION",
+    "typical_value_range": [
+      "ACTIVATE",
+      "DEACTIVATE",
+      "NO_ACTION"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -259,7 +331,11 @@
     "description_de": "Status/Aktion der Zeitautomatik 1 mit den Zuständen Activate (Ein), Deactivate (Aus) und NoAction (wird nur beim Übermitteln der Zeitautomatik 1 an das Fahrzeug verwendet).",
     "technical_identifier": "vehicle.cabin.climate.timers.weekdaysTimer1.action",
     "data_type": "string",
-    "typical_value_range": "ACTIVATE, DEACTIVATE, NO_ACTION",
+    "typical_value_range": [
+      "ACTIVATE",
+      "DEACTIVATE",
+      "NO_ACTION"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -292,7 +368,11 @@
     "description_de": "Status/Aktion der Zeitautomatik 2 mit den Zuständen Activate (Ein), Deactivate (Aus) und NoAction (wird nur beim Übermitteln der Zeitautomatik 2 an das Fahrzeug verwendet).",
     "technical_identifier": "vehicle.cabin.climate.timers.weekdaysTimer2.action",
     "data_type": "string",
-    "typical_value_range": "ACTIVATE, DEACTIVATE, NO_ACTION",
+    "typical_value_range": [
+      "ACTIVATE",
+      "DEACTIVATE",
+      "NO_ACTION"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -336,7 +416,10 @@
     "description_de": "Gibt den zum Zeitpunkt der Datenerfassung aktuellen Status des Cabriodachs an, also ob es beispielsweise geschlossen (CLOSED), geöffnet (OPEN) oder – im Notfall – verriegelt ist (EMERGENCYLOCKED). Folgende weitere Statuswerte sind möglich: CLOSEDSECURED = Cabriodach geschlossen, Fahrzeug gesichert OPENSECURED = Cabriodach offen, Fahrzeug gesichert HARDTOPMOUNTED = Hardtop montiert und geschlossen (abnehmbares Hardtop) INTERMEDIATEPOSITION = Cabrioverdeck in Zwischenstellung LOADINGPOSITION = Verdeck befindet sich in einer Position, die das Beladen des Kofferraums erleichtert LOADINGPOSITIONIMMEDIATE = Verdeck befindet sich in einer Position, die das Beladen des Kofferraums erleichtert",
     "technical_identifier": "vehicle.cabin.convertible.roofStatus",
     "data_type": "string",
-    "typical_value_range": "CLOSEDSECURED, OPENSECURED",
+    "typical_value_range": [
+      "CLOSEDSECURED",
+      "OPENSECURED"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -347,7 +430,14 @@
     "description_de": "Gibt an, ob die Türen zum Zeitpunkt der Datenerfassung verschlossen (LOCKED) oder unverschlossen (UNLOCKED) waren. Weitere möglichen Werte lauten: SELECTIVELOCKED = Fahrzeug bis auf die linke vordere Tür verriegelt (ergibt sich bei der ersten Ausführung eines Remote Services Door Unlock) SECURED = Fahrzeug ist gesichert = alle Türen verriegelt und Alarmanlage geschärft",
     "technical_identifier": "vehicle.cabin.door.lock.status",
     "data_type": "",
-    "typical_value_range": "SECURED, UNLOCKED, SELECTIVE-LOCKED, LOCKED, INVALID, UNKNOWN",
+    "typical_value_range": [
+      "SECURED",
+      "UNLOCKED",
+      "SELECTIVE-LOCKED",
+      "LOCKED",
+      "INVALID",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -358,7 +448,12 @@
     "description_de": "Der Wert gibt an, ob die linke Tür zum Zeitpunkt der Datenerfassung geschlossen (CLOSED) oder geöffnet (OPEN) war.",
     "technical_identifier": "vehicle.cabin.door.row1.driver.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "OPEN, CLOSED, INVALID, UNKNOWN",
+    "typical_value_range": [
+      "OPEN",
+      "CLOSED",
+      "INVALID",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -380,7 +475,12 @@
     "description_de": "Der Wert gibt an, ob die rechte Tür zum Zeitpunkt der Datenerfassung geschlossen (CLOSED) oder geöffnet (OPEN) war.",
     "technical_identifier": "vehicle.cabin.door.row1.passenger.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "OPEN, CLOSED, INVALID, UNKNOWN",
+    "typical_value_range": [
+      "OPEN",
+      "CLOSED",
+      "INVALID",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -402,7 +502,12 @@
     "description_de": "Der Wert gibt an, ob die Tür hinten links zum Zeitpunkt der Datenerfassung geschlossen (CLOSED) oder geöffnet (OPEN) war.",
     "technical_identifier": "vehicle.cabin.door.row2.driver.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "OPEN, CLOSED, INVALID, UNKNOWN",
+    "typical_value_range": [
+      "OPEN",
+      "CLOSED",
+      "INVALID",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -424,7 +529,12 @@
     "description_de": "Der Wert gibt an, ob die Tür hinten rechts zum Zeitpunkt der Datenerfassung geschlossen (CLOSED) oder geöffnet (OPEN) war.",
     "technical_identifier": "vehicle.cabin.door.row2.passenger.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "OPEN, CLOSED, INVALID, UNKNOWN",
+    "typical_value_range": [
+      "OPEN",
+      "CLOSED",
+      "INVALID",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -457,7 +567,12 @@
     "description_de": "Standardeinstellungen der Sitzkühlung/-belüftung auf der Fahrerseite vorn für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row1.driverSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -468,7 +583,12 @@
     "description_de": "Standardeinstellungen der Sitzheizung auf der Fahrerseite vorn für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row1.driverSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -479,7 +599,12 @@
     "description_de": "Standardeinstellungen der Sitzkühlung/-belüftung auf der Beifahrerseite vorn für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row1.passengerSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -490,7 +615,12 @@
     "description_de": "Standardeinstellungen der Sitzheizung auf der Beifahrerseite vorn für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row1.passengerSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -501,7 +631,12 @@
     "description_de": "Standardeinstellungen der Sitzkühlung/-belüftung auf der Fahrerseite hinten für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row2.driverSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -512,7 +647,12 @@
     "description_de": "Standardeinstellungen der Sitzheizung auf der Fahrerseite hinten für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row2.driverSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -523,7 +663,12 @@
     "description_de": "Standardeinstellungen der Sitzkühlung/-belüftung auf der Beifahrerseite hinten für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row2.passengerSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -534,7 +679,12 @@
     "description_de": "Standardeinstellungen der Sitzheizung auf der Beifahrerseite hinten für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row2.passengerSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -545,7 +695,12 @@
     "description_de": "Standardeinstellungen der Sitzkühlung/-belüftung auf der Fahrerseite dritte Sitzreihe für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row3.driverSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -556,7 +711,12 @@
     "description_de": "Standardeinstellungen der Sitzheizung auf der Fahrerseite dritte Sitzreihe für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row3.driverSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -567,7 +727,12 @@
     "description_de": "Standardeinstellungen der Sitzkühlung/-belüftung auf der Beifahrerseite dritte Sitzreihe für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row3.passengerSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -578,7 +743,12 @@
     "description_de": "Standardeinstellungen der Sitzheizung auf der Beifahrerseite dritte Sitzreihe für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.seat.row3.passengerSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -589,7 +759,12 @@
     "description_de": "Standardeinstellungen der Lenkradheizung für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.defaultSettings.steeringWheel.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -611,7 +786,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzkühlung/-belüftung auf der Fahrerseite vorn für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row1.driverSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -622,7 +802,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzheizung auf der Fahrerseite vorn für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row1.driverSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -633,7 +818,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzkühlung/-belüftung auf der Beifahrerseite vorn für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row1.passengerSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -644,7 +834,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzheizung auf der Beifahrerseite vorn für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row1.passengerSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -655,7 +850,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzkühlung/-belüftung auf der Fahrerseite hinten für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row2.driverSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -666,7 +866,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzheizung auf der Fahrerseite hinten für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row2.driverSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -677,7 +882,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzkühlung/-belüftung auf der Beifahrerseite hinten für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row2.passengerSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -688,7 +898,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzheizung auf der Beifahrerseite hinten für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row2.passengerSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -699,7 +914,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzkühlung/-belüftung auf der Fahrerseite dritte Sitzreihe für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row3.driverSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -710,7 +930,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzheizung auf der Fahrerseite dritte Sitzreihe für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row3.driverSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -721,7 +946,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzkühlung/-belüftung auf der Beifahrerseite dritte Sitzreihe für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row3.passengerSide.cooling",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -732,7 +962,12 @@
     "description_de": "DirectStart-Einstellungen der Sitzheizung auf der Beifahrerseite dritte Sitzreihe für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.seat.row3.passengerSide.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -743,7 +978,12 @@
     "description_de": "DirectStart-Einstellungen der Lenkradheizung für die Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.directStartSettings.steeringWheel.heating",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, AUTOMATIC, NO_CHANGE",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "AUTOMATIC",
+      "NO_CHANGE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -765,7 +1005,10 @@
     "description_de": "Wahr, wenn die Option Remote Engine Start gesetzt ist, andernfalls falsch.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.configuration.isRemoteEngineStartDisclaimer",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -776,7 +1019,14 @@
     "description_de": "Status des Komfortzustands der Vorklimatisierung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.status.comfortState",
     "data_type": "string",
-    "typical_value_range": "NOT_ACTIVE, COMFORT_HEATING, COMFORT_COOLING, COMFORT_VENTILATION, DEFROST, COMFORT_UNDEFINED",
+    "typical_value_range": [
+      "NOT_ACTIVE",
+      "COMFORT_HEATING",
+      "COMFORT_COOLING",
+      "COMFORT_VENTILATION",
+      "DEFROST",
+      "COMFORT_UNDEFINED"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -787,7 +1037,10 @@
     "description_de": "Aktueller Status der Spiegelheizung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.status.isExteriorMirrorHeatingActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -809,7 +1062,10 @@
     "description_de": "Aktueller Status der Heckscheibenheizung.",
     "technical_identifier": "vehicle.cabin.hvac.preconditioning.status.rearDefrostActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -831,7 +1087,12 @@
     "description_de": "Aktueller Status der Luftreinigung.",
     "technical_identifier": "vehicle.cabin.hvac.statusAirPurification",
     "data_type": "string",
-    "typical_value_range": "UNFILTERED, PURIFYING_ONGOING, PURIFIED, INVALID",
+    "typical_value_range": [
+      "UNFILTERED",
+      "PURIFYING_ONGOING",
+      "PURIFIED",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -842,7 +1103,10 @@
     "description_de": "Der Wert gibt die Einheit (Kilometer oder Meilen) der gemessenen Distanzwerte in der Instrumentenanzeige des Fahrzeugs an.",
     "technical_identifier": "vehicle.cabin.infotainment.displayUnit.distance",
     "data_type": "string",
-    "typical_value_range": "km, miles",
+    "typical_value_range": [
+      "km",
+      "miles"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -853,7 +1117,10 @@
     "description_de": "In der aktuellen HMI verwendete Wegstreckeneinheit",
     "technical_identifier": "vehicle.cabin.infotainment.hmi.distanceUnit",
     "data_type": "string",
-    "typical_value_range": "MILES, KILOMETERS",
+    "typical_value_range": [
+      "MILES",
+      "KILOMETERS"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -864,7 +1131,11 @@
     "description_de": "Der Wert gibt an, ob zum Zeitpunkt der Datenerfassung ein Mobiltelefon mit dem Fahrzeug gekoppelt war oder der Kopplungsstatus unbekannt ist.",
     "technical_identifier": "vehicle.cabin.infotainment.isMobilePhoneConnected",
     "data_type": "boolean",
-    "typical_value_range": "ASN_isFalse, ASN_isTrue, ASN_isUnknown",
+    "typical_value_range": [
+      "ASN_isFalse",
+      "ASN_isTrue",
+      "ASN_isUnknown"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -886,7 +1157,11 @@
     "description_de": "Status der GPS-Fixierung. „NO_FIX“ bedeutet, dass weniger als 3 Satelliten gefunden wurden. „2D_GPS_FIX“ wird ausgegeben, wenn mindestens 3 Satelliten gefunden wurden. „3D_GPS_FIX“ wird ausgegeben, wenn mindestens 4 Satelliten gefunden wurden.",
     "technical_identifier": "vehicle.cabin.infotainment.navigation.currentLocation.fixStatus",
     "data_type": "string",
-    "typical_value_range": "NO_FIX, GPS_FIX_2D, GPS_FIX_3D",
+    "typical_value_range": [
+      "NO_FIX",
+      "GPS_FIX_2D",
+      "GPS_FIX_3D"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1161,7 +1436,13 @@
     "description_de": "Gesamtstatus des Schiebedachs des Fahrzeugs.",
     "technical_identifier": "vehicle.cabin.sunroof.overallStatus",
     "data_type": "string",
-    "typical_value_range": "INVALID, OPEN, OPEN_TILT, INTERMEDIATE_TILT, CLOSED",
+    "typical_value_range": [
+      "INVALID",
+      "OPEN",
+      "OPEN_TILT",
+      "INTERMEDIATE_TILT",
+      "CLOSED"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1194,7 +1475,12 @@
     "description_de": "Der Wert gibt an, ob das Schiebedach (sofern vorhanden) zum Zeitpunkt der Datenerfassung geöffnet (OPEN), halb geöffnet (INTERMEDIATE) oder geschlossen (CLOSED) war.",
     "technical_identifier": "vehicle.cabin.sunroof.status",
     "data_type": "string",
-    "typical_value_range": "CLOSED, INTERMEDIATE, OPEN, INVALID",
+    "typical_value_range": [
+      "CLOSED",
+      "INTERMEDIATE",
+      "OPEN",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1205,7 +1491,12 @@
     "description_de": "Der Wert gibt an, ob das Schiebedach (sofern vorhanden) zum Zeitpunkt der Datenerfassung gekippt (OPEN), halb gekippt (INTERMEDIATE) oder geschlossen (CLOSED) war.",
     "technical_identifier": "vehicle.cabin.sunroof.tiltStatus",
     "data_type": "string",
-    "typical_value_range": "CLOSED, INTERMEDIATE, OPEN, INVALID",
+    "typical_value_range": [
+      "CLOSED",
+      "INTERMEDIATE",
+      "OPEN",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1216,7 +1507,12 @@
     "description_de": "Der Wert gibt an, ob das Fenster der linken Tür zum Zeitpunkt der Datenerfassung geöffnet (OPEN), halb geöffnet (INTERMEDIATE) oder geschlossen (CLOSED) war.",
     "technical_identifier": "vehicle.cabin.window.row1.driver.status",
     "data_type": "string",
-    "typical_value_range": "CLOSED, INTERMEDIATE, OPEN, INVALID",
+    "typical_value_range": [
+      "CLOSED",
+      "INTERMEDIATE",
+      "OPEN",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1227,7 +1523,12 @@
     "description_de": "Der Wert gibt an, ob das Fenster der rechten Tür zum Zeitpunkt der Datenerfassung geöffnet (OPEN), halb geöffnet (INTERMEDIATE) oder geschlossen (CLOSED) war.",
     "technical_identifier": "vehicle.cabin.window.row1.passenger.status",
     "data_type": "string",
-    "typical_value_range": "CLOSED, INTERMEDIATE, OPEN, INVALID",
+    "typical_value_range": [
+      "CLOSED",
+      "INTERMEDIATE",
+      "OPEN",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1238,7 +1539,12 @@
     "description_de": "Der Wert gibt an, ob das Fenster hinten links zum Zeitpunkt der Datenerfassung geöffnet (OPEN), halb geöffnet (INTERMEDIATE) oder geschlossen (CLOSED) war.",
     "technical_identifier": "vehicle.cabin.window.row2.driver.status",
     "data_type": "string",
-    "typical_value_range": "CLOSED, INTERMEDIATE, OPEN, INVALID",
+    "typical_value_range": [
+      "CLOSED",
+      "INTERMEDIATE",
+      "OPEN",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1249,7 +1555,12 @@
     "description_de": "Der Wert gibt an, ob das Fenster hinten rechts zum Zeitpunkt der Datenerfassung geöffnet (OPEN), halb geöffnet (INTERMEDIATE) oder geschlossen (CLOSED) war.",
     "technical_identifier": "vehicle.cabin.window.row2.passenger.status",
     "data_type": "string",
-    "typical_value_range": "CLOSED, INTERMEDIATE, OPEN, INVALID",
+    "typical_value_range": [
+      "CLOSED",
+      "INTERMEDIATE",
+      "OPEN",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1260,7 +1571,12 @@
     "description_de": "Dieser Wert gibt die Statusinformation über die letzte Übertragung von OBFCM*-Werten an, die in einer Werkstatt durchgeführt wurde (d.h. kabelgebunden). (OK für eine gültige Übertragung, bei der die OBFCM-Werte aktualisiert wurden, ECU_COMMUNICATION_ERROR für Fehler beim Sammeln von Daten von den Steuergeräten, VEHICLE_MANIPULATION_DETECTED, wenn eine Manipulation des Fahrzeugs festgestellt wurde, und MANUFACTURER_EXCLUDED, wenn der Fahrzeughersteller von der OBFCM*-Sammlung ausgeschlossen ist (z.B. Alpina, Toyota Supra).",
     "technical_identifier": "vehicle.channel.ista.obfcm.lastTransmissionStatus",
     "data_type": "string",
-    "typical_value_range": "OK, ECU_COMMUNICATION_ERROR, VEHICLE_MANIPULATION_DETECTED, MANUFACTURER_EXCLUDED",
+    "typical_value_range": [
+      "OK",
+      "ECU_COMMUNICATION_ERROR",
+      "VEHICLE_MANIPULATION_DETECTED",
+      "MANUFACTURER_EXCLUDED"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -1326,7 +1642,12 @@
     "description_de": "Der Wert gibt an, ob Teleservices für dieses Fahrzeug verfügbar sind.",
     "technical_identifier": "vehicle.channel.teleservice.status",
     "data_type": "string",
-    "typical_value_range": "PENDING, IDLE, SUCCESSFUL, ERROR",
+    "typical_value_range": [
+      "PENDING",
+      "IDLE",
+      "SUCCESSFUL",
+      "ERROR"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1535,7 +1856,11 @@
     "description_de": "Rückmeldung der AC-Beschränkung.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.acRestriction.factor",
     "data_type": "string",
-    "typical_value_range": "MAXCHARGING, REDUCEDCHARGING, MINCHARGING",
+    "typical_value_range": [
+      "MAXCHARGING",
+      "REDUCEDCHARGING",
+      "MINCHARGING"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1546,7 +1871,14 @@
     "description_de": "Der erste Wert gibt an, ob der Ladestrom, mit dem das Fahrzeug geladen wird, begrenzt wird. Der zweite Wert beschreibt die Art der Begrenzung (reduziert oder minimal)",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.acRestriction.isChosen",
     "data_type": "boolean",
-    "typical_value_range": "NOTCHOSEN, CHOSEN, INVALID; MAXCHARGING, REDUCEDCHARGING, MINCHARGING, INVALID",
+    "typical_value_range": [
+      "NOTCHOSEN",
+      "CHOSEN",
+      "INVALID; MAXCHARGING",
+      "REDUCEDCHARGING",
+      "MINCHARGING",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1568,7 +1900,17 @@
     "description_de": "Autorisierungsstatus der Plug & Charge-Funktion (automatische Bezahlung von Ladeservices) einer Ladesitzung. „AUTHORIZATION_SUCCESSFUL“ - Authentifizierung mit PlugAndCharge erfolgreich, „TRANSPORT_LAYER_ERROR“ - TLS-Verbindung zur EVSE nicht möglich, „HIGH_LEVEL_COMMUNICATION_ERROR“ - Fehler bei der High-Pegel-Kommunikation mit ISO15118, „CONTRACT_SERVICE_NOT_SUPPORTED_ERROR“ - EVSE unterstützt keine Authentifizierung über PlugAndCharge, „AUTHORIZATION_TIMEOUT“ - Autorisierung ist mit einem Fehler abgelaufen, „AUTHORIZATION_TIMEOUT“ - Authentifizierung nach 120 s nicht abgeschlossen, „NVM_READ_CERTIFICATE_ERROR“ - Zertifikate konnten nicht aus dem Speicher des Ladesteuergeräts gelesen werden, „CERTIFICATE_UPDATE_ERROR“ - Aktualisierung des Vertrags über Powerline fehlgeschlagen, „XML_SECURITY_ERROR“ - Schema-Validierungsfehler der übertragenen Daten.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.authentication.status",
     "data_type": "string",
-    "typical_value_range": "AUTHORIZATION_SUCCESSFUL, TRANSPORT_LAYER_ERROR, HIGH_LEVEL_COMMUNICATION_ERROR, CONTRACT_SERVICE_NOT_SUPPORTED_ERROR, AUTHORIZATION_ERROR, AUTHORIZATION_TIMEOUT, NVM_READ_CERTIFICATE_ERROR, CERTIFICATE_UPDATE_ERROR, XML_SECURITY_ERROR",
+    "typical_value_range": [
+      "AUTHORIZATION_SUCCESSFUL",
+      "TRANSPORT_LAYER_ERROR",
+      "HIGH_LEVEL_COMMUNICATION_ERROR",
+      "CONTRACT_SERVICE_NOT_SUPPORTED_ERROR",
+      "AUTHORIZATION_ERROR",
+      "AUTHORIZATION_TIMEOUT",
+      "NVM_READ_CERTIFICATE_ERROR",
+      "CERTIFICATE_UPDATE_ERROR",
+      "XML_SECURITY_ERROR"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1579,7 +1921,11 @@
     "description_de": "Aktuelle Ladebetriebsart.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.chargingMode",
     "data_type": "string",
-    "typical_value_range": "NORMAL_PROGNOSE_BASED, STEP_BASED, PLC_MODE",
+    "typical_value_range": [
+      "NORMAL_PROGNOSE_BASED",
+      "STEP_BASED",
+      "PLC_MODE"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1590,7 +1936,11 @@
     "description_de": "Der Wert gibt das Ladeverfahren (CONDUCTIVE, INDUCTIVE) an, mit dem das Fahrzeug zum Zeitpunkt der Datenerfassung geladen wird.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.connectionType",
     "data_type": "string",
-    "typical_value_range": "CONDUCTIVE, INDUCTIVE, SIGNAL_INVALID",
+    "typical_value_range": [
+      "CONDUCTIVE",
+      "INDUCTIVE",
+      "SIGNAL_INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1601,7 +1951,11 @@
     "description_de": "Aktueller Zustand des Ladesteckers über alle Typen (induktiv, leitungsgebunden), Betriebsarten (AC, DC) und Servicepacks hinweg.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.connectorStatus",
     "data_type": "string",
-    "typical_value_range": "CONNECTED, DISCONNECTED, ERROR",
+    "typical_value_range": [
+      "CONNECTED",
+      "DISCONNECTED",
+      "ERROR"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1678,7 +2032,15 @@
     "description_de": "Status des Hochvolt-Ladens.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.hvStatus",
     "data_type": "string",
-    "typical_value_range": "INVALID, CHARGING, ERROR, NOT_CHARGING, WAITING_FOR_CHARGING, FINISHED_FULLY_CHARGED, FINISHED_NOT_FULL",
+    "typical_value_range": [
+      "INVALID",
+      "CHARGING",
+      "ERROR",
+      "NOT_CHARGING",
+      "WAITING_FOR_CHARGING",
+      "FINISHED_FULLY_CHARGED",
+      "FINISHED_NOT_FULL"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1689,7 +2051,19 @@
     "description_de": "Der Wert gibt die Ursache für das Beenden eines Ladevorgangs an.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.hvpmFinishReason",
     "data_type": "string",
-    "typical_value_range": "UNKNOWN, CHARGING_GOAL_REACHED, END_REQUESTED_BY_DRIVER, CONNECTOR_REMOVED, POWERGRID_FAILED, HV_SYSTEM_FAILURE, CHARGING_STATION_FAILURE, PARKING_LOCK_FAILED, NO_PARKING_LOCK, SIGNAL_INVALID, INVALID",
+    "typical_value_range": [
+      "UNKNOWN",
+      "CHARGING_GOAL_REACHED",
+      "END_REQUESTED_BY_DRIVER",
+      "CONNECTOR_REMOVED",
+      "POWERGRID_FAILED",
+      "HV_SYSTEM_FAILURE",
+      "CHARGING_STATION_FAILURE",
+      "PARKING_LOCK_FAILED",
+      "NO_PARKING_LOCK",
+      "SIGNAL_INVALID",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1700,7 +2074,10 @@
     "description_de": "Dieser Parameter enthält die Information, dass die vom Kunden gewählte Ladebetriebsart aus Systemgründen überschrieben wurde.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.isImmediateChargingSystemReason",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1711,7 +2088,11 @@
     "description_de": "Der Wert gibt an, ob die Funktion \"Sofortladen\" aktiviert ist oder nicht.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.isSingleImmediateCharging",
     "data_type": "boolean",
-    "typical_value_range": "DIRECT_CHG_ONCE_NOT_ACTIVE, DIRECT_CHG_ONCE_ACTIVE, INVALID",
+    "typical_value_range": [
+      "DIRECT_CHG_ONCE_NOT_ACTIVE",
+      "DIRECT_CHG_ONCE_ACTIVE",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1722,7 +2103,18 @@
     "description_de": "Grund des letzten Ladevorgangs.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.lastChargingReason",
     "data_type": "string",
-    "typical_value_range": "CHARGING_GOAL_REACHED, END_REQUESTED_BY_DRIVER, CONNECTOR_REMOVED, POWERGRID_FAILED, HV_SYSTEM_FAILURE, CHARGING_STATION_FAILURE, PARKING_LOCK_FAILED, NO_PARKING_LOCK, INVALID, -NA-",
+    "typical_value_range": [
+      "CHARGING_GOAL_REACHED",
+      "END_REQUESTED_BY_DRIVER",
+      "CONNECTOR_REMOVED",
+      "POWERGRID_FAILED",
+      "HV_SYSTEM_FAILURE",
+      "CHARGING_STATION_FAILURE",
+      "PARKING_LOCK_FAILED",
+      "NO_PARKING_LOCK",
+      "INVALID",
+      "-NA-"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1733,7 +2125,11 @@
     "description_de": "Ergebnis des letzten Ladevorgangs.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.lastChargingResult",
     "data_type": "string",
-    "typical_value_range": "SUCCESS, FAILED, UNKNOWN",
+    "typical_value_range": [
+      "SUCCESS",
+      "FAILED",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1755,7 +2151,11 @@
     "description_de": "Der Wert beschreibt, ob das Fahrzeug mit Gleichstrom (DC) oder Wechselstrom (AC) geladen wurde und welcher Ladestecker dabei verwendet wurde. Der angezeigte technische Wert AC_TYPE1PLUG beispielsweise gibt an, dass der Hochvolt-Speicher im Wechelstrommodus geladen wurde und dabei ein Ladestecker vom Typ 1 Plug zum Einsatz kam.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.method",
     "data_type": "string",
-    "typical_value_range": "AC_TYPE1PLUG,AC_TYPE2PLUG, NOCHARGING",
+    "typical_value_range": [
+      "AC_TYPE1PLUG",
+      "AC_TYPE2PLUG",
+      "NOCHARGING"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1766,7 +2166,21 @@
     "description_de": "Dieser Parameter enthält Informationen über systembedingte Abweichungen von der vom Kunden ausgewählten Ladebetriebsart.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.modeDeviation",
     "data_type": "string",
-    "typical_value_range": "NO_DEVIATION, DC_DYNAMIC_MALIBU, DC_DYNAMIC_MIN_SOE_PROTECTION, IMMEDIATE_CHARGING_NOT_SUPPORTED_BY_EVSE, IMMEDIATE_CHARGING_WAKE_UP_LIMIT_REACHED, IMMEDIATE_CHARGING, CHARGING_TIMESLOT, CHARGING_IN_TIMESLOT, SMART_CHARGING, DC_DYNAMIC, BIDIRECTIONAL_CHARGING, NO_ACTION, UNKNOWN",
+    "typical_value_range": [
+      "NO_DEVIATION",
+      "DC_DYNAMIC_MALIBU",
+      "DC_DYNAMIC_MIN_SOE_PROTECTION",
+      "IMMEDIATE_CHARGING_NOT_SUPPORTED_BY_EVSE",
+      "IMMEDIATE_CHARGING_WAKE_UP_LIMIT_REACHED",
+      "IMMEDIATE_CHARGING",
+      "CHARGING_TIMESLOT",
+      "CHARGING_IN_TIMESLOT",
+      "SMART_CHARGING",
+      "DC_DYNAMIC",
+      "BIDIRECTIONAL_CHARGING",
+      "NO_ACTION",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1777,7 +2191,13 @@
     "description_de": "Der Wert gibt die Anzahl der Phasen an, mit denen die Hochvoltbatterie geladen wird.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.phaseNumber",
     "data_type": "string",
-    "typical_value_range": "NO_CHARGING, 1-PHASES, 2-PHASES, 3-PHASES, INVALID",
+    "typical_value_range": [
+      "NO_CHARGING",
+      "1-PHASES",
+      "2-PHASES",
+      "3-PHASES",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1788,7 +2208,10 @@
     "description_de": "Klimatisierungsaktivierung des Fahrzeugs im Ladeprofil, der Fahrzeuginnenraum wird für die nächste Abfahrtszeit vorklimatisiert.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.profile.climatizationActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1799,7 +2222,10 @@
     "description_de": "Fahrzeuge mit einer vollständigen RCP-Konfiguration (Remote Charging Profile) senden explizit Werte für alle Ladeprofilattribute. Für Fahrzeuge ohne vollständige RCP-Konfiguration werden Standardwerte angewendet.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.profile.isRcpConfigComplete",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1821,7 +2247,11 @@
     "description_de": "Ladepräferenz des aktuellen Ladeprofils. Dieser Wert hängt von der Auswahl des Lademodus ab. Wenn Vehicle.ElectricEngine.Charging.Profile.Mode „DELAYED_CHARGING“ ist, ist Vehicle.ElectricEngine.Charging.Profile.Preference entweder „SMART_CHARGING“ oder „CHARGING_WINDOW“. Wenn Vehicle.ElectricEngine.Charging.Profile.Mode „IMMEDIATE_CHARGING“ ist, ist Vehicle.ElectricEngine.Charging.Profile.Preference auf „NO_PRESELECTION“ gesetzt.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.profile.preference",
     "data_type": "string",
-    "typical_value_range": "CHARGING_WINDOW, SMART_CHARGING, NO_PRESELECTION",
+    "typical_value_range": [
+      "CHARGING_WINDOW",
+      "SMART_CHARGING",
+      "NO_PRESELECTION"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1832,7 +2262,10 @@
     "description_de": "Informationen darüber, ob die bevorstehende Abfahrtszeit für den professionellen Modus (bidirektional/unidirektional) relevant ist und der Sollenergiezustand zu diesem Zeitpunkt erreicht werden muss.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.profile.settings.biDirectionalCharging.departureTimeRelevant",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1843,7 +2276,10 @@
     "description_de": "Das Zulassen der Entladung im professionellen Modus für die bidirektionale Leistungsübertragungsfunktion (BPT) kann vom Kunden ausgewählt werden oder nicht (ON/OFF).",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.profile.settings.biDirectionalCharging.dischargeAllowed",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1865,7 +2301,65 @@
     "description_de": "Grund für das Ende des Ladens ab SP25.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.reasonChargingEnd",
     "data_type": "string",
-    "typical_value_range": "NO_CHARGING_END_SINCE_IPF_WAKEUP, CUSTOMER_INTERACTION_HMI_UNPLUG_CABLE_ONCE, CUSTOMER_INTERACTION_HMI_CHARGING_TARGET_REACHED, CUSTOMER_INTERACTION_APP_UNPLUG_CABLE_ONCE, CUSTOMER_INTERACTION_APP_CHARGING_TARGET_REACHED, CUSTOMER_INTERACTION_CHARGING_STOP_VIA_CHARGING_STOP_BUTTON_SOCKET, CUSTOMER_INTERACTION_AC_CHARGING_STOP_VIA_KEY, CUSTOMER_INTERACTION_AC_CHARGING_STOP_WALLBOX, CUSTOMER_INTERACTION_AC_CHARGING_STOP_LATCH, HV_BATTERY_FULLY_CHARGED, INFRASTRUCTURE_PHYSICAL_LIMITS_REACHED_TARGET_SOE_NOT_REACHABLE, INFRASTRUCTURE_DC_CCS_EVSE_SHUTDOWN, INFRASTRUCTURE_DC_GBT_CST_MESSAGE, INFRASTRUCTURE_DC_CCS_STATIC_PILOT, INFRASTRUCTURE_DC_CCS_COMMUNICATION_ERROR_FAILED_RESPONSE_CODE, INFRASTRUCTURE_DC_CCS_COMMUNICATION_ERROR, INFRASTRUCTURE_NO_ENERGY_TRANSFER, INFRASTRUCTURE_DC_CCS_PRECHARGE_ERROR, INFRASTRUCTURE_DC_CCS_EVSE_MALFUNCTION_EMERGENCY_SHUTDOWN, INFRASTRUCTURE_STATION_NOT_COMPATIBLE, INFRASTRUCTURE_CHARGE_READINESS_TIMEOUT, INFRASTRUCTURE_AC_MAXIMUM_GRID_ERROR_REACHED, INFRASTRUCTURE_DC_GBT_ISOLATION_ERROR_DETECTED, INFRASTRUCTURE_AUTHENTIFICATION_ERROR, VEHICLE_HV_BATTERY_ERROR, VEHICLE_HV_BATTERY_COMMUNICATION_ERROR, VEHICLE_DCDC_ERROR, VEHICLE_PLC_BOOTUP_ERROR, VEHICLE_HV_BATTERY_MAXIMAL_CURRENT_OVERSHOOT, VEHICLE_ISOLATION_ERROR, VEHICLE_MAXIMUM_TEMPERATURE_CHARGING_SOCKET_OVERSHOOT, VEHICLE_LT3_OVERSHOOT, VEHICLE_FUSI_CABLE_LOCK_ERROR, VEHICLE_PLC_COMMUNICATION_NOT_POSSIBLE, FLEXCHARGER_GRID_ERROR, FLEXCHARGER_GRID_TEMPERATURE_ERROR, FLEXCHARGER_EVSE_TEMPERATURE_ERROR, FLEXCHARGER_EVSE_INTERNAL_ERROR, FLEXCHARGER_AC_DC_FAULT_CURRENT, FLEXCHARGER_INCORRECT_REACTION_TIME_PWM, FLEXCHARGER_CHARGING_CURRENT_TOO_HIGH, FLEXCHARGER_PE_FAULT, INFRASTRUCTURE_INEFFICIENT_CHARGING_LOW_POWER, VEHICLE_CABLE_LOCKING_ERROR, VEHICLE_CONFIGURATION_ERROR_400V_800V, INFRASTRUCTURE_NO_AC_VOLTAGE, PLUG_AND_CHARGE_TLS_ERROR, PLUG_AND_CHARGE_CONTRACT_ERROR, SMART_CHARGING_TARIFF_SELECTION_INVALID, SMART_CHARGING_CHARGING_PROFILE_INVALID, CUSTOMER_INTERACTION_AC_CHARGING_STOP_VIA_APP, CHARGING_PAUSED, DISCHARGE_NOT_POSSIBLE_VOLTAGE_TOO_HIGH, DISCHARGE_NOT_POSSIBLE_SOE_TOO_LOW, DISCHARGE_NOT_POSSIBLE_INTERNAL_ERROR, DISCHARGE_NOT_POSSIBLE_INCOMPATIBLE_ADAPTER, DISCHARGE_NOT_POSSIBLE_INCOMPATIBLE_CONSUMER",
+    "typical_value_range": [
+      "NO_CHARGING_END_SINCE_IPF_WAKEUP",
+      "CUSTOMER_INTERACTION_HMI_UNPLUG_CABLE_ONCE",
+      "CUSTOMER_INTERACTION_HMI_CHARGING_TARGET_REACHED",
+      "CUSTOMER_INTERACTION_APP_UNPLUG_CABLE_ONCE",
+      "CUSTOMER_INTERACTION_APP_CHARGING_TARGET_REACHED",
+      "CUSTOMER_INTERACTION_CHARGING_STOP_VIA_CHARGING_STOP_BUTTON_SOCKET",
+      "CUSTOMER_INTERACTION_AC_CHARGING_STOP_VIA_KEY",
+      "CUSTOMER_INTERACTION_AC_CHARGING_STOP_WALLBOX",
+      "CUSTOMER_INTERACTION_AC_CHARGING_STOP_LATCH",
+      "HV_BATTERY_FULLY_CHARGED",
+      "INFRASTRUCTURE_PHYSICAL_LIMITS_REACHED_TARGET_SOE_NOT_REACHABLE",
+      "INFRASTRUCTURE_DC_CCS_EVSE_SHUTDOWN",
+      "INFRASTRUCTURE_DC_GBT_CST_MESSAGE",
+      "INFRASTRUCTURE_DC_CCS_STATIC_PILOT",
+      "INFRASTRUCTURE_DC_CCS_COMMUNICATION_ERROR_FAILED_RESPONSE_CODE",
+      "INFRASTRUCTURE_DC_CCS_COMMUNICATION_ERROR",
+      "INFRASTRUCTURE_NO_ENERGY_TRANSFER",
+      "INFRASTRUCTURE_DC_CCS_PRECHARGE_ERROR",
+      "INFRASTRUCTURE_DC_CCS_EVSE_MALFUNCTION_EMERGENCY_SHUTDOWN",
+      "INFRASTRUCTURE_STATION_NOT_COMPATIBLE",
+      "INFRASTRUCTURE_CHARGE_READINESS_TIMEOUT",
+      "INFRASTRUCTURE_AC_MAXIMUM_GRID_ERROR_REACHED",
+      "INFRASTRUCTURE_DC_GBT_ISOLATION_ERROR_DETECTED",
+      "INFRASTRUCTURE_AUTHENTIFICATION_ERROR",
+      "VEHICLE_HV_BATTERY_ERROR",
+      "VEHICLE_HV_BATTERY_COMMUNICATION_ERROR",
+      "VEHICLE_DCDC_ERROR",
+      "VEHICLE_PLC_BOOTUP_ERROR",
+      "VEHICLE_HV_BATTERY_MAXIMAL_CURRENT_OVERSHOOT",
+      "VEHICLE_ISOLATION_ERROR",
+      "VEHICLE_MAXIMUM_TEMPERATURE_CHARGING_SOCKET_OVERSHOOT",
+      "VEHICLE_LT3_OVERSHOOT",
+      "VEHICLE_FUSI_CABLE_LOCK_ERROR",
+      "VEHICLE_PLC_COMMUNICATION_NOT_POSSIBLE",
+      "FLEXCHARGER_GRID_ERROR",
+      "FLEXCHARGER_GRID_TEMPERATURE_ERROR",
+      "FLEXCHARGER_EVSE_TEMPERATURE_ERROR",
+      "FLEXCHARGER_EVSE_INTERNAL_ERROR",
+      "FLEXCHARGER_AC_DC_FAULT_CURRENT",
+      "FLEXCHARGER_INCORRECT_REACTION_TIME_PWM",
+      "FLEXCHARGER_CHARGING_CURRENT_TOO_HIGH",
+      "FLEXCHARGER_PE_FAULT",
+      "INFRASTRUCTURE_INEFFICIENT_CHARGING_LOW_POWER",
+      "VEHICLE_CABLE_LOCKING_ERROR",
+      "VEHICLE_CONFIGURATION_ERROR_400V_800V",
+      "INFRASTRUCTURE_NO_AC_VOLTAGE",
+      "PLUG_AND_CHARGE_TLS_ERROR",
+      "PLUG_AND_CHARGE_CONTRACT_ERROR",
+      "SMART_CHARGING_TARIFF_SELECTION_INVALID",
+      "SMART_CHARGING_CHARGING_PROFILE_INVALID",
+      "CUSTOMER_INTERACTION_AC_CHARGING_STOP_VIA_APP",
+      "CHARGING_PAUSED",
+      "DISCHARGE_NOT_POSSIBLE_VOLTAGE_TOO_HIGH",
+      "DISCHARGE_NOT_POSSIBLE_SOE_TOO_LOW",
+      "DISCHARGE_NOT_POSSIBLE_INTERNAL_ERROR",
+      "DISCHARGE_NOT_POSSIBLE_INCOMPATIBLE_ADAPTER",
+      "DISCHARGE_NOT_POSSIBLE_INCOMPATIBLE_CONSUMER"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1876,7 +2370,10 @@
     "description_de": "Zeigt den Ladestatus in Fällen an, in denen der Kunde das E-Route-Laden für seine Reise nutzt. E-Route-Ladesitzungen bestehen aus zwei verschiedenen Phasen. Routenoptimierte Ladesitzungen setzen den Soll-Ladezustand des Kunden vorübergehend außer Kraft.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.routeOptimizedChargingStatus",
     "data_type": "string",
-    "typical_value_range": "ROUTE_OPTIMIZED_CHARGING_IN_PROGRESS, ROUTE_OPTIMIZED_SOC_TARGET_REACHED",
+    "typical_value_range": [
+      "ROUTE_OPTIMIZED_CHARGING_IN_PROGRESS",
+      "ROUTE_OPTIMIZED_SOC_TARGET_REACHED"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1898,7 +2395,12 @@
     "description_de": "Dieser Wert gibt den zum Zeitpunkt der Datenerfassung aktuellen Ladestatus des Fahrzeugs an. Der Wert NOCHARGING beispielsweise bedeutet, dass der Hochvolt-Speicher des Fahrzeugs derzeit nicht geladen wird. INITIALIZATION meint, der Ladevorgang wird gerade vorbereitet, CHARGINGACTIVE heißt, der Akku wird gerade aufgeladen. Weitere mögliche Werte sind: CHARGINGPAUSED (Ladevorgang pausiert), CHARGINGENDED (Ladevorgang beendet) und CHARGINGERROR (Ladefehler).",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.status",
     "data_type": "string",
-    "typical_value_range": "MANUAL_SELECTION, AUTOMATIC_SELECTION, AUTOMATIC_SELECTION_20, UNKNOWN",
+    "typical_value_range": [
+      "MANUAL_SELECTION",
+      "AUTOMATIC_SELECTION",
+      "AUTOMATIC_SELECTION_20",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1920,7 +2422,10 @@
     "description_de": "Der Wert gibt die berechnete Dauer bis zur vollständigen Ladung der Hochvoltbatterie (in Minuten) an. Falls ein Navigationsziel gesetzt ist, wird die Restladedauer bis zur Erreichung dieses Ziels angezeigt.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.timeToFullyCharged",
     "data_type": "uint16",
-    "typical_value_range": "0 – 65500 Min, INVALID",
+    "typical_value_range": [
+      "0 – 65500 Min",
+      "INVALID"
+    ],
     "unit": "min",
     "streaming_capable": true
   },
@@ -1931,7 +2436,11 @@
     "description_de": "Gibt ein zuvor definiertes Zeitfenster an, in dem die Hochvoltbatterie des Fahrzeugs geladen werden sollte. Die möglichen Werte lauten NOTCHOSEN und CHOSEN.",
     "technical_identifier": "vehicle.drivetrain.electricEngine.charging.windowSelection",
     "data_type": "string",
-    "typical_value_range": "CHOSEN, NOTCHOSEN, -NA-",
+    "typical_value_range": [
+      "CHOSEN",
+      "NOTCHOSEN",
+      "-NA-"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1975,7 +2484,11 @@
     "description_de": "Der Wert gibt an, ob die Zündung zum Zeitpunkt der Datenerfassung aus oder an war oder ob der Status unbekannt ist.",
     "technical_identifier": "vehicle.drivetrain.engine.isActive",
     "data_type": "boolean",
-    "typical_value_range": "ASN_isFalse, ASN_isTrue, ASN_isUnknown",
+    "typical_value_range": [
+      "ASN_isFalse",
+      "ASN_isTrue",
+      "ASN_isUnknown"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -1986,7 +2499,11 @@
     "description_de": "Der Wert gibt an, ob der Motor zum Zeitpunkt der Datenerfassung aus oder an war oder ob der Status unbekannt ist.",
     "technical_identifier": "vehicle.drivetrain.engine.isIgnitionOn",
     "data_type": "boolean",
-    "typical_value_range": "ASN_isFalse, ASN_isTrue, ASN_isUnknown",
+    "typical_value_range": [
+      "ASN_isFalse",
+      "ASN_isTrue",
+      "ASN_isUnknown"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2217,7 +2734,11 @@
     "description_de": "Der Wert gibt an, ob sich das Fahrzeug zum Zeitpunkt der Datenerfassung in Bewegung befand.",
     "technical_identifier": "vehicle.isMoving",
     "data_type": "boolean",
-    "typical_value_range": "ASN_isFalse, ASN_isTrue, ASN_isUnknown",
+    "typical_value_range": [
+      "ASN_isFalse",
+      "ASN_isTrue",
+      "ASN_isUnknown"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2250,7 +2771,16 @@
     "description_de": "Enthält die Information über die aktuelle Verfügbarkeit der BPT-Funktion (Bidirectional Power Transfer).",
     "technical_identifier": "vehicle.powertrain.electric.battery.biDirectionalCharging.availability",
     "data_type": "string",
-    "typical_value_range": "AVAILABLE, NOT_AVAILABLE, DISABLED_MALIBU, DISABLED_HVS, BPT_AND_IMO_DISABLED, BPT_ONLY_FOR_EMERGENCY_POWER_SUPPLY, DISABLED_IMO_POSSIBLE, DISABLED_LONG_TERM",
+    "typical_value_range": [
+      "AVAILABLE",
+      "NOT_AVAILABLE",
+      "DISABLED_MALIBU",
+      "DISABLED_HVS",
+      "BPT_AND_IMO_DISABLED",
+      "BPT_ONLY_FOR_EMERGENCY_POWER_SUPPLY",
+      "DISABLED_IMO_POSSIBLE",
+      "DISABLED_LONG_TERM"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -2261,7 +2791,11 @@
     "description_de": "Der Wert gibt an, ob zum Zeitpunkt der Datenerfassung eine Ladestrombegrenzung aktiv war.",
     "technical_identifier": "vehicle.powertrain.electric.battery.charging.acLimit.isActive",
     "data_type": "boolean",
-    "typical_value_range": "AC_LIMIT_INACTIVE, AC_LIMIT_ACTIVE, INVALID",
+    "typical_value_range": [
+      "AC_LIMIT_INACTIVE",
+      "AC_LIMIT_ACTIVE",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2305,7 +2839,12 @@
     "description_de": "Der Wert gibt an, ob das Laden wegen der Lärmemission begrenzt wird oder nicht.",
     "technical_identifier": "vehicle.powertrain.electric.battery.charging.acousticLimit",
     "data_type": "string",
-    "typical_value_range": "NO_ACTION, AUTOMATIC, UNLIMITED,LIMITED",
+    "typical_value_range": [
+      "NO_ACTION",
+      "AUTOMATIC",
+      "UNLIMITED",
+      "LIMITED"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2316,7 +2855,18 @@
     "description_de": "Dieses Feld zeigt den Status der Authentifizierung mit der Ladestation an.",
     "technical_identifier": "vehicle.powertrain.electric.battery.charging.authenticationStatus",
     "data_type": "string",
-    "typical_value_range": "NOT_STARTED, STARTED_EIM, STARTED_PNC, STARTED_PLC_EIM, DONE_EIM, DONE_PLC_EIM, DONE_PNC, FAILED_PLC_EIM, FAILED_PNC, UNKNOWN",
+    "typical_value_range": [
+      "NOT_STARTED",
+      "STARTED_EIM",
+      "STARTED_PNC",
+      "STARTED_PLC_EIM",
+      "DONE_EIM",
+      "DONE_PLC_EIM",
+      "DONE_PNC",
+      "FAILED_PLC_EIM",
+      "FAILED_PNC",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -2327,7 +2877,10 @@
     "description_de": "Zeigt an, ob der Battery Care-Modus dauerhaft aktiv ist.",
     "technical_identifier": "vehicle.powertrain.electric.battery.charging.batteryCarePersisted.isActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -2338,7 +2891,10 @@
     "description_de": "Das Laden bis zur Abfahrtszeit beginnt so spät wie möglich, um die Zeit zu minimieren, in der das Fahrzeug einen hohen SoE (State of Energy) hat.",
     "technical_identifier": "vehicle.powertrain.electric.battery.charging.batteryCarePersisted.isPreservingChargingMode",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -2349,7 +2905,10 @@
     "description_de": "Reduziert den Ziel-SoE (State of Energy) auf einen definierten Wert, damit die Batterie keine hohen SoE-Werte erreicht und somit die Batteriealterung verringert wird.",
     "technical_identifier": "vehicle.powertrain.electric.battery.charging.batteryCarePersisted.isReducedTargetSoe",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -2371,7 +2930,11 @@
     "description_de": "Aktive Gleichstrom-Ladebetriebsart (Performance vs. Efficient).",
     "technical_identifier": "vehicle.powertrain.electric.battery.charging.dcChargingModeActive",
     "data_type": "string",
-    "typical_value_range": "EFFICIENT, STANDARD, PERFORMANCE",
+    "typical_value_range": [
+      "EFFICIENT",
+      "STANDARD",
+      "PERFORMANCE"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -2404,7 +2967,12 @@
     "description_de": "Der Wert gibt an, mit welcher \"Smart Charging\" Ladeoption geladen wird.",
     "technical_identifier": "vehicle.powertrain.electric.battery.charging.preferenceSmartCharging",
     "data_type": "string",
-    "typical_value_range": "PRICE_OPTIMIZED, RENEWABLE_ENERGEY, CO2_OPTIMIZED, INVALID",
+    "typical_value_range": [
+      "PRICE_OPTIMIZED",
+      "RENEWABLE_ENERGEY",
+      "CO2_OPTIMIZED",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2426,7 +2994,12 @@
     "description_de": "Aktueller Zustand des Kippschalters für die automatische Batterievorkonditionierung. ON bedeutet, dass der Automatikbetrieb (navigationsbasiert) des vorausschauenden Wärmemanagements (vWM) aktiviert ist. OFF bedeutet, dass der Automatikbetrieb (navigationsbasiert) des vorausschauenden Wärmemanagements (vWM) deaktiviert ist. TEMP\\_OFF steht für die temporäre Deaktivierung des automatischen vorausschauenden Wärmemanagements (vWM) für die aktuelle Fahrt.",
     "technical_identifier": "vehicle.powertrain.electric.battery.preconditioning.automaticMode.statusFeedback",
     "data_type": "string",
-    "typical_value_range": "OFF, ON, TEMP_OFF, UNKNOWN",
+    "typical_value_range": [
+      "OFF",
+      "ON",
+      "TEMP_OFF",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2437,7 +3010,12 @@
     "description_de": "Aktueller Zustand des Tasters für die manuelle Batterievorkonditionierung. Entweder zum Laden oder für den Fahrbetrieb.",
     "technical_identifier": "vehicle.powertrain.electric.battery.preconditioning.manualMode.statusFeedback",
     "data_type": "string",
-    "typical_value_range": "OFF, ON_CHARGE, ON_DRIVE, UNKNOWN",
+    "typical_value_range": [
+      "OFF",
+      "ON_CHARGE",
+      "ON_DRIVE",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2448,7 +3026,16 @@
     "description_de": "Status der Aktivität zur Vorkonditionierung der Batterie. Ein Legacy-Wert, der nur für das Legacy-Projekt SP2021plus gültig ist.",
     "technical_identifier": "vehicle.powertrain.electric.battery.preconditioning.state",
     "data_type": "string",
-    "typical_value_range": "OFF, ON_LEGACY, MANUAL_ON_CHARGE, AUTOMATIC_ON, REMOTE_ON_CHARGE, REMOTE_ON_DRIVE, REMOTE_OFF, UNKNOWN",
+    "typical_value_range": [
+      "OFF",
+      "ON_LEGACY",
+      "MANUAL_ON_CHARGE",
+      "AUTOMATIC_ON",
+      "REMOTE_ON_CHARGE",
+      "REMOTE_ON_DRIVE",
+      "REMOTE_OFF",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2503,7 +3090,12 @@
     "description_de": "Der Wert gibt an, ob die Ladedauer im Fahrzeug angezeigt wird.",
     "technical_identifier": "vehicle.powertrain.electric.chargingDuration.displayControl",
     "data_type": "string",
-    "typical_value_range": "NO_DISPLAY_TIME_FOR_CHARGING, DISPLAY_CHARGING_DURATION, NO_DISPLAY_CHARGING_DURATION, INVALID",
+    "typical_value_range": [
+      "NO_DISPLAY_TIME_FOR_CHARGING",
+      "DISPLAY_CHARGING_DURATION",
+      "NO_DISPLAY_CHARGING_DURATION",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2514,7 +3106,12 @@
     "description_de": "Der Wert gibt an, ob die Abfahrtszeit im Fahrzeug angezeigt wird.",
     "technical_identifier": "vehicle.powertrain.electric.departureTime.displayControl",
     "data_type": "string",
-    "typical_value_range": "DONT_DISPLAY, DISPLAY_DEPARTURE_TIME, DISPLAY_DEPARTURE_TIME_WITH_V2XSOE, UNKNOWN",
+    "typical_value_range": [
+      "DONT_DISPLAY",
+      "DISPLAY_DEPARTURE_TIME",
+      "DISPLAY_DEPARTURE_TIME_WITH_V2XSOE",
+      "UNKNOWN"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2547,7 +3144,10 @@
     "description_de": "Dieses Feld zeigt an, ob die Kundeneinstellung zum Öffnen der Klappe über die MyWay-Funktion (Schieberegler in der mobilen App) aktiv ist. Wenn ja, öffnet sich die Klappe automatisch, wenn sich das Fahrzeug in der Nähe einer Ladestation mit dem Digital Key in der Tasche befindet, und schließt sich automatisch, nachdem das Kabel abgezogen wurde.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.anyPosition.flap.isAutomaticOpenAndCloseActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2558,7 +3158,10 @@
     "description_de": "Dieses Signal zeigt an, ob der Ladeanschluss im Fahrzeug geöffnet ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.anyPosition.flap.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2569,7 +3172,10 @@
     "description_de": "Dieses Signal zeigt an, ob ein Ladekabel an den Ladeanschluss angeschlossen ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.anyPosition.isPlugged",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2580,7 +3186,10 @@
     "description_de": "Dieses Feld zeigt an, ob die Kundeneinstellung zum Öffnen der Klappe vorn links über die MyWay-Funktion (Schieberegler in der mobilen App) aktiv ist. Wenn ja, öffnet sich die Klappe automatisch, wenn sich das Fahrzeug in der Nähe einer Ladestation mit dem Digital Key in der Tasche befindet, und schließt sich automatisch, nachdem das Kabel abgezogen wurde.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.frontLeft.flap.isAutomaticOpenAndCloseActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2591,7 +3200,10 @@
     "description_de": "Dieses Signal zeigt an, ob der Ladeanschluss vorn links im Fahrzeug geöffnet ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.frontLeft.flap.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2602,7 +3214,10 @@
     "description_de": "Dieses Signal zeigt an, ob ein Ladekabel an den Ladeanschluss vorn links angeschlossen ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.frontLeft.isPlugged",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2613,7 +3228,10 @@
     "description_de": "Dieses Feld zeigt an, ob die Kundeneinstellung zum Öffnen der Klappe vorn in der Mitte über die MyWay-Funktion (Schieberegler in der mobilen App) aktiv ist. Wenn ja, öffnet sich die Klappe automatisch, wenn sich das Fahrzeug in der Nähe einer Ladestation mit dem Digital Key in der Tasche befindet, und schließt sich automatisch, nachdem das Kabel abgezogen wurde.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.frontMiddle.flap.isAutomaticOpenAndCloseActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2624,7 +3242,10 @@
     "description_de": "Dieses Signal zeigt an, ob der Ladeanschluss vorn in der Mitte im Fahrzeug geöffnet ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.frontMiddle.flap.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2635,7 +3256,10 @@
     "description_de": "Dieses Signal zeigt an, ob ein Ladekabel an den Ladeanschluss vorn in der Mitte angeschlossen ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.frontMiddle.isPlugged",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2646,7 +3270,10 @@
     "description_de": "Dieses Feld zeigt an, ob die Kundeneinstellung zum Öffnen der Klappe vorn rechts über die MyWay-Funktion (Schieberegler in der mobilen App) aktiv ist. Wenn ja, öffnet sich die Klappe automatisch, wenn sich das Fahrzeug in der Nähe einer Ladestation mit dem Digital Key in der Tasche befindet, und schließt sich automatisch, nachdem das Kabel abgezogen wurde.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.frontRight.flap.isAutomaticOpenAndCloseActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2657,7 +3284,10 @@
     "description_de": "Dieses Signal zeigt an, ob der Ladeanschluss vorn rechts im Fahrzeug geöffnet ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.frontRight.flap.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2668,7 +3298,10 @@
     "description_de": "Dieses Signal zeigt an, ob ein Ladekabel an den Ladeanschluss vorn rechts angeschlossen ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.frontRight.isPlugged",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2679,7 +3312,10 @@
     "description_de": "Dieses Feld zeigt an, ob die Kundeneinstellung zum Öffnen der Klappe hinten links über die MyWay-Funktion (Schieberegler in der mobilen App) aktiv ist. Wenn ja, öffnet sich die Klappe automatisch, wenn sich das Fahrzeug in der Nähe einer Ladestation mit dem Digital Key in der Tasche befindet, und schließt sich automatisch, nachdem das Kabel abgezogen wurde.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.rearLeft.flap.isAutomaticOpenAndCloseActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2690,7 +3326,10 @@
     "description_de": "Dieses Signal zeigt an, ob der Ladeanschluss hinten links im Fahrzeug geöffnet ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.rearLeft.flap.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2701,7 +3340,10 @@
     "description_de": "Dieses Signal zeigt an, ob ein Ladekabel an den Ladeanschluss hinten links angeschlossen ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.rearLeft.isPlugged",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2712,7 +3354,10 @@
     "description_de": "Dieses Feld zeigt an, ob die Kundeneinstellung zum Öffnen der Klappe hinten in der Mitte über die MyWay-Funktion (Schieberegler in der mobilen App) aktiv ist. Wenn ja, öffnet sich die Klappe automatisch, wenn sich das Fahrzeug in der Nähe einer Ladestation mit dem Digital Key in der Tasche befindet, und schließt sich automatisch, nachdem das Kabel abgezogen wurde.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.rearMiddle.flap.isAutomaticOpenAndCloseActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2723,7 +3368,10 @@
     "description_de": "Dieses Signal zeigt an, ob der Ladeanschluss hinten in der Mitte im Fahrzeug geöffnet ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.rearMiddle.flap.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2734,7 +3382,10 @@
     "description_de": "Dieses Signal zeigt an, ob ein Ladekabel an den Ladeanschluss hinten in der Mitte angeschlossen ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.rearMiddle.isPlugged",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2745,7 +3396,10 @@
     "description_de": "Dieses Feld zeigt an, ob die Kundeneinstellung zum Öffnen der Klappe hinten rechts über die MyWay-Funktion (Schieberegler in der mobilen App) aktiv ist. Wenn ja, öffnet sich die Klappe automatisch, wenn sich das Fahrzeug in der Nähe einer Ladestation mit dem Digital Key in der Tasche befindet, und schließt sich automatisch, nachdem das Kabel abgezogen wurde.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.rearRight.flap.isAutomaticOpenAndCloseActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2756,7 +3410,10 @@
     "description_de": "Dieses Signal zeigt an, ob der Ladeanschluss hinten rechts im Fahrzeug geöffnet ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.rearRight.flap.isOpen",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2767,7 +3424,10 @@
     "description_de": "Dieses Signal zeigt an, ob ein Ladekabel an den Ladeanschluss hinten rechts angeschlossen ist.",
     "technical_identifier": "vehicle.powertrain.tractionBattery.charging.port.rearRight.isPlugged",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -2811,7 +3471,10 @@
     "description_de": "Dieser Wert gibt an, ob die im Fahrzeug eingebaute SIM-Karte aktiviert ist.",
     "technical_identifier": "vehicle.sim.status",
     "data_type": "",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": false
   },
@@ -3042,7 +3705,11 @@
     "description_de": "Diebstahlwarnanlage. Schärfungsstatus.",
     "technical_identifier": "vehicle.vehicle.antiTheftAlarmSystem.alarm.armStatus",
     "data_type": "string",
-    "typical_value_range": "unarmed, doorsOnly, doorsTiltCabin",
+    "typical_value_range": [
+      "unarmed",
+      "doorsOnly",
+      "doorsTiltCabin"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -3053,7 +3720,10 @@
     "description_de": "Die Diebstahlwarnanlage ist aktiv (das Fahrzeug hupt).",
     "technical_identifier": "vehicle.vehicle.antiTheftAlarmSystem.alarm.isOn",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -3108,7 +3778,10 @@
     "description_de": "Der Wert enthält die Information, ob zum Zeitpunkt der Abfrage der Tiefschlafmodus (Deep Sleep Mode) aktiviert (\"true\") oder deaktiviert (\"false\") ist. Wenn der Kunde den Tiefschlafmodus (Deep Sleep Mode) aktiviert hat, kann er sein Fahrzeug längere Zeit parken, ohne die Batterie laden zu müssen. Die meisten Verbraucher sind in diesem Modus deaktiviert, um Energie zu sparen. Der Kunde kann den Tiefschlafmodus (Deep Sleep Mode) beenden, indem er ihn deaktiviert oder das Fahrzeug startet.",
     "technical_identifier": "vehicle.vehicle.deepSleepModeActive",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -3119,7 +3792,13 @@
     "description_de": "Aktueller Status der Vorkonditionierung der Standklimatisierung vor Fahrtantritt zum Zeitpunkt der Datenerfassung. Der Wert \"Inactive\" kann übermittelt werden, wenn die Vorkonditionierung nicht gebucht ist oder auch übermittelt werden, wenn die Vorkonditionierung zum Zeitpunkt der Datenerfassung nicht aktiv ist.",
     "technical_identifier": "vehicle.vehicle.preConditioning.activity",
     "data_type": "string",
-    "typical_value_range": "standby, heating, cooling, ventilation, inactive",
+    "typical_value_range": [
+      "standby",
+      "heating",
+      "cooling",
+      "ventilation",
+      "inactive"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -3130,7 +3809,16 @@
     "description_de": "Der Wert gibt den Grund für Nichtausführung der Standklimatisierung zum Zeitpunkt der Datenerfassung an.",
     "technical_identifier": "vehicle.vehicle.preConditioning.error",
     "data_type": "string",
-    "typical_value_range": "LowFuel, LowBattery, QuotaExceeded, HeaterFailure, ComponentFailure, OpenOrUnlocked, OK, INVALID",
+    "typical_value_range": [
+      "LowFuel",
+      "LowBattery",
+      "QuotaExceeded",
+      "HeaterFailure",
+      "ComponentFailure",
+      "OpenOrUnlocked",
+      "OK",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -3141,7 +3829,10 @@
     "description_de": "Dieser Wert gibt an, ob zum Zeitpunkt der Datenerfassung der Motor während der Standklimatisierung aktiv war. Der Wert \"Inactive\" kann übermittelt werden, wenn die Vorkonditionierung nicht gebucht ist oder auch übermittelt werden, wenn die Vorkonditionierung zum Zeitpunkt der Datenerfassung nicht aktiv ist.",
     "technical_identifier": "vehicle.vehicle.preConditioning.isRemoteEngineRunning",
     "data_type": "boolean",
-    "typical_value_range": "true, false",
+    "typical_value_range": [
+      "true",
+      "false"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -3152,7 +3843,11 @@
     "description_de": "Dieser Wert zeigt an, ob eine Motorennutzung zur Vorkonditionierung der Standklimatisierung zum Zeitpunkt der Datenerfassung genutzt werden darf. Dies wird vom Kunden festgelegt.",
     "technical_identifier": "vehicle.vehicle.preConditioning.isRemoteEngineStartAllowed",
     "data_type": "boolean",
-    "typical_value_range": "true, false, INVALID",
+    "typical_value_range": [
+      "true",
+      "false",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
@@ -3196,7 +3891,13 @@
     "description_de": "Der Wert gibt die aktuelle Einstellung zur Anzeige der Uhrzeit zum Zeitpunkt der Datenerfassung im Fahrzeug an. Dies kann zum Beispiel Winterzeit, Sommerzeit, UTC oder manual sein.",
     "technical_identifier": "vehicle.vehicle.timeSetting",
     "data_type": "string",
-    "typical_value_range": "wintertime, summertime, utc, manual, INVALID",
+    "typical_value_range": [
+      "wintertime",
+      "summertime",
+      "utc",
+      "manual",
+      "INVALID"
+    ],
     "unit": "",
     "streaming_capable": true
   },
