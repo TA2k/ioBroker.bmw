@@ -777,7 +777,7 @@ class Bmw extends utils.Adapter {
 
         // HTTP response errors - check status code
         if (error.response) {
-          this.log.error(`Response status: ${JSON.stringify(error.response)}`);
+          this.log.error(`Response status: ${JSON.stringify(error.response.data)}`);
           const status = error.response.status;
           if (status >= 400 && status < 500) {
             // 4xx errors indicate authentication problems - reset needed
