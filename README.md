@@ -209,6 +209,11 @@ If you're not seeing expected data in `VIN.api.*`:
 This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://github.com/TA2k/ioBroker.bmw)
 
 ## Changelog
+### 4.3.0 (2025-10-09)
+
+- improve logs
+- add autocast
+- add descriptions
 
 ### 4.2.0 (2025-10-04)
 

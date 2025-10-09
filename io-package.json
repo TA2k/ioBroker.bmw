@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "4.2.0",
+    "version": "4.3.0",
     "news": {
+      "4.3.0": {
+        "en": "improve logs\nadd autocast\nadd descriptions",
+        "de": "logs verbessern\nautocast hinzufügen\nbeschreibungen hinzufügen",
+        "ru": "улучшить бревна\nдобавить autocast\nдобавить описания",
+        "pt": "melhorar logs\nadicionar autocast\nadicionar descrições",
+        "nl": "logs verbeteren\nautocast toevoegen\nbeschrijvingen toevoegen",
+        "fr": "améliorer les registres\najouter autocast\najouter des descriptions",
+        "it": "migliorare i registri\naggiungere autocast\naggiungere descrizioni",
+        "es": "mejorar los registros\nañadir autocast\nañadir descripciones",
+        "pl": "poprawić logi\ndodaj autocast\ndodaj opisy",
+        "uk": "поліпшення колод\nadd autocast\nдодати описи",
+        "zh-cn": "改进日志\n添加自动播报\n添加说明"
+      },
       "4.2.0": {
         "en": "improve token refresh\nfix image fetching",
         "de": "verbessern sie die token-erfrischung\nbild-feeding fixieren",
@@ -80,19 +93,6 @@
         "pl": "aktualizacja axios\nproblemy z ustawianiem wykryte przez kontroler repozytorium (# 88)\nniektóre małe czystki kodu / modernizacje\ndodaj / przetłumacz opis\naktualizacja logo",
         "uk": "оновлення axios\nфіксація питань, виявлених репозиторійною перевіркою (#88)\nдеякі невеликі очищення коду / модернізації\nопис\nоновлення логотипу",
         "zh-cn": "更新轴线\n修复仓库检查器检测到的问题(#88)\n一些小代码清理/现代化\n添加/翻译说明\n更新标志"
-      },
-      "2.9.4": {
-        "en": "fix for Mitbenutzer Feature",
-        "de": "fix für Mitbenutzer Feature",
-        "ru": "обсуждение Mitbenutzer Feature",
-        "pt": "correção para recurso Mitbenutzer",
-        "nl": "fix voor Mitbenutzer Feature",
-        "fr": "correction pour la fonctionnalité Mitbenutzer",
-        "it": "fix per la funzione Mitbenutzer",
-        "es": "fijado para Mitbenutzer Feature",
-        "pl": "fix dla Mitbenutzer Feature",
-        "uk": "фіксатор для функції Mitbenutzer",
-        "zh-cn": "用于 Mitbenutzer 特性的固定"
       }
     },
     "titleLang": {
@@ -121,8 +121,12 @@
       "uk": "Adapter for BMW CarData API з потоком MQTT в реальному часі",
       "zh-cn": "带有实时MQTT流的BMW CarData API适配器"
     },
-    "authors": ["TA2k <tombox2020@gmail.com>"],
-    "keywords": ["BMW"],
+    "authors": [
+      "TA2k <tombox2020@gmail.com>"
+    ],
+    "keywords": [
+      "BMW"
+    ],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"
