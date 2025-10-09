@@ -174,6 +174,8 @@ class Bmw extends utils.Adapter {
                     descriptions: this.description,
                     states: this.states,
                     autoCast: true,
+
+                    useCompletePathForDescriptionsAndStates: true,
                     forceIndex: true,
                   });
 
@@ -249,7 +251,7 @@ class Bmw extends utils.Adapter {
         })
         .catch(error => {
           this.log.error(`Device code request failed: ${error.message}`);
-          this.log.error(`Error stack: ${error.stack}`);
+          this.log.debug(`Error stack: ${error.stack}`);
           if (error.response) {
             this.log.error(`Response status: ${error.response.status}`);
             this.log.error(`Response headers: ${JSON.stringify(error.response.headers)}`);
@@ -892,7 +894,7 @@ class Bmw extends utils.Adapter {
         this.log.warn(`MQTT authentication failed - refreshing token for next auto-reconnect`);
         try {
           await this.refreshToken();
-          this.log.info(`Token refreshed successfully - MQTT client will auto-reconnect with new credentials`);
+          this.log.debug(`Token refreshed - MQTT client will auto-reconnect with new credentials`);
         } catch (refreshError) {
           this.log.error(`Token refresh failed: ${refreshError}`);
           this.log.warn(`MQTT will retry connection with current token via built-in reconnection`);
@@ -943,6 +945,7 @@ class Bmw extends utils.Adapter {
             states: this.states,
             channelName: 'MQTT Stream Data',
             autoCast: true,
+            useCompletePathForDescriptionsAndStates: true,
           });
 
           await this.setState(`${vin}.lastStreamUpdate`, new Date().toISOString(), true);
@@ -1038,6 +1041,7 @@ class Bmw extends utils.Adapter {
                     states: this.states,
                     autoCast: true,
                     forceIndex: true,
+                    useCompletePathForDescriptionsAndStates: true,
                   });
 
                   // Update lastAPIUpdate timestamp
@@ -1148,6 +1152,7 @@ class Bmw extends utils.Adapter {
               states: this.states,
               autoCast: true,
 
+              useCompletePathForDescriptionsAndStates: true,
               forceIndex: true,
             });
 
@@ -1421,6 +1426,7 @@ class Bmw extends utils.Adapter {
             forceIndex: true,
             states: this.states,
             autoCast: true,
+            useCompletePathForDescriptionsAndStates: true,
           });
 
           // Update lastAPIUpdate timestamp
