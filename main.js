@@ -302,6 +302,7 @@ class Bmw extends utils.Adapter {
       this.log.debug(`Starting token polling, will timeout in ${expires_in}s`);
       while (Date.now() - startTime < expires_in * 1000) {
         this.log.debug(`Waiting ${interval}s before next token poll...`);
+        this.log.debug(`Visit: ${verification_uri_complete}`);
         await this.sleep(interval * 1000);
 
         try {
