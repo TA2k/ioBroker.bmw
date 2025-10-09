@@ -8,6 +8,8 @@ const crypto = require('crypto');
 const qs = require('qs');
 const Json2iob = require('json2iob');
 const axiosRetry = require('axios-retry').default;
+const fs = require('fs');
+const path = require('path');
 
 // BMW CarData API quota limit (calls per 24 hours)
 const API_QUOTA_LIMIT = 50;
@@ -48,6 +50,10 @@ class Bmw extends utils.Adapter {
     // Flag to track initial login (not adapter restart)
     this.initialLogin = false;
 
+    // Initialize descriptions and states from telematic.json
+    this.description = {};
+    this.states = {};
+
     this.requestClient = axios.create({
       withCredentials: true,
     });
@@ -79,6 +85,8 @@ class Bmw extends utils.Adapter {
     }
 
     this.subscribeStates('*');
+
+    this.initializeTelematicData();
 
     // Initialize API quota tracking - restore from saved history
     const apiCallsHistoryState = await this.getStateAsync('info.apiCallsHistory');
@@ -164,6 +172,8 @@ class Bmw extends utils.Adapter {
                   // Store telematic data directly in stream folder
                   await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
                     descriptions: this.description,
+                    states: this.states,
+                    autoCast: true,
                     forceIndex: true,
                   });
 
@@ -688,6 +698,28 @@ class Bmw extends utils.Adapter {
     }
   }
 
+  /**
+   * Initialize descriptions and states from telematic.json
+   */
+  initializeTelematicData() {
+    try {
+      const telematicData = JSON.parse(fs.readFileSync(path.join(__dirname, 'telematic.json'), 'utf8'));
+
+      telematicData.forEach(item => {
+        if (item.technical_identifier && item.cardata_element) {
+          this.description[item.technical_identifier] = item.cardata_element;
+          if (Array.isArray(item.typical_value_range)) {
+            this.states[item.technical_identifier] = item.typical_value_range;
+          }
+        }
+      });
+
+      this.log.info(`Initialized ${Object.keys(this.description).length} descriptions, ${Object.keys(this.states).length} states`);
+    } catch (error) {
+      this.log.error(`Error initializing telematic data: ${error.message}`);
+    }
+  }
+
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -908,7 +940,9 @@ class Bmw extends utils.Adapter {
           await this.json2iob.parse(`${vin}.stream`, data.data, {
             forceIndex: true,
             descriptions: this.description,
+            states: this.states,
             channelName: 'MQTT Stream Data',
+            autoCast: true,
           });
 
           await this.setState(`${vin}.lastStreamUpdate`, new Date().toISOString(), true);
@@ -1001,6 +1035,8 @@ class Bmw extends utils.Adapter {
                   // Store validation data directly in stream folder to avoid duplicate API call
                   await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
                     descriptions: this.description,
+                    states: this.states,
+                    autoCast: true,
                     forceIndex: true,
                   });
 
@@ -1109,6 +1145,9 @@ class Bmw extends utils.Adapter {
             // Store telematic data directly in stream folder
             await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
               descriptions: this.description,
+              states: this.states,
+              autoCast: true,
+
               forceIndex: true,
             });
 
@@ -1380,6 +1419,8 @@ class Bmw extends utils.Adapter {
           await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
             descriptions: this.description,
             forceIndex: true,
+            states: this.states,
+            autoCast: true,
           });
 
           // Update lastAPIUpdate timestamp
