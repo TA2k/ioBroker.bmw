@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "4.3.0",
+    "version": "4.3.1",
     "news": {
+      "4.3.1": {
+        "en": "fix gps coordinate parsing",
+        "de": "fix gps koordinate paring",
+        "ru": "фиксация gps координаты парсинга",
+        "pt": "corrigir a análise de coordenadas do gps",
+        "nl": "fix gps-coördinaat ontleden",
+        "fr": "correction de l'analyse des coordonnées de gps",
+        "it": "correzione gps coordinate parsing",
+        "es": "fijar gps coordenadas paresing",
+        "pl": "parsowanie współrzędnych gps",
+        "uk": "фіксувати gps координацію парсингу",
+        "zh-cn": "gps 坐标解析"
+      },
       "4.3.0": {
         "en": "improve logs\nadd autocast\nadd descriptions",
         "de": "logs verbessern\nautocast hinzufügen\nbeschreibungen hinzufügen",
@@ -80,19 +93,6 @@
         "pl": "BREAKING: Upuszczone wsparcie dla Node.js 18 (# 88)\nBREAKING: Utracone wsparcie dla kontrolera js- 5 (# 111)\nBREAKING: zmiana na admin 7.4.10 zgodnie z zaleceniami jOBrokera (# 111)\nszyfrowanie i ochrona hasła drugiego użytkownika - należy ponownie wprowadzić (# 111)\nuzależnienia od guza",
         "uk": "BREAKING: Dropped підтримка для Node.js 18 (#88)\nBREAKING: Dropped підтримка для js-controller 5 (#111)\nBREAKING: зміни до адміністратора 7.4.10, як рекомендовано ioBroker (#111)\nзашифрувати і захистити другий пароль користувача - повинен бути повторний (#111)\nbump залежності",
         "zh-cn": "对节点18(#88)的支持下降\n中断 : js 控制器 5 已放弃支持 (# 111)\n根据ioBroker的建议(# 111) 改为admin 7.4.10\n加密和保护第二个用户密码 - 必须重新输入( # 111)\n意外依赖"
-      },
-      "2.9.5": {
-        "en": "update axios\nfixing issues detected by repository checker (#88)\nsome small code cleanups/modernisations\nadd/translate description\nupdate logo",
-        "de": "axios\nproblembehebung durch repository checker (#88)\neinige kleine code-reinigungen/modernisierungen\nbeschreibung hinzufügen/übersetzen\nupdate-logo",
-        "ru": "обновление axios\nисправление проблем, обнаруженных с помощью проверки репозитория (#88)\nнебольшая очистка кода / модернизация\nдобавить/перевести описание\nобновление логотипа",
-        "pt": "axios de atualização\nproblemas de fixação detectados pelo verificador de repositório (#88)\nalgumas pequenas limpezas de código/modernizações\nadd/translate description\natualização do logotipo",
-        "nl": "axios bijwerken\nvastleggen van problemen gedetecteerd door repository checker (#88)\nenkele kleine code opruimingen/modernisaties\nbeschrijving toevoegen/vertalen\nlogo bijwerken",
-        "fr": "mettre à jour axios\ncorrection des problèmes détectés par le contrôleur du dépôt (#88)\nquelques petits nettoyages/modernisations de code\najouter/transférer la description\nmettre à jour le logo",
-        "it": "aggiornamento assio\nrisolvere i problemi rilevati da repository checker (#88)\nalcune piccole pulizia del codice/modernizzazioni\naggiungere/tradurre la descrizione\nlogo aggiornamento",
-        "es": "actualización axios\nproblemas de fijación detectados por repositorio (#88)\nalgunas pequeñas limpiezas/modernizaciones de código\nadd/translate description\nactualización del logo",
-        "pl": "aktualizacja axios\nproblemy z ustawianiem wykryte przez kontroler repozytorium (# 88)\nniektóre małe czystki kodu / modernizacje\ndodaj / przetłumacz opis\naktualizacja logo",
-        "uk": "оновлення axios\nфіксація питань, виявлених репозиторійною перевіркою (#88)\nдеякі невеликі очищення коду / модернізації\nопис\nоновлення логотипу",
-        "zh-cn": "更新轴线\n修复仓库检查器检测到的问题(#88)\n一些小代码清理/现代化\n添加/翻译说明\n更新标志"
       }
     },
     "titleLang": {
