@@ -8,7 +8,8 @@ const path = require('path');
 
 /**
  * Generate descriptions and states from telematic.json file
- * @returns {Object} Object containing descriptions and states
+ *
+ * @returns {object} Object containing descriptions and states
  */
 function generateTelematicData() {
   try {
