@@ -74,8 +74,8 @@ class Bmw extends utils.Adapter {
 
     // Validate configuration
     if (!this.config.clientId) {
-      this.log.error('BMW CarData Client ID not configured! Please set up in adapter settings.');
-      this.log.info('Visit BMW ConnectedDrive portal, go to CarData section, and generate a client ID');
+      this.log.error(`BMW CarData Client ID not configured! Please set up in adapter settings.`);
+      this.log.info(`Visit BMW ConnectedDrive portal, go to CarData section, and generate a client ID`);
       return;
     }
 
@@ -156,10 +156,10 @@ class Bmw extends utils.Adapter {
 
             // Periodic telematic data refresh - MQTT provides real-time updates
             if (!this.containerId) {
-              this.log.warn('No container ID available for periodic telematic data fetch, setting up container...');
+              this.log.warn(`No container ID available for periodic telematic data fetch, setting up container...`);
               const setupSuccess = await this.setupTelematicContainer();
               if (!setupSuccess) {
-                this.log.error('Failed to setup telematic container for periodic updates');
+                this.log.error(`Failed to setup telematic container for periodic updates`);
                 return;
               }
             }
@@ -260,22 +260,22 @@ class Bmw extends utils.Adapter {
             // Special handling for 400 Bad Request - likely client configuration issue
             if (error.response.status === 400) {
               this.log.error('='.repeat(80));
-              this.log.error('BMW CLIENT ID CONFIGURATION ERROR (400 Bad Request)');
+              this.log.error(`BMW CLIENT ID CONFIGURATION ERROR (400 Bad Request)`);
               this.log.error('='.repeat(80));
-              this.log.error('This error usually means:');
-              this.log.error('1. CarData API access is not activated for your Client ID');
-              this.log.error('2. CarData Streaming is not enabled for your Client ID');
-              this.log.error('3. Your Client ID is invalid or has been revoked');
+              this.log.error(`This error usually means:`);
+              this.log.error(`1. CarData API access is not activated for your Client ID`);
+              this.log.error(`2. CarData Streaming is not enabled for your Client ID`);
+              this.log.error(`3. Your Client ID is invalid or has been revoked`);
               this.log.error('');
-              this.log.error('To fix this issue:');
-              this.log.error('1. Visit BMW ConnectedDrive portal: https://www.bmw.de/de-de/mybmw/vehicle-overview');
-              this.log.error('2. Go to CarData section');
+              this.log.error(`To fix this issue:`);
+              this.log.error(`1. Visit BMW ConnectedDrive portal: https://www.bmw.de/de-de/mybmw/vehicle-overview`);
+              this.log.error(`2. Go to CarData section`);
               this.log.error(
-                '3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection',
+                `3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection`,
               );
-              this.log.error('4. If not activated, enable both services');
-              this.log.error('5. If already activated, delete and recreate your Client ID');
-              this.log.error('6. Update the adapter configuration with the new Client ID');
+              this.log.error(`4. If not activated, enable both services`);
+              this.log.error(`5. If already activated, delete and recreate your Client ID`);
+              this.log.error(`6. Update the adapter configuration with the new Client ID`);
               this.log.error('='.repeat(80));
             }
           }
@@ -300,13 +300,13 @@ class Bmw extends utils.Adapter {
 
       // Show user instructions
       this.log.info('='.repeat(80));
-      this.log.info('BMW CARDATA AUTHORIZATION REQUIRED');
+      this.log.info(`BMW CARDATA AUTHORIZATION REQUIRED`);
       this.log.info('='.repeat(80));
       this.log.info(`1. Visit: ${verification_uri_complete}`);
       this.log.info(`2. Or visit: ${deviceResponse.data.verification_uri} and enter code: ${user_code}`);
       this.log.info(`3. Login with your BMW account and authorize`);
       this.log.info(`4. Code expires in ${Math.floor(expires_in / 60)} minutes`);
-      this.log.info('The adapter will automatically continue after authorization');
+      this.log.info(`The adapter will automatically continue after authorization`);
       this.log.info('='.repeat(80));
 
       // Step 2: Poll for tokens
@@ -358,7 +358,7 @@ class Bmw extends utils.Adapter {
 
           await this.setState('cardataauth.session', JSON.stringify(this.session), true);
           this.setState('info.connection', true, true);
-          this.log.info('BMW CarData authorization successful!');
+          this.log.info(`BMW CarData authorization successful!`);
 
           // Mark this as an initial login so basicData will be fetched
           this.initialLogin = true;
@@ -369,14 +369,14 @@ class Bmw extends utils.Adapter {
           this.log.debug(`Token polling error: ${errorCode || error.message}`);
 
           if (errorCode === 'authorization_pending') {
-            this.log.debug('Authorization still pending, continuing to poll...');
+            this.log.debug(`Authorization still pending, continuing to poll...`);
             continue; // Keep polling
           } else if (errorCode === 'slow_down') {
-            this.log.debug('Rate limit hit, slowing down polling...');
+            this.log.debug(`Rate limit hit, slowing down polling...`);
             await this.sleep(5000); // Additional delay
             continue;
           } else if (errorCode === 'expired_token') {
-            this.log.error('Authorization code expired, please restart adapter');
+            this.log.error(`Authorization code expired, please restart adapter`);
             return false;
           } else {
             this.log.error(`Token request failed: ${errorCode || error.message}`);
@@ -437,7 +437,7 @@ class Bmw extends utils.Adapter {
         }
 
         if (mappings.length === 0) {
-          this.log.info('No BMW vehicles found in CarData mappings');
+          this.log.info(`No BMW vehicles found in CarData mappings`);
           return;
         }
 
@@ -480,7 +480,7 @@ class Bmw extends utils.Adapter {
         if (error.response) {
           this.log.error(`Response: ${JSON.stringify(error.response.data)}`);
           if (error.response.status === 403 || error.response.status === 429) {
-            this.log.warn('Rate limit exceeded or access denied');
+            this.log.warn(`Rate limit exceeded or access denied`);
           }
         }
       });
@@ -488,13 +488,17 @@ class Bmw extends utils.Adapter {
     // Reset initialLogin flag after processing all vehicles
     if (this.initialLogin) {
       this.initialLogin = false;
-      this.log.info('Initial login basicData fetching completed');
+      this.log.info(`Initial login basicData fetching completed`);
     }
 
     await this.sleep(2000);
   }
 
-  // Create complete vehicle structure including basic states and remote buttons
+  /**
+   * Create complete vehicle structure including basic states and remote buttons
+   *
+   * @param {string} vin - The vehicle VIN
+   */
   async createVehicleStates(vin) {
     // Create vehicle device
     await this.extendObject(vin, {
@@ -640,7 +644,6 @@ class Bmw extends utils.Adapter {
 
     const used = this.apiCalls.length;
     const remaining = API_QUOTA_LIMIT - used;
-
     // Quota states removed - using only apiCallsHistory for persistence
 
     return { used, remaining };
@@ -722,10 +725,20 @@ class Bmw extends utils.Adapter {
     }
   }
 
+  /**
+   * Pauses execution for a specified duration.
+   *
+   * @param {number} ms - The duration to pause in milliseconds.
+   */
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  /**
+   * Function to clean up old states from previous adapter versions
+   *
+   * @param {string} vin - The vehicle VIN
+   */
   async cleanObjects(vin) {
     // Check if this is an upgrade from old version by looking for remotev2 states
     const remoteState = await this.getObjectAsync(`${vin}.remotev2`);
@@ -733,7 +746,7 @@ class Bmw extends utils.Adapter {
       this.log.info(`Cleaning old states for ${vin} (upgrading from previous version)`);
 
       // Delete all old state structures recursively
-      await this.delObjectAsync(`${vin}`, { recursive: true });
+      await this.delObjectAsync(vin, { recursive: true });
 
       // Create fresh vehicle device
       await this.extendObject(vin, {
@@ -755,20 +768,20 @@ class Bmw extends utils.Adapter {
         await this.delObjectAsync(`${vin}.chargingprofile`, { recursive: true });
         await this.delObjectAsync(`${vin}.serviceExecutionHistory`, { recursive: true });
         await this.delObjectAsync(`${vin}.apiV2`, { recursive: true });
-        await this.delObject(`${vin}.remote`, { recursive: true });
+        await this.delObjectAsync(`${vin}.remote`, { recursive: true });
       }
     }
 
     // Clean up old global states
-    await this.delObject(`_DatenNeuLaden`);
-    await this.delObject(`_LetzterDatenabrufOK`);
-    await this.delObject(`_LetzerFehler`);
+    await this.delObjectAsync(`_DatenNeuLaden`);
+    await this.delObjectAsync(`_LetzterDatenabrufOK`);
+    await this.delObjectAsync(`_LetzerFehler`);
 
     // Clean up old authentication objects (v3.x used different auth structure)
-    const oldAuthObjects = await this.getObjectAsync('auth');
+    const oldAuthObjects = await this.getObjectAsync(`auth`);
     if (oldAuthObjects) {
-      this.log.info('Cleaning up complete old auth folder from previous version');
-      await this.delObjectAsync('auth', { recursive: true });
+      this.log.info(`Cleaning up complete old auth folder from previous version`);
+      await this.delObjectAsync(`auth`, { recursive: true });
     }
   }
 
@@ -778,7 +791,7 @@ class Bmw extends utils.Adapter {
       return await this.login();
     }
 
-    this.log.debug('Refreshing BMW CarData tokens');
+    this.log.debug(`Refreshing BMW CarData tokens`);
     this.log.debug(`Refresh token URL: ${this.authApiBase}/token`);
     this.log.debug(`Client ID: ${this.config.clientId}`);
 
@@ -800,9 +813,9 @@ class Bmw extends utils.Adapter {
       .then(async res => {
         // Store refreshed tokens (keep existing session structure)
         this.session = res.data;
-        this.setState('cardataauth.session', JSON.stringify(this.session), true);
-        this.setState('info.connection', true, true);
-        this.log.debug('Tokens refreshed successfully - MQTT will auto-reconnect with new credentials');
+        this.setState(`cardataauth.session`, JSON.stringify(this.session), true);
+        this.setState(`info.connection`, true, true);
+        this.log.debug(`Tokens refreshed successfully - MQTT will auto-reconnect with new credentials`);
         this.mqtt?.options && (this.mqtt.options.password = this.session.id_token);
         return res.data;
       })
@@ -817,7 +830,7 @@ class Bmw extends utils.Adapter {
           if (status >= 400 && status < 500) {
             // 4xx errors indicate authentication problems - reset needed
             this.log.error(`Token refresh failed with HTTP ${status} auth error - starting new device flow`);
-            this.setState('info.connection', false, true);
+            this.setState(`info.connection`, false, true);
             return await this.login();
           }
         }
@@ -825,20 +838,20 @@ class Bmw extends utils.Adapter {
         this.log.warn(
           `Token refresh failed, will retry on next refresh cycle. You can also delete bmw.0.cardataauth.session state to force re-login.`,
         );
-        this.setState('info.connection', false, true);
+        this.setState(`info.connection`, false, true);
         return;
       });
   }
 
   async connectMQTT() {
     if (!this.session.id_token) {
-      this.log.warn('No MQTT credentials available (missing ID token)');
+      this.log.warn(`No MQTT credentials available (missing ID token)`);
       return false;
     }
 
     if (!this.config.cardataStreamingUsername) {
-      this.log.error('CarData Streaming Username not configured! Please set it in adapter settings.');
-      this.log.error('Find your streaming username in BMW ConnectedDrive portal under CarData > Streaming section.');
+      this.log.error(`CarData Streaming Username not configured! Please set it in adapter settings.`);
+      this.log.error(`Find your streaming username in BMW ConnectedDrive portal under CarData > Streaming section.`);
       return false;
     }
 
@@ -862,8 +875,8 @@ class Bmw extends utils.Adapter {
     this.mqtt = mqtt.connect(options);
 
     this.mqtt.on('connect', () => {
-      this.log.info('BMW MQTT stream connected');
-      this.setState('info.mqttConnected', true, true);
+      this.log.info(`BMW MQTT stream connected`);
+      this.setState(`info.mqttConnected`, true, true);
 
       // Subscribe to all vehicle topics for this CarData Streaming username
       const topic = `${this.config.cardataStreamingUsername}/+`;
