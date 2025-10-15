@@ -867,7 +867,7 @@ class Bmw extends utils.Adapter {
 
       // Subscribe to all vehicle topics for this CarData Streaming username
       const topic = `${this.config.cardataStreamingUsername}/+`;
-      this.mqtt.subscribe(topic, err => {
+      this.mqtt?.subscribe(topic, err => {
         if (err) {
           this.log.error(`MQTT subscription failed: ${err.message}`);
         } else {
