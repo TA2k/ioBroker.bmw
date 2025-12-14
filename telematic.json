@@ -101,8 +101,8 @@
   {
     "cardata_element": "Charging port status text",
     "cardata_element_de": "Status-Text des Ladeanschlusses",
-    "description": "Required alongside Vehicle.Body.ChargingPort.Status to ensure correct handling of charging sessions for G08 BEV vehicles (for details, contact DE-3-E; onboard fix expected by 2021-03)",
-    "description_de": "Erforderlich zusammen mit Vehicle.Body.ChargingPort.Status, um eine korrekte Handhabbarkeit der Ladesitzungen bei G08 BEV Fahrzeugen sicherzustellen (für Details bitte DE-3-E kontaktieren; Korrektur im Fahrzeug bis 2021-03 erwartet)",
+    "description": "Required alongside Vehicle.Body.ChargingPort.Status to ensure correct handling of charging sessions for G08 BEV vehicles.",
+    "description_de": "Erforderlich zusammen mit Vehicle.Body.ChargingPort.Status, um eine korrekte Handhabbarkeit der Ladesitzungen bei G08 BEV Fahrzeugen sicherzustellen.",
     "technical_identifier": "vehicle.body.chargingPort.statusClearText",
     "data_type": "string",
     "typical_value_range": [
@@ -2712,7 +2712,7 @@
     "description_de": "Der Fehlerspeicher gibt Auskunft über potenzielle Störungen oder technische Defekte im Fahrzeug. Diese Informationen sind für Werkstätten gedacht. Kundenrelevante Störungen, die dem Fahrer im Fahrzeug angezeigt werden, sind unter dem CarData Element „Check Control Meldungen“ zu finden. Details hierzu sind in der Betriebsanleitung des Fahrzeugs dokumentiert.",
     "technical_identifier": "vehicle.electronicControlUnit.diagnosticTroubleCodes.raw",
     "data_type": "",
-    "typical_value_range": "The JSON structure is appended at the end of the table (4).",
+    "typical_value_range": "-",
     "unit": "",
     "streaming_capable": true
   },
@@ -2741,17 +2741,6 @@
     ],
     "unit": "",
     "streaming_capable": true
-  },
-  {
-    "cardata_element": "Learning navigation",
-    "cardata_element_de": "Lernende Navigation",
-    "description": "Displays the learned navigation recommendations (preferred routes and destinations of the customer).",
-    "description_de": "Gibt die gelernten Navigationsempfehlungen (bevorzugte Routen und Ziele des Kunden) an.",
-    "technical_identifier": "vehicle.learningNavigation",
-    "data_type": "",
-    "typical_value_range": "Details can be found in the corresponding Swagger documentation: ../learningNavigation",
-    "unit": "",
-    "streaming_capable": false
   },
   {
     "cardata_element": "Vehicle image",
@@ -3485,7 +3474,7 @@
     "description_de": "Der Wert gibt die letzten relevanten Check-Control-Meldungen an, welche im Fahrzeug angezeigt und an BMW übertragen wurden. Check-Control überwacht Funktionen im Fahrzeug und meldet, wenn in überwachten Systemen eine Störung vorliegt. Eine Check-Control-Meldung wird als Kombination von Kontroll- oder Warnleuchten und Textmeldungen in der Instrumentenkombination und ggf. im Head-Up Display angezeigt. Hinweis: Nicht alle Check-Control-Meldungen, die im Fahrzeug angezeigt werden, werden an BMW übertragen.",
     "technical_identifier": "vehicle.status.checkControlMessages",
     "data_type": "",
-    "typical_value_range": "The Check Control example is appended at the end of the table (2).",
+    "typical_value_range": "-",
     "unit": "",
     "streaming_capable": false
   },
@@ -3496,7 +3485,7 @@
     "description_de": "Sensoren und spezielle Algorithmen berücksichtigen die Einsatzbedingungen des Fahrzeugs. CBS ermittelt damit den Wartungsbedarf. Das System ermöglicht somit den Wartungsumfang an das individuelle Nutzungsprofil anzupassen.",
     "technical_identifier": "vehicle.status.conditionBasedServices",
     "data_type": "",
-    "typical_value_range": "The Condition Based Service example is appended at the end of the table (3).",
+    "typical_value_range": "-",
     "unit": "",
     "streaming_capable": false
   },
