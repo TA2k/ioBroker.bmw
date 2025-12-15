@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "4.3.1",
+    "version": "4.3.2",
     "news": {
+      "4.3.2": {
+        "en": "update telemetry ids for container creation\noptimize dependabot config (#209)",
+        "de": "aktualisierung von telemetrie-ids für die container-erstellung\noptimieren abhängigabot config (#209)",
+        "ru": "обновление телеметрических идентификаторов для создания контейнеров\nоптимизируйте конфигурацию зависимого робота (#209)",
+        "pt": "atualizar ids de telemetria para criação de containers\notimizar a configuração do dependebot (# 209)",
+        "nl": "update telemetrie-id's voor het aanmaken van containers\ndependabot config optimaliseren (#209)",
+        "fr": "mettre à jour les ids de télémétrie pour la création de conteneurs\noptimiser la configuration de base (#209)",
+        "it": "aggiornare ids di telemetria per la creazione di container\nottimizzare la configurazione dipendeabot (#209)",
+        "es": "actualización de los sistemas de telemetría para la creación de contenedores\noptimizar config de dependabot (#209)",
+        "pl": "aktualizacja identyfikatorów telemetrii do tworzenia kontenerów\noptymalizacja konfiguracji zależnej (# 209)",
+        "uk": "оновлення телеметрії кришок для створення контейнерів\nоптимізація налаштування залежностей (#209)",
+        "zh-cn": "更新用于创建容器的遥测标识\n优化依赖配置 (# 209)"
+      },
       "4.3.1": {
         "en": "fix gps coordinate parsing",
         "de": "fix gps koordinate paring",
@@ -80,19 +93,6 @@
         "pl": "Zmiana na zalecaną stabilną wersję admin 7.6.17 (#159)\nMigracja do iobroker/eslint-config (#146)\nNaprawa podatności w form-data\nCzyszczenie kodu\nAktualizacja axios\nAktualizacja adapter-core\nNaprawa problemów wykrytych przez sprawdzacz repozytorium (#170)\nAktualizacja zależności",
         "uk": "Перехід на рекомендовану стабільну версію admin 7.6.17 (#159)\nМіграція на iobroker/eslint-config (#146)\nВиправлення вразливості form-data\nОчищення коду\nОновлення axios\nОновлення adapter-core\nВиправлення проблем, виявлених перевіркою репозиторію (#170)\nОновлення залежностей",
         "zh-cn": "切换到推荐的稳定版 admin 7.6.17 (#159)\n迁移到 iobroker/eslint-config (#146)\n修复 form-data 漏洞\n代码清理\n更新 axios\n更新 adapter-core\n修复仓库检查器检测到的问题 (#170)\n更新依赖项"
-      },
-      "3.0.0": {
-        "en": "BREAKING: Dropped support for Node.js 18 (#88)\nBREAKING: Dropped support for js-controller 5 (#111)\nBREAKING: change to admin 7.4.10 as recommended by ioBroker (#111)\nencrypt and protect second user password - has to be reentered (#111)\nbump dependencies",
-        "de": "BREAKING: Unterstützung für Node.js 18 (#88) eingestellt\nBREAKING: Unterstützung für js-controller 5 (#111) eingestellt\nBREAKING: Wechsel zu admin 7.4.10 wie von ioBroker empfohlen (#111)\nzweites Benutzerpasswort verschlüsseln und schützen - muss erneut eingegeben werden (#111)\nAbhängigkeiten aktualisiert",
-        "ru": "Отказ от поддержки Node.js 18 (#88)\nОтказ от поддержки js-контроллера 5 (#111)\nBREAKING: изменение на админ 7.4.10 в соответствии с рекомендациями ioBroker (#111)\nшифровать и защищать пароль второго пользователя - должен быть повторно введен (#111)\nбамп зависимости",
-        "pt": "BREAKING: Suporte suspenso para Node.js 18 (# 88)\nBREAKING: Suporte suspenso para o js-controller 5 (# 111)\nBREAKING: mudança para admin 7.4.10 conforme recomendado pelo ioBroker (# 111)\ncriptografar e proteger a segunda senha do usuário - tem que ser reentrada (# 111)\ndependências de colisão",
-        "nl": "BREAKING: Gestopte ondersteuning voor Node.js 18 (#88)\nBreaking: Dropped support for js-controller 5 (#111)\nBREAKING: overstappen op admin 7.4.10 zoals aanbevolen door ioBroker (#111)\ntweede gebruikerswachtwoord versleutelen en beschermen - moet opnieuw worden ingevoerd (#111)\nbump afhankelijkheden",
-        "fr": "Soutien abandonné pour Node.js 18 (#88)\nSoutien abandonné pour le contrôleur de js 5 (#111)\nBREAKING: changement à l'administrateur 7.4.10 recommandé par ioBroker (#111)\nchiffrer et protéger le mot de passe du deuxième utilisateur - doit être réintroduit (#111)\ndépendances des bosses",
-        "it": "BREAKING: Supporto a goccia per Node.js 18 (#88)\nBREAKING: Supporto a goccia per js-controller 5 (#111)\nBREAKING: cambiamento a admin 7.4.10 come raccomandato da ioBroker (#111)\ncrittografare e proteggere la seconda password dell'utente - deve essere riattivata (#111)\nindipendenza urto",
-        "es": "BREAKING: Soporte abandonado para Node.js 18 (#88)\nBREAKING: Soporte desechado para js-controller 5 (#111)\nBREAKING: cambio a admin 7.4.10 según lo recomendado por ioBroker (#111)\nencriptar y proteger la segunda contraseña de usuario - tiene que ser reiniciado (#111)\ndependencia de los gastos",
-        "pl": "BREAKING: Upuszczone wsparcie dla Node.js 18 (# 88)\nBREAKING: Utracone wsparcie dla kontrolera js- 5 (# 111)\nBREAKING: zmiana na admin 7.4.10 zgodnie z zaleceniami jOBrokera (# 111)\nszyfrowanie i ochrona hasła drugiego użytkownika - należy ponownie wprowadzić (# 111)\nuzależnienia od guza",
-        "uk": "BREAKING: Dropped підтримка для Node.js 18 (#88)\nBREAKING: Dropped підтримка для js-controller 5 (#111)\nBREAKING: зміни до адміністратора 7.4.10, як рекомендовано ioBroker (#111)\nзашифрувати і захистити другий пароль користувача - повинен бути повторний (#111)\nbump залежності",
-        "zh-cn": "对节点18(#88)的支持下降\n中断 : js 控制器 5 已放弃支持 (# 111)\n根据ioBroker的建议(# 111) 改为admin 7.4.10\n加密和保护第二个用户密码 - 必须重新输入( # 111)\n意外依赖"
       }
     },
     "titleLang": {
