@@ -857,6 +857,7 @@ class Bmw extends utils.Adapter {
 
     const mqtt = require('mqtt');
 
+    //export interface IClientOptions extends ISecureClientOptions {
     const options = {
       host: 'customer.streaming-cardata.bmwgroup.com',
       port: 9000,

@@ -214,6 +214,12 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (hombach) year 2026 changes
+- (hombach) update dependencies
+
 ### 4.3.2 (2025-12-15)
 
 - update telemetry ids for container creation
