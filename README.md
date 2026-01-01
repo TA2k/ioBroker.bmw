@@ -348,7 +348,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 MIT License
 
-Copyright (c) 2021-2025 TA2k <tombox2020@gmail.com>
+Copyright (c) 2021-2026 TA2k <tombox2020@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
