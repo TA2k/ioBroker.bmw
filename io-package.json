@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "4.3.2",
+    "version": "4.3.3",
     "news": {
+      "4.3.3": {
+        "en": "year 2026 changes\nupdate dependencies",
+        "de": "jahr 2026 änderungen\naktualisierung der abhängigkeiten",
+        "ru": "2026 год изменения\nобновление зависимостей",
+        "pt": "variações do ano de 2026\natualizar dependências",
+        "nl": "jaar 2026 veranderingen\nafhankelijkheden bijwerken",
+        "fr": "année 2026 changements\nmettre à jour les dépendances",
+        "it": "anno 2026 modifiche\naggiornamento dipendenze",
+        "es": "año 2026 cambios\ndependencias de actualización",
+        "pl": "rok 2026 zmiany\naktualizacji zależności",
+        "uk": "рік 2026 змін\nоновлення залежності",
+        "zh-cn": "2026年的变化\n更新依赖关系"
+      },
       "4.3.2": {
         "en": "update telemetry ids for container creation\noptimize dependabot config (#209)",
         "de": "aktualisierung von telemetrie-ids für die container-erstellung\noptimieren abhängigabot config (#209)",
@@ -80,19 +93,6 @@
         "pl": "BREAKING: Pełna migracja do BMW CarData API\nBREAKING: Uwierzytelnianie OAuth2 device flow (bez nazwy użytkownika/hasła)\nBREAKING: Usunięto zdalne sterowanie (CarData API tylko do odczytu)\nNEW: Strumieniowanie MQTT w czasie rzeczywistym dla natychmiastowych aktualizacji\nNEW: Zarządzanie limitem 50 wywołań API na 24h\nNEW: Kompleksowe zbieranie danych ze wszystkich endpointów CarData",
         "uk": "BREAKING: Повна міграція на BMW CarData API\nBREAKING: Автентифікація через OAuth2 device flow (без імені користувача/пароля)\nBREAKING: Видалено дистанційне керування (CarData API лише для читання)\nNEW: Потокове MQTT у реальному часі для миттєвих оновлень\nNEW: Керування квотою 50 викликів API на 24 години\nNEW: Повний збір даних з усіх кінцевих точок CarData",
         "zh-cn": "BREAKING：完全迁移到 BMW CarData API\nBREAKING：OAuth2 device flow 身份验证（不再需要用户名/密码）\nBREAKING：远程控制已移除（CarData API 仅支持读取）\nNEW：实时 MQTT 流式传输，立即更新\nNEW：24 小时内 50 次 API 调用配额管理\nNEW：从所有 CarData 端点全面收集数据"
-      },
-      "3.0.1": {
-        "en": "change to recommended stable admin 7.6.17 (#159)\nmigrate to iobroker/eslint-config (#146)\nfix form-data vulnerability\ncode cleanups\nupdate axios\nbump adapter-core\nfix issues detected by repository checker (#170)\nbump dependencies",
-        "de": "Wechsel auf empfohlenen stabilen Admin 7.6.17 (#159)\nMigration zu iobroker/eslint-config (#146)\nBehebung der Sicherheitslücke in form-data\nCode-Bereinigung\nUpdate von axios\nUpdate von adapter-core\nBehebung von Problemen, die durch den Repository Checker erkannt wurden (#170)\nAktualisierung von Abhängigkeiten",
-        "ru": "Переход на рекомендованную стабильную версию admin 7.6.17 (#159)\nМиграция на iobroker/eslint-config (#146)\nИсправление уязвимости form-data\nОчистка кода\nОбновление axios\nОбновление adapter-core\nИсправление проблем, обнаруженных проверкой репозитория (#170)\nОбновление зависимостей",
-        "pt": "Alteração para o administrador estável recomendado 7.6.17 (#159)\nMigração para iobroker/eslint-config (#146)\nCorreção da vulnerabilidade form-data\nLimpeza de código\nAtualização do axios\nAtualização do adapter-core\nCorreção de problemas detectados pelo verificador de repositório (#170)\nAtualização de dependências",
-        "nl": "Wijziging naar aanbevolen stabiele admin 7.6.17 (#159)\nMigratie naar iobroker/eslint-config (#146)\nKwetsbaarheid in form-data opgelost\nCode opgeschoond\nAxios bijgewerkt\nAdapter-core bijgewerkt\nProblemen opgelost die door de repository checker zijn gevonden (#170)\nAfhankelijkheden bijgewerkt",
-        "fr": "Passage à l’administration stable recommandée 7.6.17 (#159)\nMigration vers iobroker/eslint-config (#146)\nCorrection de la vulnérabilité form-data\nNettoyage du code\nMise à jour d’axios\nMise à jour d’adapter-core\nCorrection des problèmes détectés par le contrôleur de dépôt (#170)\nMise à jour des dépendances",
-        "it": "Passaggio all’admin stabile raccomandato 7.6.17 (#159)\nMigrazione a iobroker/eslint-config (#146)\nCorrezione della vulnerabilità form-data\nPulizia del codice\nAggiornamento di axios\nAggiornamento di adapter-core\nRisoluzione dei problemi rilevati dal repository checker (#170)\nAggiornamento delle dipendenze",
-        "es": "Cambio al administrador estable recomendado 7.6.17 (#159)\nMigración a iobroker/eslint-config (#146)\nCorrección de la vulnerabilidad form-data\nLimpieza de código\nActualización de axios\nActualización de adapter-core\nCorrección de problemas detectados por el comprobador de repositorios (#170)\nActualización de dependencias",
-        "pl": "Zmiana na zalecaną stabilną wersję admin 7.6.17 (#159)\nMigracja do iobroker/eslint-config (#146)\nNaprawa podatności w form-data\nCzyszczenie kodu\nAktualizacja axios\nAktualizacja adapter-core\nNaprawa problemów wykrytych przez sprawdzacz repozytorium (#170)\nAktualizacja zależności",
-        "uk": "Перехід на рекомендовану стабільну версію admin 7.6.17 (#159)\nМіграція на iobroker/eslint-config (#146)\nВиправлення вразливості form-data\nОчищення коду\nОновлення axios\nОновлення adapter-core\nВиправлення проблем, виявлених перевіркою репозиторію (#170)\nОновлення залежностей",
-        "zh-cn": "切换到推荐的稳定版 admin 7.6.17 (#159)\n迁移到 iobroker/eslint-config (#146)\n修复 form-data 漏洞\n代码清理\n更新 axios\n更新 adapter-core\n修复仓库检查器检测到的问题 (#170)\n更新依赖项"
       }
     },
     "titleLang": {
