@@ -199,8 +199,8 @@ class Bmw extends utils.Adapter {
         this.log.info('Periodic telematic data updates disabled (interval = 0)');
       }
 
-      this.log.info('BMW CarData adapter startup complete');
-      this.log.info('MQTT streaming: enabled');
+      this.log.info(`BMW CarData adapter startup complete`);
+      this.log.info(`MQTT streaming: enabled`);
       this.log.info(
         `API quota: ${
           API_QUOTA_LIMIT - this.apiCalls.length
@@ -213,7 +213,7 @@ class Bmw extends utils.Adapter {
 
   async login() {
     if (!this.config.clientId) {
-      this.log.error('BMW CarData Client ID not configured! Please set up in adapter settings.');
+      this.log.error(`BMW CarData Client ID not configured! Please set up in adapter settings.`);
       return false;
     }
 
@@ -222,7 +222,7 @@ class Bmw extends utils.Adapter {
 
     try {
       // Step 1: Get device code
-      this.log.debug('Starting BMW CarData device authorization flow');
+      this.log.debug(`Starting BMW CarData device authorization flow`);
       this.log.debug(`Auth API Base: ${this.authApiBase}`);
       this.log.debug(`Client ID: ${this.config.clientId}`);
       this.log.debug(`Code Challenge: ${codeChallenge}`);
@@ -259,9 +259,9 @@ class Bmw extends utils.Adapter {
 
             // Special handling for 400 Bad Request - likely client configuration issue
             if (error.response.status === 400) {
-              this.log.error('='.repeat(80));
+              this.log.error(`===================================================`);
               this.log.error(`BMW CLIENT ID CONFIGURATION ERROR (400 Bad Request)`);
-              this.log.error('='.repeat(80));
+              this.log.error(`===================================================`);
               this.log.error(`This error usually means:`);
               this.log.error(`1. CarData API access is not activated for your Client ID`);
               this.log.error(`2. CarData Streaming is not enabled for your Client ID`);
@@ -271,12 +271,12 @@ class Bmw extends utils.Adapter {
               this.log.error(`1. Visit BMW ConnectedDrive portal: https://www.bmw.de/de-de/mybmw/vehicle-overview`);
               this.log.error(`2. Go to CarData section`);
               this.log.error(
-                `3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection`,
+                `3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection!`,
               );
               this.log.error(`4. If not activated, enable both services`);
               this.log.error(`5. If already activated, delete and recreate your Client ID`);
               this.log.error(`6. Update the adapter configuration with the new Client ID`);
-              this.log.error('='.repeat(80));
+              this.log.error(`===================================================`);
             }
           }
           if (error.request) {
@@ -1113,7 +1113,7 @@ class Bmw extends utils.Adapter {
 
       const containerData = {
         name: `ioBroker BMW Telematic Data - ${new Date().toISOString()}`,
-        purpose: 'Container for BMW telematic data endpoints used by ioBroker adapter',
+        purpose: `Container for BMW telematic data endpoints used by ioBroker adapter`,
         technicalDescriptors: technicalDescriptors,
       };
 
@@ -1516,7 +1516,7 @@ class Bmw extends utils.Adapter {
 
           this.log.info(`Successfully fetched charging history for ${vin}: ${chargingData.totalSessions} sessions`);
         } else {
-          throw new Error('Failed to fetch charging history');
+          throw new Error(`Failed to fetch charging history`);
         }
         break;
       }
