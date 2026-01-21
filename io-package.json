@@ -169,7 +169,8 @@
     "cardataStreamingUsername": "",
     "interval": 60,
     "brand": "bmw",
-    "ignorelist": ""
+    "ignorelist": "",
+    "reverseGeocode": false
   },
   "objects": [],
   "instanceObjects": [

@@ -255,6 +255,40 @@
       "lg": 6,
       "xl": 6
     },
+    "reverseGeocode": {
+      "type": "checkbox",
+      "label": {
+        "en": "Enable Reverse Geocoding",
+        "de": "Reverse Geocoding aktivieren",
+        "ru": "Включить обратное геокодирование",
+        "pt": "Ativar geocodificação reversa",
+        "nl": "Reverse geocoding inschakelen",
+        "fr": "Activer le géocodage inversé",
+        "it": "Abilita geocodifica inversa",
+        "es": "Habilitar geocodificación inversa",
+        "pl": "Włącz odwrotne geokodowanie",
+        "zh-cn": "启用反向地理编码"
+      },
+      "help": {
+        "en": "Convert GPS coordinates (latitude/longitude) to street address using OpenStreetMap Nominatim. Updates after position has not changed for 30 seconds.",
+        "de": "GPS-Koordinaten (Breitengrad/Längengrad) in Straßenadresse umwandeln mit OpenStreetMap Nominatim. Aktualisierung wenn Position sich 30 Sekunden nicht geändert hat.",
+        "ru": "Преобразование GPS координат (широта/долгота) в адрес улицы с помощью OpenStreetMap Nominatim. Обновление после того, как позиция не менялась 30 секунд.",
+        "pt": "Converter coordenadas GPS (latitude/longitude) em endereço usando OpenStreetMap Nominatim. Atualiza após a posição não mudar por 30 segundos.",
+        "nl": "GPS-coördinaten (breedtegraad/lengtegraad) omzetten naar adres met OpenStreetMap Nominatim. Update nadat positie 30 seconden niet is veranderd.",
+        "fr": "Convertir les coordonnées GPS (latitude/longitude) en adresse avec OpenStreetMap Nominatim. Mise à jour après que la position n'a pas changé pendant 30 secondes.",
+        "it": "Converti le coordinate GPS (latitudine/longitudine) in indirizzo usando OpenStreetMap Nominatim. Aggiornamento dopo che la posizione non è cambiata per 30 secondi.",
+        "es": "Convertir coordenadas GPS (latitud/longitud) a dirección usando OpenStreetMap Nominatim. Se actualiza después de que la posición no cambie durante 30 segundos.",
+        "pl": "Konwertuj współrzędne GPS (szerokość/długość geograficzną) na adres za pomocą OpenStreetMap Nominatim. Aktualizacja po 30 sekundach bez zmiany pozycji.",
+        "zh-cn": "使用OpenStreetMap Nominatim将GPS坐标（纬度/经度）转换为街道地址。位置30秒未变化后更新。"
+      },
+      "default": false,
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 6,
+      "xl": 6
+    },
     "_api_endpoints": {
       "type": "header",
       "text": {

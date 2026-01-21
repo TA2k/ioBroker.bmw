@@ -50,6 +50,10 @@ class Bmw extends utils.Adapter {
     // Flag to track initial login (not adapter restart)
     this.initialLogin = false;
 
+    // Position tracking for reverse geocoding debounce
+    this.lastPosition = {}; // { vin: { lat, lon, timestamp } }
+    this.reverseGeocodeTimers = {}; // { vin: timer }
+
     // Initialize descriptions and states from telematic.json
     this.description = {};
     this.states = {};
@@ -963,10 +967,40 @@ class Bmw extends utils.Adapter {
           });
 
           await this.setState(`${vin}.lastStreamUpdate`, new Date().toISOString(), true);
+
+          // Check for position updates and trigger reverse geocoding
+          this.checkPositionFromData(vin, data.data);
         }
       }
     } catch (error) {
       this.log.warn(`Failed to parse MQTT message: ${error.message}`);
+    }
+  }
+
+  /**
+   * Check for position data and trigger reverse geocoding if available
+   *
+   * @param {string} vin - The vehicle VIN
+   * @param {object} data - The data object containing telematic data
+   */
+  checkPositionFromData(vin, data) {
+    if (!this.config.reverseGeocode) {
+      return;
+    }
+
+    const latKey = 'vehicle.cabin.infotainment.navigation.currentLocation.latitude';
+    const lonKey = 'vehicle.cabin.infotainment.navigation.currentLocation.longitude';
+
+    const latData = data[latKey];
+    const lonData = data[lonKey];
+
+    if (latData?.value != null && lonData?.value != null) {
+      const latitude = parseFloat(latData.value);
+      const longitude = parseFloat(lonData.value);
+
+      if (!isNaN(latitude) && !isNaN(longitude)) {
+        this.checkAndTriggerReverseGeocode(vin, latitude, longitude);
+      }
     }
   }
 
@@ -1345,6 +1379,107 @@ class Bmw extends utils.Adapter {
   }
 
   /**
+   * Reverse geocode position using OpenStreetMap Nominatim
+   *
+   * @param {number} latitude - The latitude value
+   * @param {number} longitude - The longitude value
+   * @param {string} vin - The vehicle VIN
+   */
+  async reversePosition(latitude, longitude, vin) {
+    this.log.debug(`Reverse geocoding for ${vin}: ${latitude}, ${longitude}`);
+
+    try {
+      const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
+        params: { lat: latitude, lon: longitude, format: 'json', zoom: 18 },
+        headers: { 'User-Agent': 'ioBroker/bmw-adapter' },
+        timeout: 10000,
+      });
+
+      const body = response.data;
+      if (!body?.display_name) {
+        this.log.debug(`No address found for ${latitude}, ${longitude}`);
+        return;
+      }
+
+      const address = body.address || {};
+      const road = address.road || address.street || '';
+      const number = address.house_number || '';
+      const postcode = address.postcode || '';
+      const city = address.city || address.town || address.village || address.municipality || '';
+      const country = address.country || '';
+
+      let fullAddress = road;
+      if (number) {
+        fullAddress += ` ${number}`;
+      }
+      if (city) {
+        fullAddress += `, ${postcode ? `${postcode} ` : ''}${city}`;
+      }
+      if (country) {
+        fullAddress += `, ${country}`;
+      }
+
+      // Store address data using json2iob
+      await this.json2iob.parse(
+        `${vin}.position.address`,
+        {
+          displayName: fullAddress,
+          road: road,
+          house_number: number,
+          postcode: postcode,
+          city: city,
+          country: country,
+          latitude: latitude,
+          longitude: longitude,
+        },
+        { channelName: 'Reverse Geocoded Address' },
+      );
+
+      this.log.info(`Address updated for ${vin}: ${fullAddress}`);
+    } catch (error) {
+      this.log.error(`Reverse geocoding failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Check and trigger reverse geocoding with debounce
+   * Only triggers if position hasn't changed for 30 seconds
+   *
+   * @param {string} vin - The vehicle VIN
+   * @param {number} latitude - Current latitude
+   * @param {number} longitude - Current longitude
+   */
+  checkAndTriggerReverseGeocode(vin, latitude, longitude) {
+    if (!this.config.reverseGeocode) {
+      return;
+    }
+
+    const DEBOUNCE_MS = 30000; // 30 seconds
+    const lastPos = this.lastPosition[vin];
+
+    // Check if position has changed
+    const positionChanged = !lastPos || lastPos.lat !== latitude || lastPos.lon !== longitude;
+
+    if (positionChanged) {
+      // Position changed - update tracking and reset timer
+      this.lastPosition[vin] = { lat: latitude, lon: longitude };
+
+      // Clear existing timer
+      if (this.reverseGeocodeTimers[vin]) {
+        clearTimeout(this.reverseGeocodeTimers[vin]);
+      }
+
+      // Set new debounce timer
+      this.reverseGeocodeTimers[vin] = setTimeout(() => {
+        this.log.debug(`Position stable for 30s, triggering reverse geocode for ${vin}`);
+        this.reversePosition(latitude, longitude, vin);
+      }, DEBOUNCE_MS);
+
+      this.log.debug(`Position changed for ${vin}, debounce timer reset`);
+    }
+  }
+
+  /**
    * Is called when adapter shuts down - callback has to be called under any circumstances!
    *
    * @param {() => void} callback - A function to be called when the adapter shuts down.
@@ -1354,6 +1489,11 @@ class Bmw extends utils.Adapter {
       // Clear all intervals and timeouts
       clearInterval(this.updateInterval);
       clearInterval(this.refreshTokenInterval);
+
+      // Clear reverse geocode timers
+      for (const vin of Object.keys(this.reverseGeocodeTimers)) {
+        clearTimeout(this.reverseGeocodeTimers[vin]);
+      }
 
       // Close MQTT connection
       if (this.mqtt) {
