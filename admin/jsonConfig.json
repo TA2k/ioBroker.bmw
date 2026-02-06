@@ -97,8 +97,8 @@
         "zh-cn": "BMW CarData客户端ID"
       },
       "help": {
-        "en": "Client ID from BMW ConnectedDrive portal CarData section. Required for OAuth2 authentication.",
-        "de": "Client ID aus dem BMW ConnectedDrive Portal CarData Bereich. Erforderlich für OAuth2-Authentifizierung.",
+        "en": "Client ID from BMW ConnectedDrive portal CarData section. If it doesn't work, try making all letters lowercase.",
+        "de": "Client ID aus dem BMW ConnectedDrive Portal CarData Bereich. Falls es nicht funktioniert, dann alle Buchstaben kleinschreiben.",
         "ru": "Client ID из раздела CarData портала BMW ConnectedDrive. Требуется для OAuth2 аутентификации.",
         "pt": "Client ID da seção CarData do portal BMW ConnectedDrive. Necessário para autenticação OAuth2.",
         "nl": "Client ID uit BMW ConnectedDrive portal CarData sectie. Vereist voor OAuth2 authenticatie.",

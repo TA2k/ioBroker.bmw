@@ -22,11 +22,11 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
-    "axios": "^1.13.2",
+    "axios": "^1.13.4",
     "axios-retry": "^4.5.0",
-    "json2iob": "^2.6.21",
-    "mqtt": "^5.14.1",
-    "qs": "^6.14.0"
+    "json2iob": "^2.6.22",
+    "mqtt": "^5.15.0",
+    "qs": "^6.14.1"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^5.0.0",
@@ -35,8 +35,8 @@
     "@alcalzone/release-script-plugin-manual-review": "^4.0.0",
     "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/testing": "^5.2.2",
-    "@tsconfig/node20": "^20.1.8",
-    "@types/node": "^25.0.3",
+    "@tsconfig/node20": "^20.1.9",
+    "@types/node": "^25.2.1",
     "@types/qs": "^6.14.0",
     "globals": "^16.5.0",
     "typescript": "~5.9.3"

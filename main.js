@@ -899,8 +899,13 @@ class Bmw extends utils.Adapter {
     });
 
     this.mqtt.on('error', async error => {
-      this.log.error(`MQTT error: ${error}`);
       this.setState('info.mqttConnected', false, true);
+
+      // Check if it's a connection timeout (server not reachable)
+      if (error.message && error.message.includes('connack timeout')) {
+        this.log.warn(`BMW MQTT server not reachable (Connack timeout) - will retry automatically`);
+        return;
+      }
 
       // Check if it's an authentication error indicating expired token
       if (
@@ -918,6 +923,7 @@ class Bmw extends utils.Adapter {
           this.log.warn(`MQTT will retry connection with current token via built-in reconnection`);
         }
       } else {
+        this.log.error(`MQTT error: ${error}`);
         this.log.debug(`Non-authentication MQTT error - letting built-in client handle reconnection`);
       }
     });
