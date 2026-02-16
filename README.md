@@ -215,6 +215,11 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   ### **WORK IN PROGRESS**
 -->
 
+### **WORK IN PROGRESS**
+
+- enhance docu and logging
+- (hombach) fix vulnerability
+
 ### 4.3.3 (2026-01-02)
 
 - (hombach) year 2026 changes
