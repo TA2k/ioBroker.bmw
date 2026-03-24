@@ -40,7 +40,7 @@ A detailed datapoint description you can find here [telematic.json](telematic.js
 
 ### 1. BMW ConnectedDrive Portal Setup
 
-1. Visit the BMW ConnectedDrive portal: **https://www.bmw.de/de-de/mybmw/vehicle-overview**
+1. Visit the BMW ConnectedDrive portal: **https://www.bmw.de/de-de/mybmw/vehicle-overview** or https://www.mini.de/de-de/mymini/vehicle-overview
 2. Navigate to the **BMW CarData** section (you'll see various service categories)
 
 ![BMW Portal Overview](img/bmw-portal-overview.png)
