@@ -4,12 +4,12 @@
 const utils = require('@iobroker/adapter-core');
 const axios = require('axios');
 
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 const qs = require('qs');
 const Json2iob = require('json2iob');
 const axiosRetry = require('axios-retry').default;
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // BMW CarData API quota limit (calls per 24 hours)
 const API_QUOTA_LIMIT = 50;
@@ -1135,8 +1135,8 @@ class Bmw extends utils.Adapter {
       };
 
       // Read telematic.json file
-      const fs = require('fs');
-      const path = require('path');
+      const fs = require('node:fs');
+      const path = require('node:path');
       const telematicPath = path.join(__dirname, 'telematic.json');
 
       if (!fs.existsSync(telematicPath)) {
