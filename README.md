@@ -214,6 +214,9 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22 now
+
 ### 4.3.5 (2026-04-11)
 
 - (hombach) fix repo checker warnings

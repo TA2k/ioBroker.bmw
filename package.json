@@ -18,7 +18,7 @@
     "url": "https://github.com/TA2k/ioBroker.bmw"
   },
   "engines": {
-    "node": ">= 20.9.0"
+    "node": ">= 22.9.0"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
