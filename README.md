@@ -362,6 +362,8 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 - (TA2k) initial release
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 
 MIT License
