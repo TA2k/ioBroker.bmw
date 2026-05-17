@@ -217,6 +217,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ### **WORK IN PROGRESS**
 
+- (copilot) BREAKING: Adapter requires node.js >= 22 now
 - (hombach) fixed axios vulnerability
 - (hombach) removed node 20 tests
 - (hombach) updated dependencies
