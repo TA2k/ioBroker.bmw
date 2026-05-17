@@ -218,6 +218,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 ### **WORK IN PROGRESS**
 
 - (hombach) fixed axios vulnerability
+- (hombach) removed node 20 tests
 - (hombach) updated dependencies
 
 ### 4.3.5 (2026-04-11)

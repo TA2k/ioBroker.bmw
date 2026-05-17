@@ -7,7 +7,6 @@ export default [
     {
         // specify files to exclude from linting here
         ignores: [
-            '.dev-server/',
             '.vscode/',
             '*.test.js',
             'test/**/*.js',
@@ -19,6 +18,7 @@ export default [
             'admin/admin.d.ts',
             'admin/blockly.js',
             '**/adapter-config.d.ts',
+            '.dev-server/',
         ],
     },
     {

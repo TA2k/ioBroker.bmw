@@ -150,9 +150,7 @@ class Bmw extends utils.Adapter {
 
       // Start periodic telematic data updates (respecting quota limits)
       if (this.vinArray.length > 0 && this.config.interval > 0) {
-        this.log.info(
-          `Setting up periodic telematic data updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`,
-        );
+        this.log.info(`Setting up periodic telematic data updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`);
         this.updateInterval = setInterval(
           async () => {
             // Update quota states (expired calls removed automatically)
@@ -186,9 +184,7 @@ class Bmw extends utils.Adapter {
                   // Update lastAPIUpdate timestamp
                   await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
 
-                  this.log.debug(
-                    `✓ Periodic telematic data update for ${vin}: ${Object.keys(telematicData.telematicData).length} data points`,
-                  );
+                  this.log.debug(`✓ Periodic telematic data update for ${vin}: ${Object.keys(telematicData.telematicData).length} data points`);
                 } else {
                   this.log.warn(`No telematic data retrieved for ${vin} during periodic update`);
                 }
@@ -206,9 +202,7 @@ class Bmw extends utils.Adapter {
       this.log.info(`BMW CarData adapter startup complete`);
       this.log.info(`MQTT streaming: enabled`);
       this.log.info(
-        `API quota: ${
-          API_QUOTA_LIMIT - this.apiCalls.length
-        }/${API_QUOTA_LIMIT} calls remaining for API calls. Updates via MQTT do not count against quota.`,
+        `API quota: ${API_QUOTA_LIMIT - this.apiCalls.length}/${API_QUOTA_LIMIT} calls remaining for API calls. Updates via MQTT do not count against quota.`,
       );
     } else {
       this.log.error('BMW CarData authentication failed');
@@ -274,9 +268,7 @@ class Bmw extends utils.Adapter {
               this.log.error(`To fix this issue:`);
               this.log.error(`1. Visit BMW ConnectedDrive portal: https://www.bmw.de/de-de/mybmw/vehicle-overview`);
               this.log.error(`2. Go to CarData section`);
-              this.log.error(
-                `3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection!`,
-              );
+              this.log.error(`3. Check if CarData API and CarData Streaming are both activated. Sometimes it needs 30s to save the selection!`);
               this.log.error(`4. If not activated, enable both services`);
               this.log.error(`5. If already activated, delete and recreate your Client ID`);
               this.log.error(`6. Update the adapter configuration with the new Client ID`);
@@ -839,9 +831,7 @@ class Bmw extends utils.Adapter {
           }
         }
 
-        this.log.warn(
-          `Token refresh failed, will retry on next refresh cycle. You can also delete bmw.0.cardataauth.session state to force re-login.`,
-        );
+        this.log.warn(`Token refresh failed, will retry on next refresh cycle. You can also delete bmw.0.cardataauth.session state to force re-login.`);
         this.setState(`info.connection`, false, true);
         return;
       });
@@ -862,10 +852,8 @@ class Bmw extends utils.Adapter {
     const mqtt = require('mqtt');
 
     //export interface IClientOptions extends ISecureClientOptions {
+    const brokerUrl = 'mqtts://customer.streaming-cardata.bmwgroup.com:9000';
     const options = {
-      host: 'customer.streaming-cardata.bmwgroup.com',
-      port: 9000,
-      protocol: 'mqtts',
       username: this.config.cardataStreamingUsername,
       password: this.session.id_token,
       keepalive: 30,
@@ -875,9 +863,9 @@ class Bmw extends utils.Adapter {
       connectTimeout: 30000,
     };
 
-    this.log.debug(`Connecting to BMW MQTT: ${options.host}:${options.port}`);
+    this.log.debug(`Connecting to BMW MQTT: ${brokerUrl}`);
     this.log.debug(`MQTT Username: ${this.config.cardataStreamingUsername}`);
-    this.mqtt = mqtt.connect(options);
+    this.mqtt = mqtt.connect(brokerUrl, options);
 
     this.mqtt.on('connect', () => {
       this.log.info(`BMW MQTT stream connected`);
@@ -910,9 +898,7 @@ class Bmw extends utils.Adapter {
       // Check if it's an authentication error indicating expired token
       if (
         error.message &&
-        (error.message.includes('Bad username or password') ||
-          error.message.includes('Connection refused') ||
-          error.message.includes('Not authorized'))
+        (error.message.includes('Bad username or password') || error.message.includes('Connection refused') || error.message.includes('Not authorized'))
       ) {
         this.log.warn(`MQTT authentication failed - refreshing token for next auto-reconnect`);
         try {
@@ -1101,9 +1087,7 @@ class Bmw extends utils.Adapter {
                   // Update lastAPIUpdate timestamp
                   await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
 
-                  this.log.info(
-                    `Existing container is valid and working - retrieved ${Object.keys(telematicData.telematicData).length} telematic data points`,
-                  );
+                  this.log.info(`Existing container is valid and working - retrieved ${Object.keys(telematicData.telematicData).length} telematic data points`);
                   containerValid = true;
                   break; // Container is valid, no need to test other vehicles
                 }
@@ -1275,9 +1259,7 @@ class Bmw extends utils.Adapter {
         const filteredCount = Object.keys(filteredTelematicData).length;
 
         this.log.info(
-          `Telematic data retrieved for ${vin}: ${filteredCount} relevant data points (${
-            originalCount - filteredCount
-          } null timestamp entries filtered out)`,
+          `Telematic data retrieved for ${vin}: ${filteredCount} relevant data points (${originalCount - filteredCount} null timestamp entries filtered out)`,
         );
       } else {
         this.log.info(`Telematic data retrieved successfully for ${vin} (no telematicData in response)`);
