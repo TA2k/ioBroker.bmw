@@ -16,6 +16,44 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 
 ## Changelog - OLD CHANGES
 
+### 4.3.1 (2025-10-11)
+
+- fix gps coordinate parsing
+
+### 4.3.0 (2025-10-09)
+
+- improve logs
+- add autocast
+- add descriptions
+
+### 4.2.0 (2025-10-04)
+
+- improve token refresh
+- fix image fetching
+
+### 4.1.1 (2025-10-03)
+
+- Add API fetching via Container and move other apis to manually fetching
+
+### 4.0.5 (2025-10-01)
+
+- **BREAKING:** Complete migration to BMW CarData API with OAuth2 Device Flow authentication
+- **BREAKING:** Removed username/password authentication (deprecated by BMW)
+- **BREAKING:** Removed all remote control functionality (CarData API is read-only)
+- **BREAKING:** Removed second user support and CAPTCHA requirements
+- **NEW:** Real-time MQTT streaming for instant vehicle data updates
+- **NEW:** OAuth2 Device Code Flow authentication with PKCE
+- **NEW:** API quota management system (50 calls per 24 hours)
+- **NEW:** Configurable API endpoint selection to manage quota usage
+- **NEW:** Organized folder structure: api/ for periodic updates, stream/ for real-time data
+- **NEW:** Enhanced state management with proper object creation
+- **NEW:** Modern JSON-based configuration interface (jsonConfig.json)
+- **NEW:** Comprehensive setup documentation with BMW portal integration
+- **FIXED:** MQTT message processing logic for correct data validation
+- **FIXED:** State creation issues preventing "no existing object" errors
+- **IMPROVED:** Removed unused dependencies (cookie handling, legacy auth)
+- **IMPROVED:** Enhanced error handling with specific guidance for common issues
+
 ### 3.0.1 (2025-09-27)
 
 - (hombach) change to recommended stable admin 7.6.17 (#159)

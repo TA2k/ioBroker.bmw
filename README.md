@@ -214,8 +214,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 5.0.0 (2026-05-17)
 
 - (copilot) BREAKING: Adapter requires node.js >= 22 now
 - (hombach) fixed axios vulnerability
@@ -245,44 +244,6 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 - update telemetry ids for container creation
 - optimize dependabot config (#209)
-
-### 4.3.1 (2025-10-11)
-
-- fix gps coordinate parsing
-
-### 4.3.0 (2025-10-09)
-
-- improve logs
-- add autocast
-- add descriptions
-
-### 4.2.0 (2025-10-04)
-
-- improve token refresh
-- fix image fetching
-
-### 4.1.1 (2025-10-03)
-
-- Add API fetching via Container and move other apis to manually fetching
-
-### 4.0.5 (2025-10-01)
-
-- **BREAKING:** Complete migration to BMW CarData API with OAuth2 Device Flow authentication
-- **BREAKING:** Removed username/password authentication (deprecated by BMW)
-- **BREAKING:** Removed all remote control functionality (CarData API is read-only)
-- **BREAKING:** Removed second user support and CAPTCHA requirements
-- **NEW:** Real-time MQTT streaming for instant vehicle data updates
-- **NEW:** OAuth2 Device Code Flow authentication with PKCE
-- **NEW:** API quota management system (50 calls per 24 hours)
-- **NEW:** Configurable API endpoint selection to manage quota usage
-- **NEW:** Organized folder structure: api/ for periodic updates, stream/ for real-time data
-- **NEW:** Enhanced state management with proper object creation
-- **NEW:** Modern JSON-based configuration interface (jsonConfig.json)
-- **NEW:** Comprehensive setup documentation with BMW portal integration
-- **FIXED:** MQTT message processing logic for correct data validation
-- **FIXED:** State creation issues preventing "no existing object" errors
-- **IMPROVED:** Removed unused dependencies (cookie handling, legacy auth)
-- **IMPROVED:** Enhanced error handling with specific guidance for common issues
 
 ### Old Changes see [CHANGELOG OLD](CHANGELOG_OLD.md)
 

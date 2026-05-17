@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "4.3.5",
+    "version": "5.0.0",
     "news": {
+      "5.0.0": {
+        "en": "BREAKING: Adapter requires node.js >= 22 now\nfixed axios vulnerability\nremoved node 20 tests\nadded CHANGELOG_OLD.md\nupdated dependencies",
+        "de": "BREAKING: Adapter erfordert jetzt node.js >= 22\naxios vulnerability\nentfernt node 20 tests\nhinzugefügt CHANGELOG OLD.md\naktualisierte abhängigkeiten",
+        "ru": "Адаптер требует node.js >= 22 сейчас\nфиксированная уязвимость axios\nудаленный узел 20 тестов\nдобавлено: Changelog OLD.md\nобновленные зависимости",
+        "pt": "Adaptador requer nod.js >= 22 agora\nvulnerabilidade axios fixa\ntestes do nó 20 removidos\nadicionado MUDANÇALOG OLD.md\ndependências atualizadas",
+        "nl": "Voor adapters zijn node.js > 22 nu vereist\nfixed axios kwetsbaarheid\nverwijderde knoop 20 tests\nchangelog old.md toegevoegd\nbijgewerkte afhankelijkheden",
+        "fr": "Adaptateur nécessite node.js >= 22 maintenant\nvulnérabilité axios fixe\n20 essais au nœud enlevé\najouté CHANGELOG OLD.md\ndépendances actualisées",
+        "it": "BREAKING: L'adattatore richiede node.js >= 22 ora\nvulnerabilità asse fisso\nnodo rimosso 20 test\naggiunto CHANGELOG OLD.md\ndipendenze aggiornate",
+        "es": "BREAKING: Adaptador requiere node.js ю= 22 ahora\nvulnerabilidad de axios fijos\nnodo 20 pruebas\nañadido CHANGELOG OLD.md\ndependencias actualizadas",
+        "pl": "BREAKING: Adapter wymaga node.js > = 22\nstała wrażliwość na aksjozy\nusunięty węzeł 20 testów\ndodano CHANGELOG _ OLD.md\nzaktualizowane zależności",
+        "uk": "BREAKING: Адаптер вимагає node.js >= 22 тепер\nфіксована вразливість осей\nвилучений вузол 20 тестів\nдодано CHANGELOG OLD.md\nоновлені залежності",
+        "zh-cn": "适配器需要节点 Js 22 现在\n固定轴式脆弱性\n20次测试\n添加变换组 OLD.md\n更新的依赖关系"
+      },
       "4.3.5": {
         "en": "fix repo checker warnings\nfix vulnerability\nupdate dependencies\nremove old admin files",
         "de": "repo checker warnungen beheben\nfehlerbehebung\naktualisierung der abhängigkeiten\nalte admin-dateien entfernen",
@@ -80,19 +93,6 @@
         "pl": "poprawić logi\ndodaj autocast\ndodaj opisy",
         "uk": "поліпшення колод\nadd autocast\nдодати описи",
         "zh-cn": "改进日志\n添加自动播报\n添加说明"
-      },
-      "4.2.0": {
-        "en": "improve token refresh\nfix image fetching",
-        "de": "verbessern sie die token-erfrischung\nbild-feeding fixieren",
-        "ru": "улучшить обновлениеken\nфиксировать изображение",
-        "pt": "melhorar a atualização do token\ncorrigir a obtenção da imagem",
-        "nl": "token vernieuwen verbeteren\nafbeelding ophalen herstellen",
-        "fr": "améliorer le jeton rafraîchissement\ncorrection de la récupération d'image",
-        "it": "migliorare il rinfresco token\ncorrezione immagine fetching",
-        "es": "mejorar el refresco de token\narreglar la captura de imagen",
-        "pl": "poprawić odświeżanie symboli\nnaprawić pobieranie obrazu",
-        "uk": "поліпшення освіження токени\nфіксація зображення fetching",
-        "zh-cn": "改进符号刷新\n固定图像获取"
       }
     },
     "titleLang": {
@@ -121,12 +121,8 @@
       "uk": "Adapter for BMW CarData API з потоком MQTT в реальному часі",
       "zh-cn": "带有实时MQTT流的BMW CarData API适配器"
     },
-    "authors": [
-      "TA2k <tombox2020@gmail.com>"
-    ],
-    "keywords": [
-      "BMW"
-    ],
+    "authors": ["TA2k <tombox2020@gmail.com>"],
+    "keywords": ["BMW"],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"
