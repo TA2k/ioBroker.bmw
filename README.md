@@ -24,7 +24,7 @@
 
 [![NPM](https://nodei.co/npm/iobroker.bmw.png?downloads=true)](https://nodei.co/npm/iobroker.bmw/)
 
-# BMW Adapter for ioBroker
+## BMW Adapter for ioBroker
 
 This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API with OAuth2 authentication and real-time MQTT streaming. It provides comprehensive vehicle data monitoring for all BMW models linked to your BMW account.
 
@@ -54,7 +54,7 @@ A detailed datapoint description you can find here [telematic.json](telematic.js
 
 ![CarData Client Setup](img/cardata-client-setup.png)
 
-# **CRITICAL**: Click one service and wait 30 seconds if you see an error message, then click again. Don't press on "Gerät Authentifizieren/Devict authentication" Enter the client_id in iobroker settings. If it is not working try all letters as lowercase.
+## **CRITICAL**: Click one service and wait 30 seconds if you see an error message, then click again. Don't press on "Gerät Authentifizieren/Devict authentication" Enter the client_id in iobroker settings. If it is not working try all letters as lowercase.
 
 ### 2. CarData Streaming Configuration
 
