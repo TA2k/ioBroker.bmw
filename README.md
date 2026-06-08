@@ -214,6 +214,11 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (hombach) fixed adapterchecker error
+
 ### 5.0.0 (2026-05-17)
 
 - (copilot) BREAKING: Adapter requires node.js >= 22 now
