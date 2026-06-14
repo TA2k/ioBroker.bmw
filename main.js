@@ -287,7 +287,7 @@ class Bmw extends utils.Adapter {
           return false; // Return false instead of throwing
         });
 
-      if (!deviceResponse) {
+      if (!deviceResponse || typeof deviceResponse !== 'object') {
         return false; // Exit if device code request failed
       }
 
