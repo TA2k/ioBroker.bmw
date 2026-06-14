@@ -108,7 +108,7 @@
         "pl": "Client ID z sekcji CarData portalu BMW ConnectedDrive. Wymagane do uwierzytelniania OAuth2.",
         "zh-cn": "来自BMW ConnectedDrive门户CarData部分的客户端ID。OAuth2身份验证所需。"
       },
-      "placeholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "placeholder": "plhCardataClientId",
       "newLine": true,
       "xs": 12,
       "sm": 12,
@@ -142,7 +142,7 @@
         "pl": "WYMAGANE: Twoja nazwa użytkownika CarData Streaming (inna niż twój login BMW). Znajdź to w portalu BMW ConnectedDrive w sekcji CarData > Streaming. Bez tego streaming MQTT nie będzie działać!",
         "zh-cn": "必需：您的CarData流媒体用户名（与您的BMW登录不同）。在BMW ConnectedDrive门户的CarData > 流媒体部分中找到此信息。没有此信息，MQTT流媒体将无法工作！"
       },
-      "placeholder": "streaming_username_from_bmw_portal",
+      "placeholder": "plhCardataStreamingUsername",
       "newLine": true,
       "xs": 12,
       "sm": 12,
@@ -247,7 +247,7 @@
         "pl": "Lista VIN oddzielonych przecinkami do ignorowania (np. VIN1,VIN2,VIN3)",
         "zh-cn": "要忽略的VIN逗号分隔列表（例如：VIN1,VIN2,VIN3）"
       },
-      "placeholder": "VIN1,VIN2,VIN3",
+      "placeholder": "plhIgnorelistVins",
       "newLine": true,
       "xs": 12,
       "sm": 12,

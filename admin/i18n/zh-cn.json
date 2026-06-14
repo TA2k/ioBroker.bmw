@@ -1,1 +1,5 @@
-{}
+{
+  "plhCardataClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "plhCardataStreamingUsername": "BMW门户的流媒体用户名",
+  "plhIgnorelistVins": "VIN1,VIN2,VIN3"
+}

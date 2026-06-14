@@ -28,6 +28,10 @@
 
 This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API with OAuth2 authentication and real-time MQTT streaming. It provides comprehensive vehicle data monitoring for all BMW models linked to your BMW account.
 
+## Sentry
+
+This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers. For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+
 ## Data Updata while charging
 
 While charging it can happens that the battery level is not updated via stream because the car is sleeping/standby when turn on the car the data will be updated. You can trigger an update via API `bmw.0.vin.remote.fetchViaAPI`
@@ -217,7 +221,8 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ### **WORK IN PROGRESS**
 
-- (hombach) fixed adapterchecker error
+- (hombach) fixed adapterchecker errors
+- (hombach) updated dependencies
 
 ### 5.0.0 (2026-05-17)
 

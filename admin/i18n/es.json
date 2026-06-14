@@ -1,1 +1,5 @@
-{}
+{
+  "plhCardataClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "plhCardataStreamingUsername": "Nombre de usuario de streaming del portal BMW",
+  "plhIgnorelistVins": "VIN1,VIN2,VIN3"
+}

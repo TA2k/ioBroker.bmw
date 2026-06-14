@@ -141,7 +141,7 @@ class Bmw extends utils.Adapter {
       // Connect MQTT after successful auth
       await this.connectMQTT();
       // Start periodic token refresh (every 45 minutes)
-      this.refreshTokenInterval = setInterval(
+      this.refreshTokenInterval = this.setInterval(
         async () => {
           await this.refreshToken();
         },
@@ -151,7 +151,7 @@ class Bmw extends utils.Adapter {
       // Start periodic telematic data updates (respecting quota limits)
       if (this.vinArray.length > 0 && this.config.interval > 0) {
         this.log.info(`Setting up periodic telematic data updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`);
-        this.updateInterval = setInterval(
+        this.updateInterval = this.setInterval(
           async () => {
             // Update quota states (expired calls removed automatically)
             this.updateQuotaStates();
@@ -727,7 +727,7 @@ class Bmw extends utils.Adapter {
    * @param {number} ms - The duration to pause in milliseconds.
    */
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => this.setTimeout(() => resolve(undefined), ms));
   }
 
   /**
@@ -1458,7 +1458,7 @@ class Bmw extends utils.Adapter {
       }
 
       // Set new debounce timer
-      this.reverseGeocodeTimers[vin] = setTimeout(() => {
+      this.reverseGeocodeTimers[vin] = this.setTimeout(() => {
         this.log.debug(`Position stable for 30s, triggering reverse geocode for ${vin}`);
         this.reversePosition(latitude, longitude, vin);
       }, DEBOUNCE_MS);
@@ -1475,12 +1475,12 @@ class Bmw extends utils.Adapter {
   async onUnload(callback) {
     try {
       // Clear all intervals and timeouts
-      clearInterval(this.updateInterval);
-      clearInterval(this.refreshTokenInterval);
+      this.clearInterval(this.updateInterval);
+      this.clearInterval(this.refreshTokenInterval);
 
       // Clear reverse geocode timers
       for (const vin of Object.keys(this.reverseGeocodeTimers)) {
-        clearTimeout(this.reverseGeocodeTimers[vin]);
+        this.clearTimeout(this.reverseGeocodeTimers[vin]);
       }
 
       // Close MQTT connection
