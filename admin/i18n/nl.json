@@ -1,5 +1,22 @@
 {
   "plhCardataClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "plhCardataStreamingUsername": "Streaming gebruikersnaam uit BMW-portal",
-  "plhIgnorelistVins": "VIN1,VIN2,VIN3"
+  "plhIgnorelistVins": "VIN1,VIN2,VIN3",
+  "txtBmwCardataConfiguration": "BMW CarData Configuratie",
+  "txtInfoBmwCardataApi": "Deze adapter gebruikt de nieuwe BMW CarData API met OAuth2 authenticatie en realtime MQTT streaming.",
+  "txtSetupInstructions": "Setup instructies: 1. Bezoek BMW ConnectedDrive portal (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Ga naar CarData sectie 3. Genereer een client ID 4. Abonneer op API en streaming services 5. Configureer data descriptors",
+  "txtCardataStreamingSetup": "⚠️ BELANGRIJK: CarData Streaming Setup - Na het aanmaken van uw Client ID MOET u CarData Streaming activeren en handmatig ALLE 244 datapunten selecteren in het BMW portaal. Ga naar CarData > Data Descriptors > Selecteer alle categorieën en individuele datapunten. Zonder deze stap werkt realtime MQTT streaming niet!",
+  "lblClientId": "BMW CarData Client ID",
+  "hlpClientId": "Client ID uit BMW ConnectedDrive portal CarData sectie. Vereist voor OAuth2 authenticatie.",
+  "lblCardataStreamingUsername": "CarData Streaming gebruikersnaam *",
+  "hlpCardataStreamingUsername": "VEREIST: Uw CarData Streaming gebruikersnaam (verschilt van uw BMW login). Vind dit in BMW ConnectedDrive portaal onder CarData > Streaming sectie. Zonder dit werkt MQTT streaming niet!",
+  "lblBrand": "Merk",
+  "lblInterval": "Update-interval voor telematicagegevens (in minuten)",
+  "hlpInterval": "Automatisch ophaalinterval voor telematicagegevens. Stel in op 0 om automatische updates uit te schakelen. Minimum 10 minuten vanwege quota limieten (50 oproepen per 24u). Andere API endpoints kunnen handmatig worden geactiveerd via bmw.0.VIN.remote.",
+  "lblIgnorelist": "VIN negeerlijst",
+  "hlpIgnorelist": "Kommagescheiden lijst van VINs om te negeren (bijv. VIN1,VIN2,VIN3)",
+  "lblReverseGeocode": "Reverse geocoding inschakelen",
+  "hlpReverseGeocode": "GPS-coördinaten (breedtegraad/lengtegraad) omzetten naar adres met OpenStreetMap Nominatim. Update nadat positie 30 seconden niet is veranderd.",
+  "txtApiEndpoints": "Afstandsbediening Informatie",
+  "txtApiNote": "Telematicagegevens worden automatisch opgehaald op basis van het bovenstaande interval. Andere API endpoints (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) kunnen handmatig worden geactiveerd via bmw.0.VIN.remote. in elk voertuig. BasicData wordt eenmaal opgehaald na login."
 }

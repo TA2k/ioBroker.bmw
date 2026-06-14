@@ -1,5 +1,22 @@
 {
   "plhCardataClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "plhCardataStreamingUsername": "Nazwa użytkownika streamingu z portalu BMW",
-  "plhIgnorelistVins": "VIN1,VIN2,VIN3"
+  "plhIgnorelistVins": "VIN1,VIN2,VIN3",
+  "txtBmwCardataConfiguration": "BMW CarData Konfiguracja",
+  "txtInfoBmwCardataApi": "Ten adapter używa nowego BMW CarData API z uwierzytelnianiem OAuth2 i strumieniem MQTT w czasie rzeczywistym.",
+  "txtSetupInstructions": "Instrukcje konfiguracji: 1. Odwiedź portal BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Przejdź do sekcji CarData 3. Wygeneruj client ID 4. Subskrybuj usługi API i streaming 5. Skonfiguruj deskryptory danych",
+  "txtCardataStreamingSetup": "⚠️ WAŻNE: Konfiguracja CarData Streaming - Po utworzeniu Client ID MUSISZ aktywować CarData Streaming i ręcznie wybrać WSZYSTKIE 244 punkty danych w portalu BMW. Przejdź do CarData > Deskryptory Danych > Wybierz wszystkie kategorie i poszczególne punkty danych. Bez tego kroku streaming MQTT w czasie rzeczywistym nie będzie działać!",
+  "lblClientId": "BMW CarData Client ID",
+  "hlpClientId": "Client ID z sekcji CarData portalu BMW ConnectedDrive. Wymagane do uwierzytelniania OAuth2.",
+  "lblCardataStreamingUsername": "Nazwa użytkownika CarData Streaming *",
+  "hlpCardataStreamingUsername": "WYMAGANE: Twoja nazwa użytkownika CarData Streaming (inna niż twój login BMW). Znajdź to w portalu BMW ConnectedDrive w sekcji CarData > Streaming. Bez tego streaming MQTT nie będzie działać!",
+  "lblBrand": "Marka",
+  "lblInterval": "Interwał aktualizacji dla danych telematycznych (w minutach)",
+  "hlpInterval": "Interwał automatycznego pobierania danych telematycznych. Ustaw na 0 aby wyłączyć automatyczne aktualizacje. Minimum 10 minut z powodu limitów kwot (50 wywołań na 24h). Inne punkty końcowe API można wyzwalać ręcznie za pomocą bmw.0.VIN.remote.",
+  "lblIgnorelist": "Lista ignorowanych VIN",
+  "hlpIgnorelist": "Lista VIN oddzielonych przecinkami do ignorowania (np. VIN1,VIN2,VIN3)",
+  "lblReverseGeocode": "Włącz odwrotne geokodowanie",
+  "hlpReverseGeocode": "Konwertuj współrzędne GPS (szerokość/długość geograficzną) na adres za pomocą OpenStreetMap Nominatim. Aktualizacja po 30 sekundach bez zmiany pozycji.",
+  "txtApiEndpoints": "Informacje o Zdalnym Sterowaniu",
+  "txtApiNote": "Dane telematyczne są pobierane automatycznie na podstawie powyższego interwału. Inne punkty końcowe API (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) można wyzwalać ręcznie za pomocą bmw.0.VIN.remote. w każdym pojeździe. BasicData jest pobierane raz po zalogowaniu."
 }

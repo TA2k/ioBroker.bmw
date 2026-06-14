@@ -221,7 +221,9 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ### **WORK IN PROGRESS**
 
-- (hombach) fixed adapterchecker errors
+- (hombach) fixed adapterchecker errors: downgraded @types/node to ^22, added Sentry notice to README, added @iobroker/adapter-dev
+- (hombach) replaced native setInterval/setTimeout with adapter-managed equivalents in main.js
+- (hombach) moved all jsonConfig.json inline translations to i18n files
 - (hombach) updated dependencies
 
 ### 5.0.0 (2026-05-17)

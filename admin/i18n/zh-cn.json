@@ -1,5 +1,22 @@
 {
   "plhCardataClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "plhCardataStreamingUsername": "BMW门户的流媒体用户名",
-  "plhIgnorelistVins": "VIN1,VIN2,VIN3"
+  "plhIgnorelistVins": "VIN1,VIN2,VIN3",
+  "txtBmwCardataConfiguration": "BMW CarData 配置",
+  "txtInfoBmwCardataApi": "此适配器使用新的BMW CarData API，具有OAuth2身份验证和实时MQTT流。",
+  "txtSetupInstructions": "设置说明：1. 访问BMW ConnectedDrive门户 (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. 转到CarData部分 3. 生成客户端ID 4. 订阅API和流媒体服务 5. 配置数据描述符",
+  "txtCardataStreamingSetup": "⚠️ 重要：CarData流媒体设置 - 创建客户端ID后，您必须激活CarData流媒体并在BMW门户中手动选择所有244个数据点。转到CarData > 数据描述符 > 选择所有类别和单个数据点。没有此步骤，实时MQTT流媒体将无法工作！",
+  "lblClientId": "BMW CarData客户端ID",
+  "hlpClientId": "来自BMW ConnectedDrive门户CarData部分的客户端ID。OAuth2身份验证所需。",
+  "lblCardataStreamingUsername": "CarData流媒体用户名 *",
+  "hlpCardataStreamingUsername": "必需：您的CarData流媒体用户名（与您的BMW登录不同）。在BMW ConnectedDrive门户的CarData > 流媒体部分中找到此信息。没有此信息，MQTT流媒体将无法工作！",
+  "lblBrand": "品牌",
+  "lblInterval": "远程信息处理数据更新间隔（分钟）",
+  "hlpInterval": "自动获取远程信息处理数据的间隔。设置为0以禁用自动更新。由于配额限制（24小时50次调用），最少10分钟。其他API端点可以通过bmw.0.VIN.remote.手动触发。",
+  "lblIgnorelist": "VIN忽略列表",
+  "hlpIgnorelist": "要忽略的VIN逗号分隔列表（例如：VIN1,VIN2,VIN3）",
+  "lblReverseGeocode": "启用反向地理编码",
+  "hlpReverseGeocode": "使用OpenStreetMap Nominatim将GPS坐标（纬度/经度）转换为街道地址。位置30秒未变化后更新。",
+  "txtApiEndpoints": "远程控制信息",
+  "txtApiNote": "远程信息处理数据根据上述间隔自动获取。其他API端点（basicData、chargingHistory、image、locationBasedChargingSettings、smartMaintenanceTyreDiagnosis）可以通过bmw.0.VIN.remote.在每个车辆中手动触发。BasicData在登录后获取一次。"
 }
