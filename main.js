@@ -291,15 +291,18 @@ class Bmw extends utils.Adapter {
         return false; // Exit if device code request failed
       }
 
-      const { user_code, device_code, verification_uri_complete, expires_in, interval } = deviceResponse.data;
+      const { user_code, device_code, verification_uri_complete, verification_uri, expires_in, interval } = deviceResponse.data;
+      // BMW only returns verification_uri (per Device Code Flow swagger v1.6); verification_uri_complete
+      // is optional (RFC 8628) and not sent. Fall back so all cases are covered.
+      const verificationUrl = verification_uri_complete || verification_uri;
       this.log.debug(`Device code: ${device_code}, User code: ${user_code}, Expires in: ${expires_in}s, Interval: ${interval}s`);
 
       // Show user instructions
       this.log.info('='.repeat(80));
       this.log.info(`BMW CARDATA AUTHORIZATION REQUIRED`);
       this.log.info('='.repeat(80));
-      this.log.info(`1. Visit: ${verification_uri_complete}`);
-      this.log.info(`2. Or visit: ${deviceResponse.data.verification_uri} and enter code: ${user_code}`);
+      this.log.info(`1. Visit: ${verificationUrl}`);
+      this.log.info(`2. Or visit: ${verification_uri} and enter code: ${user_code}`);
       this.log.info(`3. Login with your BMW account and authorize`);
       this.log.info(`4. Code expires in ${Math.floor(expires_in / 60)} minutes`);
       this.log.info(`The adapter will automatically continue after authorization`);
@@ -310,7 +313,6 @@ class Bmw extends utils.Adapter {
       this.log.debug(`Starting token polling, will timeout in ${expires_in}s`);
       while (Date.now() - startTime < expires_in * 1000) {
         this.log.debug(`Waiting ${interval}s before next token poll...`);
-        this.log.debug(`Visit: ${verification_uri_complete}`);
         await this.sleep(interval * 1000);
 
         try {
@@ -331,6 +333,17 @@ class Bmw extends utils.Adapter {
 
           // Success! Store tokens in existing session structure
           this.session = tokenResponse.data;
+
+          // Log the effective granted scope. A missing cardata:api:read scope is the
+          // most likely cause of a 403 when creating the telematic container while all
+          // read endpoints still work. Only two scopes exist: cardata:api:read and
+          // cardata:streaming:read (CarData Integration Guide v1.6).
+          this.log.debug(`Token scope granted: ${this.session.scope || 'MISSING'} (token_type: ${this.session.token_type})`);
+          if (this.session.scope && !this.session.scope.includes('cardata:api:read')) {
+            this.log.warn(
+              `Token is missing the 'cardata:api:read' scope - CarData API calls (e.g. creating the telematic container) will fail with 403. Subscribe to CarData API in the BMW portal BEFORE registering the device, then re-authorize.`,
+            );
+          }
 
           // Create BMW CarData auth objects
           await this.extendObject('cardataauth', {
@@ -362,26 +375,48 @@ class Bmw extends utils.Adapter {
           return true;
         } catch (error) {
           const errorCode = error.response?.data?.error;
-          this.log.debug(`Token polling error: ${errorCode || error.message}`);
+          const status = error.response?.status;
+          this.log.debug(`Token polling error (status ${status ?? 'n/a'}): ${errorCode || error.message}`);
 
-          if (errorCode === 'authorization_pending') {
+          // Terminal OAuth errors (RFC 8628): stop polling.
+          if (errorCode === 'expired_token') {
+            this.log.error(`Authorization code expired, please restart adapter`);
+            return false;
+          } else if (errorCode === 'access_denied') {
+            this.log.error(`Authorization was denied by the user`);
+            return false;
+          }
+
+          // Still-waiting states: keep polling. BMW returns HTTP 403 while the
+          // user has not yet completed authorization (Device Code Flow swagger v1.6),
+          // so a 403 without a terminal error code is treated as "still pending".
+          if (errorCode === 'authorization_pending' || (status === 403 && !errorCode)) {
             this.log.debug(`Authorization still pending, continuing to poll...`);
-            continue; // Keep polling
+            continue;
           } else if (errorCode === 'slow_down') {
             this.log.debug(`Rate limit hit, slowing down polling...`);
             await this.sleep(5000); // Additional delay
             continue;
-          } else if (errorCode === 'expired_token') {
-            this.log.error(`Authorization code expired, please restart adapter`);
-            return false;
-          } else {
-            this.log.error(`Token request failed: ${errorCode || error.message}`);
-            if (error.response) {
-              this.log.error(`Token response status: ${error.response.status}`);
-              this.log.error(`Token response data: ${JSON.stringify(error.response.data)}`);
-            }
-            return false;
           }
+
+          // Transient errors (5xx backend hiccups or network errors with no
+          // response) should NOT abort the flow - keep polling until the deadline.
+          // This prevents the adapter from restarting the whole device flow on a
+          // temporary BMW backend error (e.g. HTTP 500 invalid_access_token).
+          if (!error.response || status >= 500) {
+            this.log.warn(
+              `Transient token polling error (status ${status ?? 'n/a'}): ${JSON.stringify(error.response?.data) || error.message} - continuing to poll`,
+            );
+            continue;
+          }
+
+          // Unknown client error (4xx): log full details and stop.
+          this.log.error(`Token request failed: ${errorCode || error.message}`);
+          if (error.response) {
+            this.log.error(`Token response status: ${status}`);
+            this.log.error(`Token response data: ${JSON.stringify(error.response.data)}`);
+          }
+          return false;
         }
       }
 
@@ -1209,8 +1244,22 @@ class Bmw extends utils.Adapter {
     } catch (error) {
       this.log.error(`Failed to create telematic container: ${error.message}`);
       if (error.response) {
-        this.log.error(`Response status: ${error.response.status}`);
+        const status = error.response.status;
+        const exveErrorId = error.response.data?.exveErrorId;
+        this.log.error(`Response status: ${status}`);
         this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
+        this.log.error(`Token scope on this session: ${this.session?.scope || 'unknown'}`);
+
+        // Targeted hints for the two documented causes (CarData Integration Guide v1.6).
+        if (status === 403) {
+          this.log.error(
+            `HTTP 403 on container creation while read endpoints work usually means the token lacks the 'cardata:api:read' scope. Subscribe to CarData API in the BMW portal BEFORE registering the device, then delete the client and re-authorize.`,
+          );
+        } else if (exveErrorId === 'CU-124') {
+          this.log.error(
+            `Container limit reached (max 10 per user). Delete unused containers - the adapter can clean up its own containers via cleanupAllContainers.`,
+          );
+        }
       }
       return false;
     }
