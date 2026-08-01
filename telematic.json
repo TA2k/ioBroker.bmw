@@ -1238,7 +1238,7 @@
     "description_de": "Dieser Wert gibt die Koordinate des aktiven Navigationsziels an - Breitengrad zum Zeitpunkt der Datenerfassung in Milliardstelsekunden.",
     "technical_identifier": "vehicle.cabin.infotainment.navigation.destinationSet.latitude",
     "data_type": "",
-    "typical_value_range": "-",
+    "typical_value_range": "None",
     "unit": "",
     "streaming_capable": false
   },
@@ -1249,7 +1249,7 @@
     "description_de": "Dieser Wert gibt die Koordinate des aktiven Navigationsziels an - Längengrad zum Zeitpunkt der Datenerfassung in Milliardstelsekunden.",
     "technical_identifier": "vehicle.cabin.infotainment.navigation.destinationSet.longitude",
     "data_type": "",
-    "typical_value_range": "-",
+    "typical_value_range": "None",
     "unit": "",
     "streaming_capable": false
   },
@@ -2668,7 +2668,7 @@
     "description_de": "Der Wert gibt den zum Zeitpunkt der Datenerfassung gemessenen Ladezustand der Niedervoltbatterie in Prozent an.",
     "technical_identifier": "vehicle.electricalSystem.battery.stateOfCharge",
     "data_type": "",
-    "typical_value_range": "-",
+    "typical_value_range": "None",
     "unit": "%",
     "streaming_capable": true
   },
@@ -2679,7 +2679,7 @@
     "description_de": "Dieser Wert gibt an, ob der gemessene Ladezustand der Niedervoltbatterie in Prozent plausibel ist.",
     "technical_identifier": "vehicle.electricalSystem.battery.stateOfChargePlausibility",
     "data_type": "",
-    "typical_value_range": "-",
+    "typical_value_range": "None",
     "unit": "",
     "streaming_capable": false
   },
@@ -2712,7 +2712,7 @@
     "description_de": "Der Fehlerspeicher gibt Auskunft über potenzielle Störungen oder technische Defekte im Fahrzeug. Diese Informationen sind für Werkstätten gedacht. Kundenrelevante Störungen, die dem Fahrer im Fahrzeug angezeigt werden, sind unter dem CarData Element „Check Control Meldungen“ zu finden. Details hierzu sind in der Betriebsanleitung des Fahrzeugs dokumentiert.",
     "technical_identifier": "vehicle.electronicControlUnit.diagnosticTroubleCodes.raw",
     "data_type": "",
-    "typical_value_range": "-",
+    "typical_value_range": "None",
     "unit": "",
     "streaming_capable": true
   },
@@ -3029,6 +3029,17 @@
     "streaming_capable": true
   },
   {
+    "cardata_element": "Charging status displayed",
+    "cardata_element_de": "Anzeige des Ladezustands",
+    "description": "This value indicates the charging status displayed in the vehicle.",
+    "description_de": "Dieser Wert gibt den im Fahrzeug angezeigten Ladezustand an.",
+    "technical_identifier": "vehicle.powertrain.electric.battery.stateOfCharge.displayed",
+    "data_type": "float",
+    "typical_value_range": "0 - 100 %",
+    "unit": "percent",
+    "streaming_capable": true
+  },
+  {
     "cardata_element": "Target charging status of the high-voltage battery",
     "cardata_element_de": "Zielwert des Ladezustands der Hochvoltbatterie",
     "description": "This value indicates the target charging status of the high-voltage battery in percent. This is displayed in 10% increments.",
@@ -3068,7 +3079,7 @@
     "description_de": "Dieser Wert gibt den Gesundheitszustand der Hochvoltbatterie an (SOCE, State of Certified Energy).",
     "technical_identifier": "vehicle.powertrain.electric.battery.stateOfHealth.displayed",
     "data_type": "",
-    "typical_value_range": "-",
+    "typical_value_range": "None",
     "unit": "",
     "streaming_capable": false
   },
@@ -3438,7 +3449,7 @@
     "description_de": "Der Wert enthält die Information, welche Servicebedarfe für das Fahrzeug auf Basis der Livediagnose ermittelt wurden. Diese setzt sich aus dem Titel, der Kategorie und dem aktuellen Status des Servicebedarfs zusammen. Das Fahrzeug sammelt für die Servicebedarfe Fehlerdaten und sendet diese nach festgelegten Zyklen automatisch.",
     "technical_identifier": "vehicle.serviceDemand.defect.id",
     "data_type": "",
-    "typical_value_range": "",
+    "typical_value_range": "None",
     "unit": "",
     "streaming_capable": false
   },
@@ -3474,7 +3485,7 @@
     "description_de": "Der Wert gibt die letzten relevanten Check-Control-Meldungen an, welche im Fahrzeug angezeigt und an BMW übertragen wurden. Check-Control überwacht Funktionen im Fahrzeug und meldet, wenn in überwachten Systemen eine Störung vorliegt. Eine Check-Control-Meldung wird als Kombination von Kontroll- oder Warnleuchten und Textmeldungen in der Instrumentenkombination und ggf. im Head-Up Display angezeigt. Hinweis: Nicht alle Check-Control-Meldungen, die im Fahrzeug angezeigt werden, werden an BMW übertragen.",
     "technical_identifier": "vehicle.status.checkControlMessages",
     "data_type": "",
-    "typical_value_range": "-",
+    "typical_value_range": "None",
     "unit": "",
     "streaming_capable": false
   },
@@ -3485,7 +3496,7 @@
     "description_de": "Sensoren und spezielle Algorithmen berücksichtigen die Einsatzbedingungen des Fahrzeugs. CBS ermittelt damit den Wartungsbedarf. Das System ermöglicht somit den Wartungsumfang an das individuelle Nutzungsprofil anzupassen.",
     "technical_identifier": "vehicle.status.conditionBasedServices",
     "data_type": "",
-    "typical_value_range": "-",
+    "typical_value_range": "None",
     "unit": "",
     "streaming_capable": false
   },
