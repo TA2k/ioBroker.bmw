@@ -383,7 +383,11 @@ class Bmw extends utils.Adapter {
             this.log.error(`Authorization code expired, please restart adapter`);
             return false;
           } else if (errorCode === 'access_denied') {
-            this.log.error(`Authorization was denied by the user`);
+            // access_denied is also returned when the CarData services are not
+            // subscribed to the Client ID, so do not blame the user exclusively.
+            this.log.error(
+              `Authorization denied by BMW (access_denied). Either you declined/cancelled the consent in the BMW portal, or the CarData services are not subscribed to this Client ID. Fix: in the BMW portal subscribe to CarData API AND CarData Streaming, then delete and recreate the Client ID and re-authorize within 5 minutes.`,
+            );
             return false;
           }
 
