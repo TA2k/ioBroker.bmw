@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.0",
+    "version": "5.0.1-beta.0",
     "news": {
+      "5.0.1-beta.0": {
+        "en": "Fixed device code flow (verification_uri), robust token polling, list containers before creation, better CarData scope and 403 diagnostics",
+        "de": "Device-Code-Flow korrigiert (verification_uri), robusteres Token-Polling, Container-Auflistung vor der Erstellung, bessere CarData-Scope- und 403-Diagnose"
+      },
       "5.0.0": {
         "en": "BREAKING: Adapter requires node.js >= 22 now\nfixed axios vulnerability\nremoved node 20 tests\nadded CHANGELOG_OLD.md\nupdated dependencies",
         "de": "BREAKING: Adapter erfordert jetzt node.js >= 22\naxios vulnerability\nentfernt node 20 tests\nhinzugefügt CHANGELOG OLD.md\naktualisierte abhängigkeiten",
