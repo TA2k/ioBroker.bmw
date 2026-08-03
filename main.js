@@ -225,10 +225,15 @@ class Bmw extends utils.Adapter {
       this.log.debug(`Client ID: ${this.config.clientId}`);
       this.log.debug(`Code Challenge: ${codeChallenge}`);
 
+      // Intentionally omit 'scope': per the BMW Device Code Flow swagger (v1.6),
+      // "If no scopes are set, all scopes registered for the application (OAuth
+      // client_id) will be returned." Requesting an explicit subset can narrow the
+      // token so that read endpoints work but container creation returns 403 (CU-403).
+      // Letting BMW grant the full registered set avoids that. The granted scope is
+      // logged after the token exchange.
       const requestData = {
         client_id: this.config.clientId,
         response_type: 'device_code',
-        scope: 'authenticate_user openid cardata:streaming:read cardata:api:read',
         code_challenge: codeChallenge,
         code_challenge_method: 'S256',
       };
@@ -334,15 +339,18 @@ class Bmw extends utils.Adapter {
           // Success! Store tokens in existing session structure
           this.session = tokenResponse.data;
 
-          // Log the effective granted scope. A missing cardata:api:read scope is the
-          // most likely cause of a 403 when creating the telematic container while all
-          // read endpoints still work. Only two scopes exist: cardata:api:read and
-          // cardata:streaming:read (CarData Integration Guide v1.6).
+          // Log the effective granted scope. Since we no longer request an explicit
+          // scope, BMW returns the full set registered for the Client ID.
           this.log.debug(`Token scope granted: ${this.session.scope || 'MISSING'} (token_type: ${this.session.token_type})`);
           if (this.session.scope && !this.session.scope.includes('cardata:api:read')) {
             this.log.warn(
-              `Token is missing the 'cardata:api:read' scope - CarData API calls (e.g. creating the telematic container) will fail with 403. Subscribe to CarData API in the BMW portal BEFORE registering the device, then re-authorize.`,
+              `Token is missing the 'cardata:api:read' scope - CarData API calls (e.g. creating the telematic container) will fail. Subscribe to CarData API in the BMW portal, then delete the Client ID and re-authorize.`,
             );
+          }
+          // MQTT streaming uses the id_token as its password; it only exists when the
+          // 'openid' scope is granted. Warn if it is missing so a broken stream is diagnosable.
+          if (!this.session.id_token) {
+            this.log.warn(`No id_token in the token response ('openid' scope not granted) - MQTT streaming will not be able to authenticate.`);
           }
 
           // Create BMW CarData auth objects
@@ -1157,6 +1165,33 @@ class Bmw extends utils.Adapter {
         'Content-Type': 'application/json',
       };
 
+      // List existing containers before creating a new one. BMW allows a maximum of
+      // 10 containers per user (CU-124); at the limit, creation fails. Logging the
+      // current containers also helps diagnose CU-403 issues.
+      try {
+        const listResponse = await this.makeCarDataApiRequest(
+          {
+            method: 'get',
+            url: `${this.carDataApiBase}/customers/containers`,
+            headers: headers,
+          },
+          'list containers',
+        );
+        const existingContainers = listResponse.data?.containers || [];
+        const activeCount = existingContainers.filter(c => c.state === 'ACTIVE').length;
+        this.log.info(`Found ${existingContainers.length}/10 existing containers (${activeCount} ACTIVE) before creating a new one`);
+        for (const c of existingContainers) {
+          this.log.debug(`Existing container: ${c.id} state=${c.state} name=${c.name}`);
+        }
+        if (existingContainers.length >= 10) {
+          this.log.warn(`Container limit (10) reached. Cleaning up existing containers before creating a new one.`);
+          await this.cleanupAllContainers();
+        }
+      } catch (listError) {
+        // Non-fatal: continue to creation, which will surface the real error.
+        this.log.warn(`Could not list existing containers before creation: ${listError.message}`);
+      }
+
       // Read telematic.json file
       const fs = require('node:fs');
       const path = require('node:path');
@@ -1254,11 +1289,18 @@ class Bmw extends utils.Adapter {
         this.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
         this.log.error(`Token scope on this session: ${this.session?.scope || 'unknown'}`);
 
-        // Targeted hints for the two documented causes (CarData Integration Guide v1.6).
+        // Targeted hints (CarData Integration Guide v1.6).
         if (status === 403) {
-          this.log.error(
-            `HTTP 403 on container creation while read endpoints work usually means the token lacks the 'cardata:api:read' scope. Subscribe to CarData API in the BMW portal BEFORE registering the device, then delete the client and re-authorize.`,
-          );
+          const hasApiScope = this.session?.scope?.includes('cardata:api:read');
+          if (hasApiScope) {
+            this.log.error(
+              `HTTP 403 (CU-403) on container creation although the token has 'cardata:api:read'. This is a BMW-side authorization refusal on the container endpoint, not a data problem. Known checklist: (1) both CarData API AND CarData Streaming subscribed to this Client ID, (2) you are the PRIMARY user of the VIN, (3) fewer than 10 containers exist on the account. If all apply, this is likely a BMW backend/entitlement issue - report it with this log.`,
+            );
+          } else {
+            this.log.error(
+              `HTTP 403 (CU-403) on container creation and the token is missing 'cardata:api:read' (granted: ${this.session?.scope || 'unknown'}). Subscribe to CarData API in the BMW portal BEFORE registering the device, then delete the Client ID and re-authorize.`,
+            );
+          }
         } else if (exveErrorId === 'CU-124') {
           this.log.error(
             `Container limit reached (max 10 per user). Delete unused containers - the adapter can clean up its own containers via cleanupAllContainers.`,
