@@ -17,6 +17,8 @@
   "hlpIgnorelist": "Kommagescheiden lijst van VINs om te negeren (bijv. VIN1,VIN2,VIN3)",
   "lblReverseGeocode": "Reverse geocoding inschakelen",
   "hlpReverseGeocode": "GPS-coördinaten (breedtegraad/lengtegraad) omzetten naar adres met OpenStreetMap Nominatim. Update nadat positie 30 seconden niet is veranderd.",
+  "lblReducedContainer": "Use reduced telematic container",
+  "hlpReducedContainer": "Create a container with only a small set of key data points instead of all data points. When enabled, ALL existing containers are deleted first and a new reduced container is created. Try this if container creation fails with HTTP 403 (CU-403).",
   "txtApiEndpoints": "Afstandsbediening Informatie",
   "txtApiNote": "Telematicagegevens worden automatisch opgehaald op basis van het bovenstaande interval. Andere API endpoints (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) kunnen handmatig worden geactiveerd via bmw.0.VIN.remote. in elk voertuig. BasicData wordt eenmaal opgehaald na login."
 }

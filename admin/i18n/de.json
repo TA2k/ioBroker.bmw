@@ -17,6 +17,8 @@
   "hlpIgnorelist": "Kommagetrennte Liste von VINs zum Ignorieren (z.B. VIN1,VIN2,VIN3)",
   "lblReverseGeocode": "Reverse Geocoding aktivieren",
   "hlpReverseGeocode": "GPS-Koordinaten (Breitengrad/Längengrad) in Straßenadresse umwandeln mit OpenStreetMap Nominatim. Aktualisierung wenn Position sich 30 Sekunden nicht geändert hat.",
+  "lblReducedContainer": "Reduzierten Telematik-Container verwenden",
+  "hlpReducedContainer": "Erstellt einen Container mit nur wenigen wichtigen Datenpunkten statt aller Datenpunkte. Wenn aktiviert, werden zuerst ALLE vorhandenen Container gelöscht und ein neuer reduzierter Container erstellt. Versuche dies, wenn die Container-Erstellung mit HTTP 403 (CU-403) fehlschlägt.",
   "txtApiEndpoints": "Fernbedienung Information",
   "txtApiNote": "Telematikdaten werden automatisch basierend auf dem obigen Intervall abgerufen. Andere API-Endpunkte (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) können manuell über bmw.0.VIN.remote. in jedem Fahrzeug ausgelöst werden. BasicData wird einmal nach dem Login abgerufen."
 }

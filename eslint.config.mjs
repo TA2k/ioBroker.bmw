@@ -19,6 +19,7 @@ export default [
             'admin/blockly.js',
             '**/adapter-config.d.ts',
             '.dev-server/',
+            '.references/',
         ],
     },
     {

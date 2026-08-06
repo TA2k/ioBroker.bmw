@@ -14,6 +14,27 @@ const path = require('node:path');
 // BMW CarData API quota limit (calls per 24 hours)
 const API_QUOTA_LIMIT = 50;
 
+// Reduced set of telematic keys used when the "reducedContainer" option is enabled.
+// A large container (all catalogue keys) can be rejected by BMW with HTTP 403 (CU-403).
+// This curated set mirrors the keys the evcc project uses successfully.
+const REDUCED_TELEMATIC_KEYS = [
+  'vehicle.body.chargingPort.status',
+  'vehicle.body.chargingPort.combinedStatus',
+  'vehicle.cabin.infotainment.navigation.currentLocation.latitude',
+  'vehicle.cabin.infotainment.navigation.currentLocation.longitude',
+  'vehicle.cabin.hvac.preconditioning.status.comfortState',
+  'vehicle.drivetrain.batteryManagement.header',
+  'vehicle.drivetrain.electricEngine.charging.hvStatus',
+  'vehicle.drivetrain.electricEngine.charging.status',
+  'vehicle.drivetrain.electricEngine.charging.timeRemaining',
+  'vehicle.drivetrain.electricEngine.kombiRemainingElectricRange',
+  'vehicle.drivetrain.lastRemainingRange',
+  'vehicle.powertrain.electric.battery.stateOfCharge.displayed',
+  'vehicle.powertrain.electric.battery.stateOfCharge.target',
+  'vehicle.vehicle.preConditioning.activity',
+  'vehicle.vehicle.travelledDistance',
+];
+
 class Bmw extends utils.Adapter {
   /**
    * @param {Partial<utils.AdapterOptions>} [options] - Optional adapter configuration options.
@@ -1100,12 +1121,26 @@ class Bmw extends utils.Adapter {
   }
 
   /**
-   * Create a new container with all technical identifiers from telematic.json
+   * Create a new telematic container. Uses all technical identifiers from
+   * telematic.json, or a reduced curated set when config.reducedContainer is enabled
+   * (in which case all existing containers are deleted first).
    */
   async createTelematicContainer() {
     try {
-      // Check if we already have a stored container ID
-      const storedContainerId = await this.getStateAsync('containerInfo.containerId');
+      const reducedContainer = this.config.reducedContainer === true;
+
+      // In reduced mode, always start clean: delete all existing containers and
+      // create a fresh reduced container. This avoids reusing a previously created
+      // full container and frees up the 10-container limit.
+      if (reducedContainer) {
+        this.log.info(`Reduced container mode enabled - deleting all existing containers before creating a reduced one`);
+        await this.cleanupAllContainers();
+        await this.delObjectAsync('containerInfo.containerId').catch(() => {});
+        this.containerId = null;
+      }
+
+      // Check if we already have a stored container ID (skipped in reduced mode)
+      const storedContainerId = reducedContainer ? null : await this.getStateAsync('containerInfo.containerId');
       if (storedContainerId && storedContainerId.val) {
         this.containerId = storedContainerId.val;
         this.log.info(`Using existing container ID: ${this.containerId}`);
@@ -1167,29 +1202,32 @@ class Bmw extends utils.Adapter {
 
       // List existing containers before creating a new one. BMW allows a maximum of
       // 10 containers per user (CU-124); at the limit, creation fails. Logging the
-      // current containers also helps diagnose CU-403 issues.
-      try {
-        const listResponse = await this.makeCarDataApiRequest(
-          {
-            method: 'get',
-            url: `${this.carDataApiBase}/customers/containers`,
-            headers: headers,
-          },
-          'list containers',
-        );
-        const existingContainers = listResponse.data?.containers || [];
-        const activeCount = existingContainers.filter(c => c.state === 'ACTIVE').length;
-        this.log.info(`Found ${existingContainers.length}/10 existing containers (${activeCount} ACTIVE) before creating a new one`);
-        for (const c of existingContainers) {
-          this.log.debug(`Existing container: ${c.id} state=${c.state} name=${c.name}`);
+      // current containers also helps diagnose CU-403 issues. Skipped in reduced mode
+      // because all containers were already deleted above.
+      if (!reducedContainer) {
+        try {
+          const listResponse = await this.makeCarDataApiRequest(
+            {
+              method: 'get',
+              url: `${this.carDataApiBase}/customers/containers`,
+              headers: headers,
+            },
+            'list containers',
+          );
+          const existingContainers = listResponse.data?.containers || [];
+          const activeCount = existingContainers.filter(c => c.state === 'ACTIVE').length;
+          this.log.info(`Found ${existingContainers.length}/10 existing containers (${activeCount} ACTIVE) before creating a new one`);
+          for (const c of existingContainers) {
+            this.log.debug(`Existing container: ${c.id} state=${c.state} name=${c.name}`);
+          }
+          if (existingContainers.length >= 10) {
+            this.log.warn(`Container limit (10) reached. Cleaning up existing containers before creating a new one.`);
+            await this.cleanupAllContainers();
+          }
+        } catch (listError) {
+          // Non-fatal: continue to creation, which will surface the real error.
+          this.log.warn(`Could not list existing containers before creation: ${listError.message}`);
         }
-        if (existingContainers.length >= 10) {
-          this.log.warn(`Container limit (10) reached. Cleaning up existing containers before creating a new one.`);
-          await this.cleanupAllContainers();
-        }
-      } catch (listError) {
-        // Non-fatal: continue to creation, which will surface the real error.
-        this.log.warn(`Could not list existing containers before creation: ${listError.message}`);
       }
 
       // Read telematic.json file
@@ -1204,14 +1242,22 @@ class Bmw extends utils.Adapter {
 
       const telematicData = JSON.parse(fs.readFileSync(telematicPath, 'utf8'));
 
-      // Extract all technical identifiers and ensure no trailing commas in JSON
-      const technicalDescriptors = telematicData.map(item => item.technical_identifier).filter(identifier => identifier); // Remove any undefined/null values
-
-      this.log.info(`Creating container with ${technicalDescriptors.length} technical identifiers from telematic.json`);
+      // Select descriptors: reduced mode uses a small curated set, otherwise all keys.
+      let technicalDescriptors;
+      if (reducedContainer) {
+        technicalDescriptors = REDUCED_TELEMATIC_KEYS;
+        this.log.info(`Creating REDUCED container with ${technicalDescriptors.length} technical identifiers`);
+      } else {
+        // Extract all technical identifiers and ensure no trailing commas in JSON
+        technicalDescriptors = telematicData.map(item => item.technical_identifier).filter(identifier => identifier); // Remove any undefined/null values
+        this.log.info(`Creating container with ${technicalDescriptors.length} technical identifiers from telematic.json`);
+      }
 
       const containerData = {
         name: `ioBroker BMW Telematic Data - ${new Date().toISOString()}`,
-        purpose: `Container for BMW telematic data endpoints used by ioBroker adapter`,
+        purpose: reducedContainer
+          ? `Reduced container for BMW telematic data used by ioBroker adapter`
+          : `Container for BMW telematic data endpoints used by ioBroker adapter`,
         technicalDescriptors: technicalDescriptors,
       };
 
