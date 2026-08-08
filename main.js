@@ -246,15 +246,16 @@ class Bmw extends utils.Adapter {
       this.log.debug(`Client ID: ${this.config.clientId}`);
       this.log.debug(`Code Challenge: ${codeChallenge}`);
 
-      // Intentionally omit 'scope': per the BMW Device Code Flow swagger (v1.6),
-      // "If no scopes are set, all scopes registered for the application (OAuth
-      // client_id) will be returned." Requesting an explicit subset can narrow the
-      // token so that read endpoints work but container creation returns 403 (CU-403).
-      // Letting BMW grant the full registered set avoids that. The granted scope is
-      // logged after the token exchange.
+      // Request the CarData scopes explicitly. Omitting 'scope' does NOT grant the full
+      // registered set as the swagger implies - BMW then returns a token without
+      // 'cardata:api:read', so every CarData call fails with CU-103 ("The token-scope is
+      // not CarData"). These four scopes match the BMW CarData portal registration and
+      // the evcc reference implementation. The granted scope is logged after the token
+      // exchange for diagnostics.
       const requestData = {
         client_id: this.config.clientId,
         response_type: 'device_code',
+        scope: 'authenticate_user openid cardata:streaming:read cardata:api:read',
         code_challenge: codeChallenge,
         code_challenge_method: 'S256',
       };
@@ -360,8 +361,17 @@ class Bmw extends utils.Adapter {
           // Success! Store tokens in existing session structure
           this.session = tokenResponse.data;
 
-          // Log the effective granted scope. Since we no longer request an explicit
-          // scope, BMW returns the full set registered for the Client ID.
+          // Dump the same token fields evcc extracts (gcid, id_token) plus the standard
+          // OAuth fields, so a user can diff this log line against an evcc setup. evcc logs
+          // gcid + id_token + expiry in its MQTT debug line; here we log all of them once at
+          // token exchange. Tokens are shortened to avoid leaking full credentials.
+          const shorten = v => (typeof v === 'string' && v.length > 12 ? `${v.slice(0, 8)}...${v.slice(-4)} (len ${v.length})` : v || 'MISSING');
+          this.log.debug(
+            `Token (evcc-comparable): scope=${this.session.scope || 'MISSING'} token_type=${this.session.token_type || 'MISSING'} expires_in=${this.session.expires_in || 'MISSING'} gcid=${this.session.gcid || 'MISSING'} id_token=${shorten(this.session.id_token)} access_token=${shorten(this.session.access_token)} refresh_token=${shorten(this.session.refresh_token)}`,
+          );
+
+          // Log the effective granted scope. We request cardata:api:read explicitly; if
+          // BMW still does not grant it, the Client ID is not subscribed to the CarData API.
           this.log.debug(`Token scope granted: ${this.session.scope || 'MISSING'} (token_type: ${this.session.token_type})`);
           if (this.session.scope && !this.session.scope.includes('cardata:api:read')) {
             this.log.warn(
@@ -1338,13 +1348,16 @@ class Bmw extends utils.Adapter {
         // Targeted hints (CarData Integration Guide v1.6).
         if (status === 403) {
           const hasApiScope = this.session?.scope?.includes('cardata:api:read');
-          if (hasApiScope) {
+          if (exveErrorId === 'CU-103' || !hasApiScope) {
+            // CU-103 "The token-scope is not CarData": the token was granted without
+            // cardata:api:read. Either the device-code request omitted the scope, or the
+            // Client ID is not subscribed to the CarData API in the BMW portal.
             this.log.error(
-              `HTTP 403 (CU-403) on container creation although the token has 'cardata:api:read'. This is a BMW-side authorization refusal on the container endpoint, not a data problem. Known checklist: (1) both CarData API AND CarData Streaming subscribed to this Client ID, (2) you are the PRIMARY user of the VIN, (3) fewer than 10 containers exist on the account. If all apply, this is likely a BMW backend/entitlement issue - report it with this log.`,
+              `HTTP 403 (${exveErrorId || 'CU-103'}) - the token was not granted the CarData scope (granted: ${this.session?.scope || 'unknown'}). Subscribe to the CarData API for this Client ID in the BMW portal, then delete the Client ID and re-authorize.`,
             );
           } else {
             this.log.error(
-              `HTTP 403 (CU-403) on container creation and the token is missing 'cardata:api:read' (granted: ${this.session?.scope || 'unknown'}). Subscribe to CarData API in the BMW portal BEFORE registering the device, then delete the Client ID and re-authorize.`,
+              `HTTP 403 (${exveErrorId || 'CU-403'}) on container creation although the token has 'cardata:api:read'. This is a BMW-side authorization refusal on the container endpoint, not a data problem. Known checklist: (1) both CarData API AND CarData Streaming subscribed to this Client ID, (2) you are the PRIMARY user of the VIN, (3) fewer than 10 containers exist on the account. If all apply, this is likely a BMW backend/entitlement issue - report it with this log.`,
             );
           }
         } else if (exveErrorId === 'CU-124') {

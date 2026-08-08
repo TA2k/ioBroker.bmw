@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.1-beta.0",
+    "version": "5.0.1-beta.1",
     "news": {
+      "5.0.1-beta.1": {
+        "en": "Fixed CU-103 'token-scope is not CarData': the device code request now requests the cardata:api:read scope explicitly again (re-authorization required)",
+        "de": "CU-103 'token-scope is not CarData' behoben: Der Device-Code-Request fordert den Scope cardata:api:read wieder explizit an (Neu-Autorisierung erforderlich)"
+      },
       "5.0.1-beta.0": {
         "en": "Added option for a reduced telematic container (helps with HTTP 403/CU-403), fixed device code flow (verification_uri), robust token polling, better CarData scope and 403 diagnostics",
         "de": "Option für reduzierten Telematik-Container hinzugefügt (hilft bei HTTP 403/CU-403), Device-Code-Flow korrigiert (verification_uri), robusteres Token-Polling, bessere CarData-Scope- und 403-Diagnose"
