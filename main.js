@@ -885,8 +885,13 @@ class Bmw extends utils.Adapter {
       data: qs.stringify(refreshData),
     })
       .then(async res => {
-        // Store refreshed tokens (keep existing session structure)
+        // Store refreshed tokens (keep existing session structure). Preserve the gcid if the
+        // refresh response omits it - MQTT needs it as the username on auto-reconnect.
+        const previousGcid = this.session?.gcid;
         this.session = res.data;
+        if (!this.session.gcid && previousGcid) {
+          this.session.gcid = previousGcid;
+        }
         this.setState(`cardataauth.session`, JSON.stringify(this.session), true);
         this.setState(`info.connection`, true, true);
         this.log.debug(`Tokens refreshed successfully - MQTT will auto-reconnect with new credentials`);
@@ -921,10 +926,20 @@ class Bmw extends utils.Adapter {
       return false;
     }
 
-    if (!this.config.cardataStreamingUsername) {
-      this.log.error(`CarData Streaming Username not configured! Please set it in adapter settings.`);
-      this.log.error(`Find your streaming username in BMW ConnectedDrive portal under CarData > Streaming section.`);
+    // BMW's streaming broker authenticates with the id_token as password and expects the
+    // account's gcid as the MQTT username. The topic ACL only permits '{gcid}/#', so
+    // subscribing under anything else is refused with "Unspecified error" (SUBACK failure)
+    // even though the connection succeeds. The gcid is returned in the token response.
+    // The configured cardataStreamingUsername is kept as an optional override for setups
+    // where BMW issues a separate streaming username; gcid takes precedence when present.
+    const mqttUsername = this.session.gcid || this.config.cardataStreamingUsername;
+    if (!mqttUsername) {
+      this.log.error(`No MQTT username available: token has no gcid and no CarData Streaming Username is configured.`);
+      this.log.error(`Re-authorize the adapter (the gcid comes from the token) or set the streaming username in the adapter settings.`);
       return false;
+    }
+    if (!this.session.gcid && this.config.cardataStreamingUsername) {
+      this.log.warn(`Token has no gcid - falling back to the configured CarData Streaming Username for MQTT. Re-authorize to obtain the gcid.`);
     }
 
     const mqtt = require('mqtt');
@@ -932,7 +947,7 @@ class Bmw extends utils.Adapter {
     //export interface IClientOptions extends ISecureClientOptions {
     const brokerUrl = 'mqtts://customer.streaming-cardata.bmwgroup.com:9000';
     const options = {
-      username: this.config.cardataStreamingUsername,
+      username: mqttUsername,
       password: this.session.id_token,
       keepalive: 30,
       clean: true,
@@ -942,15 +957,16 @@ class Bmw extends utils.Adapter {
     };
 
     this.log.debug(`Connecting to BMW MQTT: ${brokerUrl}`);
-    this.log.debug(`MQTT Username: ${this.config.cardataStreamingUsername}`);
+    this.log.debug(`MQTT Username (gcid): ${mqttUsername}`);
     this.mqtt = mqtt.connect(brokerUrl, options);
 
     this.mqtt.on('connect', () => {
       this.log.info(`BMW MQTT stream connected`);
       this.setState(`info.mqttConnected`, true, true);
 
-      // Subscribe to all vehicle topics for this CarData Streaming username
-      const topic = `${this.config.cardataStreamingUsername}/+`;
+      // Subscribe to all vehicle topics for this account. The topic prefix is the gcid,
+      // matching the username; '{gcid}/+' delivers every VIN mapped to the account.
+      const topic = `${mqttUsername}/+`;
       this.mqtt?.subscribe(topic, err => {
         if (err) {
           this.log.error(`MQTT subscription failed: ${err.message}`);
@@ -1108,14 +1124,14 @@ class Bmw extends utils.Adapter {
           await this.makeCarDataApiRequest(
             {
               method: 'delete',
-              url: `${this.carDataApiBase}/customers/containers/${container.id}`,
+              url: `${this.carDataApiBase}/customers/containers/${container.containerId}`,
               headers: headers,
             },
-            `delete container ${container.id}`,
+            `delete container ${container.containerId}`,
           );
-          this.log.debug(`Deleted ioBroker container: ${container.id} (${container.name})`);
+          this.log.debug(`Deleted ioBroker container: ${container.containerId} (${container.name})`);
         } catch (error) {
-          this.log.warn(`Failed to delete container ${container.id}: ${error.message}`);
+          this.log.warn(`Failed to delete container ${container.containerId}: ${error.message}`);
         }
       }
 
@@ -1228,7 +1244,7 @@ class Bmw extends utils.Adapter {
           const activeCount = existingContainers.filter(c => c.state === 'ACTIVE').length;
           this.log.info(`Found ${existingContainers.length}/10 existing containers (${activeCount} ACTIVE) before creating a new one`);
           for (const c of existingContainers) {
-            this.log.debug(`Existing container: ${c.id} state=${c.state} name=${c.name}`);
+            this.log.debug(`Existing container: ${c.containerId} state=${c.state} name=${c.name}`);
           }
           if (existingContainers.length >= 10) {
             this.log.warn(`Container limit (10) reached. Cleaning up existing containers before creating a new one.`);

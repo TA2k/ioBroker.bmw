@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.1-beta.1",
+    "version": "5.0.1-beta.2",
     "news": {
+      "5.0.1-beta.2": {
+        "en": "Fixed MQTT subscription (uses the token gcid as username and topic prefix, matching BMW's broker ACL); fixed container cleanup deleting with an undefined containerId (CU-121)",
+        "de": "MQTT-Subscription behoben (nutzt die gcid aus dem Token als Username und Topic-Präfix, passend zur ACL des BMW-Brokers); Container-Cleanup behoben, das mit undefinierter containerId löschte (CU-121)"
+      },
       "5.0.1-beta.1": {
         "en": "Fixed CU-103 'token-scope is not CarData': the device code request now requests the cardata:api:read scope explicitly again (re-authorization required)",
         "de": "CU-103 'token-scope is not CarData' behoben: Der Device-Code-Request fordert den Scope cardata:api:read wieder explizit an (Neu-Autorisierung erforderlich)"
