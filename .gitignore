@@ -26,3 +26,4 @@ admin/i18n/*/flat.txt
 /convert_table.py
 /telematic_de.html
 /telematic.html
+__pycache__/

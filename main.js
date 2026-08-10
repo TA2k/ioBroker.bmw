@@ -930,16 +930,10 @@ class Bmw extends utils.Adapter {
     // account's gcid as the MQTT username. The topic ACL only permits '{gcid}/#', so
     // subscribing under anything else is refused with "Unspecified error" (SUBACK failure)
     // even though the connection succeeds. The gcid is returned in the token response.
-    // The configured cardataStreamingUsername is kept as an optional override for setups
-    // where BMW issues a separate streaming username; gcid takes precedence when present.
-    const mqttUsername = this.session.gcid || this.config.cardataStreamingUsername;
+    const mqttUsername = this.session.gcid;
     if (!mqttUsername) {
-      this.log.error(`No MQTT username available: token has no gcid and no CarData Streaming Username is configured.`);
-      this.log.error(`Re-authorize the adapter (the gcid comes from the token) or set the streaming username in the adapter settings.`);
+      this.log.error(`No gcid in the session - MQTT streaming cannot authenticate. Re-authorize the adapter to obtain the gcid from the token.`);
       return false;
-    }
-    if (!this.session.gcid && this.config.cardataStreamingUsername) {
-      this.log.warn(`Token has no gcid - falling back to the configured CarData Streaming Username for MQTT. Re-authorize to obtain the gcid.`);
     }
 
     const mqtt = require('mqtt');

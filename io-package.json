@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.1-beta.2",
+    "version": "5.0.1-beta.3",
     "news": {
+      "5.0.1-beta.3": {
+        "en": "Removed the CarData Streaming Username setting - the MQTT username (gcid) is now taken automatically from the token, no manual entry needed",
+        "de": "CarData-Streaming-Benutzername aus den Einstellungen entfernt - der MQTT-Username (gcid) wird jetzt automatisch aus dem Token übernommen, keine manuelle Eingabe mehr nötig"
+      },
       "5.0.1-beta.2": {
         "en": "Fixed MQTT subscription (uses the token gcid as username and topic prefix, matching BMW's broker ACL); fixed container cleanup deleting with an undefined containerId (CU-121)",
         "de": "MQTT-Subscription behoben (nutzt die gcid aus dem Token als Username und Topic-Präfix, passend zur ACL des BMW-Brokers); Container-Cleanup behoben, das mit undefinierter containerId löschte (CU-121)"
@@ -174,7 +178,6 @@
   "protectedNative": [],
   "native": {
     "clientId": "",
-    "cardataStreamingUsername": "",
     "interval": 60,
     "brand": "bmw",
     "ignorelist": "",

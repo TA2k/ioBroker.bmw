@@ -61,18 +61,6 @@
       "lg": 6,
       "xl": 6
     },
-    "cardataStreamingUsername": {
-      "type": "text",
-      "label": "lblCardataStreamingUsername",
-      "help": "hlpCardataStreamingUsername",
-      "placeholder": "plhCardataStreamingUsername",
-      "newLine": true,
-      "xs": 12,
-      "sm": 12,
-      "md": 12,
-      "lg": 6,
-      "xl": 6
-    },
     "brand": {
       "type": "select",
       "label": "lblBrand",

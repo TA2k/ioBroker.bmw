@@ -1,6 +1,5 @@
 {
   "plhCardataClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-  "plhCardataStreamingUsername": "Streaming gebruikersnaam uit BMW-portal",
   "plhIgnorelistVins": "VIN1,VIN2,VIN3",
   "txtBmwCardataConfiguration": "BMW CarData Configuratie",
   "txtInfoBmwCardataApi": "Deze adapter gebruikt de nieuwe BMW CarData API met OAuth2 authenticatie en realtime MQTT streaming.",
@@ -8,8 +7,6 @@
   "txtCardataStreamingSetup": "⚠️ BELANGRIJK: CarData Streaming Setup - Na het aanmaken van uw Client ID MOET u CarData Streaming activeren en handmatig ALLE 244 datapunten selecteren in het BMW portaal. Ga naar CarData > Data Descriptors > Selecteer alle categorieën en individuele datapunten. Zonder deze stap werkt realtime MQTT streaming niet!",
   "lblClientId": "BMW CarData Client ID",
   "hlpClientId": "Client ID uit BMW ConnectedDrive portal CarData sectie. Vereist voor OAuth2 authenticatie.",
-  "lblCardataStreamingUsername": "CarData Streaming gebruikersnaam *",
-  "hlpCardataStreamingUsername": "VEREIST: Uw CarData Streaming gebruikersnaam (verschilt van uw BMW login). Vind dit in BMW ConnectedDrive portaal onder CarData > Streaming sectie. Zonder dit werkt MQTT streaming niet!",
   "lblBrand": "Merk",
   "lblInterval": "Update-interval voor telematicagegevens (in minuten)",
   "hlpInterval": "Automatisch ophaalinterval voor telematicagegevens. Stel in op 0 om automatische updates uit te schakelen. Minimum 10 minuten vanwege quota limieten (50 oproepen per 24u). Andere API endpoints kunnen handmatig worden geactiveerd via bmw.0.VIN.remote.",

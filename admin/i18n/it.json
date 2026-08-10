@@ -1,6 +1,5 @@
 {
   "plhCardataClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-  "plhCardataStreamingUsername": "Nome utente streaming dal portale BMW",
   "plhIgnorelistVins": "VIN1,VIN2,VIN3",
   "txtBmwCardataConfiguration": "BMW CarData Configurazione",
   "txtInfoBmwCardataApi": "Questo adattatore utilizza la nuova API BMW CarData con autenticazione OAuth2 e streaming MQTT in tempo reale.",
@@ -8,8 +7,6 @@
   "txtCardataStreamingSetup": "⚠️ IMPORTANTE: Configurazione CarData Streaming - Dopo aver creato il tuo Client ID, DEVI attivare CarData Streaming e selezionare manualmente TUTTI i 244 punti dati nel portale BMW. Vai su CarData > Descrittori Dati > Seleziona tutte le categorie e i singoli punti dati. Senza questo passaggio, lo streaming MQTT in tempo reale non funzionerà!",
   "lblClientId": "BMW CarData Client ID",
   "hlpClientId": "Client ID dalla sezione CarData del portale BMW ConnectedDrive. Richiesto per l'autenticazione OAuth2.",
-  "lblCardataStreamingUsername": "Nome utente CarData Streaming *",
-  "hlpCardataStreamingUsername": "RICHIESTO: Il tuo nome utente CarData Streaming (diverso dal tuo login BMW). Trova questo nel portale BMW ConnectedDrive sotto CarData > sezione Streaming. Senza questo, lo streaming MQTT non funzionerà!",
   "lblBrand": "Marca",
   "lblInterval": "Intervallo di aggiornamento per dati telematici (in minuti)",
   "hlpInterval": "Intervallo di recupero automatico dei dati telematici. Impostare a 0 per disabilitare gli aggiornamenti automatici. Minimo 10 minuti a causa dei limiti di quota (50 chiamate per 24h). Altri endpoint API possono essere attivati manualmente tramite bmw.0.VIN.remote.",
