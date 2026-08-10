@@ -83,10 +83,9 @@ After creating your Client ID, configure streaming:
 ### 3. Adapter Configuration
 
 1. Enter your **Client ID** in the adapter settings
-2. Enter your **CarData Streaming Username** (found in BMW portal under CarData > Streaming section)
-3. Select your vehicle **brand** (BMW, Mini, Toyota Supra)
-4. Set **update interval** (minimum 10 minutes due to API quota)
-5. Configure **VIN ignore list** if needed
+2. Select your vehicle **brand** (BMW, Mini, Toyota Supra)
+3. Set **update interval** (minimum 10 minutes due to API quota)
+4. Configure **VIN ignore list** if needed
 
 ### 4. Authentication Process
 
