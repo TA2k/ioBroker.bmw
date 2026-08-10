@@ -140,3 +140,7 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 ### 2.0.0
 
 - (TA2k) initial release
+## 4.3.2 (2025-12-15)
+
+- update telemetry ids for container creation
+- optimize dependabot config (#209)

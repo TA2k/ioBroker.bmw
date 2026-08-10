@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.1-beta.3",
+    "version": "5.0.1",
     "news": {
+      "5.0.1": {
+        "en": "fixed CU-103 \"token-scope is not CarData\" by requesting the cardata:api:read scope explicitly in the device code flow\nfixed MQTT streaming: use the token gcid as username and topic prefix (matching BMW's broker ACL), fixing the \"Unspecified error\" subscribe failure\nfixed container cleanup deleting with an undefined containerId (CU-121)\nremoved the CarData Streaming Username setting - the gcid is now taken automatically from the token\nadded an option to create a reduced telematic container (workaround for CU-403 on container creation)\nupdated adapter-core\nfixed adapterchecker errors: downgraded @types/node to ^22, added Sentry notice to README, added @iobroker/adapter-dev\nreplaced native setInterval/setTimeout with adapter-managed equivalents in main.js\nmoved all jsonConfig.json inline translations to i18n files\nupdated dependencies",
+        "de": "fixed CU-103 \"token-scope is not CarData\" durch Anfordern des cardata:api:read Umfangs explizit im Gerätecodefluss\nfixed MQTT-Streaming: Verwenden Sie das Token gcid als Benutzername und Themenpräfix (passend zu BMWs Broker ACL), Behebung des \"Unspecified Error\"-Abonnementfehlers\nreinigung des festen Behälters Löschen mit einer undefinierten ContainerId (CU-121)\ndie Einstellung CarData Streaming Benutzername entfernt - das gcid wird jetzt automatisch aus dem Token übernommen\neine Option zum Erstellen eines reduzierten Telematikcontainers hinzugefügt (Workaround für CU-403 bei der Containererstellung)\nupdate adapter-core\nfixed Adapterchecker Errors: downgraded @types/node to ^22, addiert Sentry Notice to README, addiert @iobroker/adapter-dev\nersetzt native setInterval/setTimeout mit Adapter-verwalteten Äquivalenten in main.js\nalle jsonConfig.json Inline-Übersetzungen in i18n-Dateien verschoben\naktualisierte abhängigkeiten",
+        "ru": "фиксированный CU-103 «token-scope is not CarData» путем запроса кардата:api:read scope явно в потоке кода устройства\nфиксированная потоковая передача MQTT: используйте маркер gcid в качестве имени пользователя и префикса темы (совпадая с брокером BMW ACL), исправляя сбой подписки «Неопределенная ошибка»\nфиксированная очистка контейнера с удалением неопределенного контейнера (CU-121)\nудалена настройка имени пользователя CarData Streaming - теперь gcid автоматически берется из токена\nдобавлен вариант создания уменьшенного телематического контейнера (оборудование для CU-403 по созданию контейнера)\nобновленный адаптер-ядро\nисправленные ошибки адаптеров: понижен @types/node до ^22, добавлено уведомление Sentry в README, добавлено @iobroker/adapter-dev\nзаменить нативный наборInterval/setTimeout на адаптер-управляемые эквиваленты в main.js\nперенес все встроенные переводы jsonConfig.json в файлы i18n\nобновленные зависимости",
+        "pt": "fixo CU-103 \"token-scope não é CarData\" solicitando o escopo cardata:api:read explicitamente no fluxo de código do dispositivo\nstreaming MQTT fixo: use o token gcid como nome de usuário e prefixo de tópico (matching BMW's broker ACL), corrigindo a falha de assinatura \"erro não especificado\"\nlimpeza do recipiente fixo apagando com um recipiente indefinidoId (CU-121)\nremovido a configuração CarData Streaming Username - o gcid agora é retirado automaticamente do token\nadicionou uma opção para criar um recipiente telemático reduzido (arranjar para CU-403 na criação do recipiente)\nadaptador- núcleo atualizado\nerro de verificação de adaptadores fixo: desclassificado @types/node para ^22, adicionado aviso de entrada para README, adicionado @iobroker/adapter-dev\nsubstituiu o set nativoInterval/setTimeout com equivalentes gerenciados pelo adaptador no main.js\nmoveu todas as traduções em linha do jsonConfig.json para arquivos i18n\ndependências atualizadas",
+        "nl": "vaste CU-103 \"token-scoop is niet CarData\" door de cardata:api:lees scope expliciet in de apparaatcodestroom aan te vragen\nvaste MQTT streaming: gebruik de token gcid als gebruikersnaam en topic prefix (dat overeenkomt met BMW's makelaar ACL), het repareren van de \"Ongespecificeerde fout\" abonneer fout\nvaste container opruimen verwijderen met een ongedefinieerde containerId (CU-121)\nverwijderde de CarData Streaming Gebruikersnaam instelling - de gcid wordt nu automatisch uit het token genomen\neen optie toegevoegd om een gereduceerde telematicacontainer te creëren (afronding voor CU-403 bij het aanmaken van containers)\nbijgewerkte adapter-core\nfixed adapterchecker fouten: gedegradeerd @types/node naar ^22, toegevoegd Sentry note aan README, toegevoegd @iobroker/adapter-dev\nvervangen native setInterval/setTimeout met adapter-beheerde equivalenten in main.js\nverplaatst alle jsonConfig.json inline vertalingen naar i18n bestanden\nbijgewerkte afhankelijkheden",
+        "fr": "fixe CU-103 \"token-scope n'est pas CarData\" en demandant la carte:api:read scope explicitement dans le flux de code de périphérique\nstreaming MQTT fixe: utilisez le gcid jeton comme nom d'utilisateur et préfixe de sujet (appariement ACL courtier de BMW), en corrigeant l'erreur non spécifiée s'abonner\nnettoyage du conteneur fixe avec un conteneur non définiId (CU-121)\nsupprimé le réglage du nom d'utilisateur CarData Streaming - le gcid est maintenant pris automatiquement du jeton\najout d'une option pour créer un conteneur télématique réduit (réparation pour CU-403 sur la création de conteneurs)\nadaptateur-core mis à jour\nerreurs de vérification d'adaptateurs fixes: déclassées @types/node à ^22, ajout de l'avis de saisie à README, ajout de @iobroker/adaptateur-dev\nremplace native setInterval/setTimeout par des équivalents gérés par adaptateur dans main.js\ndéplacé toutes les traductions en ligne de jsonConfig.json vers des fichiers i18n\ndépendances actualisées",
+        "it": "fisso CU-103 \"token-scope non è CarData\" richiedendo il cardata:api:read scope esplicitamente nel flusso del codice del dispositivo\nfisso MQTT streaming: utilizzare il token gcid come nome utente e prefisso dell'argomento (matching BMW broker ACL), fissando il \"errore non specificato\"\npulizia del contenitore fisso con un contenitore non definitoId (CU-121)\nrimosso l'impostazione CarData Streaming Username - il gcid è ora preso automaticamente dal token\naggiunto un'opzione per creare un contenitore telematico ridotto (rotondo per CU-403 sulla creazione di container)\naggiornamento adattatore-core\nerrori Adattatorechecker fissi: @types/nodo degradato a ^22, aggiunto avviso Sentry a README, aggiunto @iobroker/adapter-dev\nsostituito nativo setInterval/setTimeout con adattatore-managed equivalenti in main.js\nha spostato tutte le traduzioni in linea jsonConfig.json ai file i18n\ndipendenze aggiornate",
+        "es": "fija CU-103 \"el token-scope no es CarData\" solicitando la cardata:api:read scope explícitamente en el flujo del código del dispositivo\nstreaming de MQTT fijo: use el gcid token como nombre de usuario y prefijo tópico (compactador de BMW ACL), fijación del fallo de suscripción \"error no especificado\"\nlimpieza de contenedores fijos eliminando con un contenedorId indefinido (CU-121)\neliminar el ajuste de nombre de usuario de CarData Streaming - el gcid ahora se toma automáticamente desde el token\nagregó una opción para crear un contenedor telemático reducido (reparado para CU-403 en la creación de contenedores)\nadaptador-core actualizado\nerrores de control de adaptador fijo: degradado @tipos/nodo a ^22, añadido Aviso de envío a README, añadido @iobroker/adapter-dev\nreemplazado conjunto nativoInterval/setTimeout con equivalentes gestionados por adaptadores en main.js\nmovió todas las traducciones jsonConfig.json en línea a archivos i18n\ndependencias actualizadas",
+        "pl": "stałe CU- 103 \"token- scope nie jest CarData\", prosząc cardata: api: czytaj zakres wyraźnie w przepływu kodu urządzenia\nstreamind MQTT streaming: użyj tokena gcid jako nazwy użytkownika i prefiksu tematycznego (pasującego do brokera BMW ACL), poprawiając niepowodzenie subskrypcji \"Nieokreślony błąd\"\nstałe czyszczenie pojemnika usuwanie z nieokreślonym kontenerem (CU- 121)\nusunięto ustawienie CarData Streaming Username - gcid jest teraz automatycznie pobierany z tokena\ndodano opcję tworzenia zmniejszonego pojemnika telematycznego (praca dla CU- 403 na tworzenie kontenera)\nzaktualizowany adapter-rdzeń\nstałe błędy adapterchecker: downgradgradted @ types / node to ^ 22, dodany wpis Sentry do README, dodany @ iobroker / adapter- dev\nzastąpiony natywny setInterval / setTimeout z odpowiednikami zarządzanymi adapterem w main.js\nprzeniósł wszystkie tłumaczenia inline jsonConfig.json do plików i18n\nzaktualizowane zależności",
+        "uk": "фіксований CU-103 \"Токен-скоп не є CarData\" за запитом cardata:api:поточна сфера явно в потікі коду пристрою\nвиправлено потокове передавання MQTT: використовувати токен gcid як ім'я користувача та темний префікс (знімання брокера BMW ACL), зафіксувавши \"Визначена помилка\" відмову підпису\nфіксований контейнерний очищувач з невизначеним контейнеромId (CU-121)\nвидалення параметра «Карда Потокове ім'я користувача» - Gcid тепер приймається автоматично з токен\nдодано варіант створення зменшеної телемагнітної ємності (робота для CU-403 на створення контейнера)\nоновлений адаптер-core\nвиправлені помилки перехідника: номінальний @types/node до ^22, додано повідомлення про Sentry до README, додано @iobroker/adapter-dev\nзамінений на рідний набірInterval/setTimeout з адаптером, керованими еквівалентами в main.js\nперемістили всі jsonConfig.json inline переклади до i18n файлів\nоновлені залежності",
+        "zh-cn": "固定 CU- 103 “ 托肯镜不是 CarData ” , 方法是在设备代码流中明确请求卡数据: api: 读取范围\n固定 MQTT 流线: 使用符号 gcid 作为用户名和话题前缀(匹配 BMW 的经纪人 ACL), 固定“ 未指定错误” 订阅失败\n使用未定义的容器ID(CU-121)删除固定容器清理\n删除了 CarData 串流用户名设置 - gcid 现在自动从符号中获取\n增加了一种选择,即创建一个减少电传的集装箱(为关于集装箱生成的CU-403工作)\n更新适配器核心\n固定适配器检查器错误: 降级为 @ types/ node 到 ^ 22, 在 README 中添加 Sentry 通知, 添加 @iobrocco/ adapter- dev\n替换本地设置 Interval/ setTimeout , 主要使用适配器管理的等效设备 \n将所有 jsonConfig.json 内置翻译移至 i18n 文件\n更新的依赖关系"
+      },
       "5.0.1-beta.3": {
         "en": "Removed the CarData Streaming Username setting - the MQTT username (gcid) is now taken automatically from the token, no manual entry needed",
         "de": "CarData-Streaming-Benutzername aus den Einstellungen entfernt - der MQTT-Username (gcid) wird jetzt automatisch aus dem Token übernommen, keine manuelle Eingabe mehr nötig"
@@ -44,71 +57,6 @@
         "pl": "naprawić ostrzeżenia kontrolera repo\nnaprawić podatność\naktualizacji zależności\nusuwanie starych plików admin",
         "uk": "виправити попередження репо-реєстраторів\nвиправити вразливість\nоновлення залежності\nвидалити старі файли адміністратора",
         "zh-cn": "修复 repo 检查器警告\n消除脆弱性\n更新依赖关系\n删除旧管理文件"
-      },
-      "4.3.4": {
-        "en": "enhance docu and logging\nfix vulnerability\nupdate dependencies",
-        "de": "docu und protokollierung verbessern\nfehlerbehebung\naktualisierung der abhängigkeiten",
-        "ru": "усиление доку и лесозаготовок\nисправить уязвимость\nобновление зависимостей",
-        "pt": "melhorar o docu e o registo\ncorrigir vulnerabilidade\natualizar dependências",
-        "nl": "document en houtkap verbeteren\nkwetsbaarheid herstellen\nafhankelijkheden bijwerken",
-        "fr": "améliorer docu et l'exploitation forestière\nfixer la vulnérabilité\nmettre à jour les dépendances",
-        "it": "migliorare docu e logging\ncorrezione della vulnerabilità\naggiornamento dipendenze",
-        "es": "mejorar docu y logging\ncorrección de vulnerabilidad\ndependencias de actualización",
-        "pl": "zwiększyć doku i logowanie\nnaprawić podatność\naktualizacji zależności",
-        "uk": "посилити docu і журналювання\nвиправити вразливість\nоновлення залежності",
-        "zh-cn": "加强docu和记录\n消除脆弱性\n更新依赖关系"
-      },
-      "4.3.3": {
-        "en": "year 2026 changes\nupdate dependencies",
-        "de": "jahr 2026 änderungen\naktualisierung der abhängigkeiten",
-        "ru": "2026 год изменения\nобновление зависимостей",
-        "pt": "variações do ano de 2026\natualizar dependências",
-        "nl": "jaar 2026 veranderingen\nafhankelijkheden bijwerken",
-        "fr": "année 2026 changements\nmettre à jour les dépendances",
-        "it": "anno 2026 modifiche\naggiornamento dipendenze",
-        "es": "año 2026 cambios\ndependencias de actualización",
-        "pl": "rok 2026 zmiany\naktualizacji zależności",
-        "uk": "рік 2026 змін\nоновлення залежності",
-        "zh-cn": "2026年的变化\n更新依赖关系"
-      },
-      "4.3.2": {
-        "en": "update telemetry ids for container creation\noptimize dependabot config (#209)",
-        "de": "aktualisierung von telemetrie-ids für die container-erstellung\noptimieren abhängigabot config (#209)",
-        "ru": "обновление телеметрических идентификаторов для создания контейнеров\nоптимизируйте конфигурацию зависимого робота (#209)",
-        "pt": "atualizar ids de telemetria para criação de containers\notimizar a configuração do dependebot (# 209)",
-        "nl": "update telemetrie-id's voor het aanmaken van containers\ndependabot config optimaliseren (#209)",
-        "fr": "mettre à jour les ids de télémétrie pour la création de conteneurs\noptimiser la configuration de base (#209)",
-        "it": "aggiornare ids di telemetria per la creazione di container\nottimizzare la configurazione dipendeabot (#209)",
-        "es": "actualización de los sistemas de telemetría para la creación de contenedores\noptimizar config de dependabot (#209)",
-        "pl": "aktualizacja identyfikatorów telemetrii do tworzenia kontenerów\noptymalizacja konfiguracji zależnej (# 209)",
-        "uk": "оновлення телеметрії кришок для створення контейнерів\nоптимізація налаштування залежностей (#209)",
-        "zh-cn": "更新用于创建容器的遥测标识\n优化依赖配置 (# 209)"
-      },
-      "4.3.1": {
-        "en": "fix gps coordinate parsing",
-        "de": "fix gps koordinate paring",
-        "ru": "фиксация gps координаты парсинга",
-        "pt": "corrigir a análise de coordenadas do gps",
-        "nl": "fix gps-coördinaat ontleden",
-        "fr": "correction de l'analyse des coordonnées de gps",
-        "it": "correzione gps coordinate parsing",
-        "es": "fijar gps coordenadas paresing",
-        "pl": "parsowanie współrzędnych gps",
-        "uk": "фіксувати gps координацію парсингу",
-        "zh-cn": "gps 坐标解析"
-      },
-      "4.3.0": {
-        "en": "improve logs\nadd autocast\nadd descriptions",
-        "de": "logs verbessern\nautocast hinzufügen\nbeschreibungen hinzufügen",
-        "ru": "улучшить бревна\nдобавить autocast\nдобавить описания",
-        "pt": "melhorar logs\nadicionar autocast\nadicionar descrições",
-        "nl": "logs verbeteren\nautocast toevoegen\nbeschrijvingen toevoegen",
-        "fr": "améliorer les registres\najouter autocast\najouter des descriptions",
-        "it": "migliorare i registri\naggiungere autocast\naggiungere descrizioni",
-        "es": "mejorar los registros\nañadir autocast\nañadir descripciones",
-        "pl": "poprawić logi\ndodaj autocast\ndodaj opisy",
-        "uk": "поліпшення колод\nadd autocast\nдодати описи",
-        "zh-cn": "改进日志\n添加自动播报\n添加说明"
       }
     },
     "titleLang": {
@@ -137,8 +85,12 @@
       "uk": "Adapter for BMW CarData API з потоком MQTT в реальному часі",
       "zh-cn": "带有实时MQTT流的BMW CarData API适配器"
     },
-    "authors": ["TA2k <tombox2020@gmail.com>"],
-    "keywords": ["BMW"],
+    "authors": [
+      "TA2k <tombox2020@gmail.com>"
+    ],
+    "keywords": [
+      "BMW"
+    ],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"

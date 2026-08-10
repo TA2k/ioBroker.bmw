@@ -218,8 +218,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 5.0.1 (2026-08-10)
 
 - (TA2k) fixed CU-103 "token-scope is not CarData" by requesting the cardata:api:read scope explicitly in the device code flow
 - (TA2k) fixed MQTT streaming: use the token gcid as username and topic prefix (matching BMW's broker ACL), fixing the "Unspecified error" subscribe failure
@@ -257,11 +256,6 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 - (hombach) year 2026 changes
 - (hombach) update dependencies
-
-### 4.3.2 (2025-12-15)
-
-- update telemetry ids for container creation
-- optimize dependabot config (#209)
 
 ### Old Changes see [CHANGELOG OLD](CHANGELOG_OLD.md)
 
