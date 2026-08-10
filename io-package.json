@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.1",
+    "version": "5.0.2-beta.0",
     "news": {
+      "5.0.2-beta.0": {
+        "en": "Auto-fallback to a reduced telematic container when BMW refuses the full catalogue container with CU-403, so a fresh setup still gets telematic data\nExpanded the reduced container to 75 elementary keys (doors, windows, locks, tyres, fuel, mileage, ignition, location, service) plus the full charging/HV set, covering combustion and EV vehicles",
+        "de": "Automatischer Fallback auf einen reduzierten Telematik-Container, wenn BMW den vollen Katalog-Container mit CU-403 ablehnt, damit ein frisches Setup trotzdem Telematikdaten erhält\nReduzierten Container auf 75 elementare Keys erweitert (Türen, Fenster, Verriegelung, Reifen, Tank, Kilometerstand, Zündung, Position, Service) plus das komplette Lade-/HV-Set, deckt Verbrenner und E-Fahrzeuge ab"
+      },
       "5.0.1": {
         "en": "fixed CU-103 \"token-scope is not CarData\" by requesting the cardata:api:read scope explicitly in the device code flow\nfixed MQTT streaming: use the token gcid as username and topic prefix (matching BMW's broker ACL), fixing the \"Unspecified error\" subscribe failure\nfixed container cleanup deleting with an undefined containerId (CU-121)\nremoved the CarData Streaming Username setting - the gcid is now taken automatically from the token\nadded an option to create a reduced telematic container (workaround for CU-403 on container creation)\nupdated adapter-core\nfixed adapterchecker errors: downgraded @types/node to ^22, added Sentry notice to README, added @iobroker/adapter-dev\nreplaced native setInterval/setTimeout with adapter-managed equivalents in main.js\nmoved all jsonConfig.json inline translations to i18n files\nupdated dependencies",
         "de": "fixed CU-103 \"token-scope is not CarData\" durch Anfordern des cardata:api:read Umfangs explizit im Gerätecodefluss\nfixed MQTT-Streaming: Verwenden Sie das Token gcid als Benutzername und Themenpräfix (passend zu BMWs Broker ACL), Behebung des \"Unspecified Error\"-Abonnementfehlers\nreinigung des festen Behälters Löschen mit einer undefinierten ContainerId (CU-121)\ndie Einstellung CarData Streaming Benutzername entfernt - das gcid wird jetzt automatisch aus dem Token übernommen\neine Option zum Erstellen eines reduzierten Telematikcontainers hinzugefügt (Workaround für CU-403 bei der Containererstellung)\nupdate adapter-core\nfixed Adapterchecker Errors: downgraded @types/node to ^22, addiert Sentry Notice to README, addiert @iobroker/adapter-dev\nersetzt native setInterval/setTimeout mit Adapter-verwalteten Äquivalenten in main.js\nalle jsonConfig.json Inline-Übersetzungen in i18n-Dateien verschoben\naktualisierte abhängigkeiten",

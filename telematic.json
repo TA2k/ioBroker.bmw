@@ -3909,7 +3909,7 @@
     "technical_identifier": "vehicle.vehicle.travelledDistance",
     "data_type": "float",
     "typical_value_range": "0 km to 500000 km or 0 mi to 310686 mi",
-    "unit": "null",
+    "unit": "km",
     "streaming_capable": true
   },
   {

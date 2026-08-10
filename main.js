@@ -14,25 +14,98 @@ const path = require('node:path');
 // BMW CarData API quota limit (calls per 24 hours)
 const API_QUOTA_LIMIT = 50;
 
-// Reduced set of telematic keys used when the "reducedContainer" option is enabled.
-// A large container (all catalogue keys) can be rejected by BMW with HTTP 403 (CU-403).
-// This curated set mirrors the keys the evcc project uses successfully.
+// Reduced set of telematic keys used when the "reducedContainer" option is enabled
+// or as an automatic fallback when BMW refuses the full catalogue container with
+// HTTP 403 (CU-403). Starts from the EV keys the evcc project uses successfully and
+// adds elementary status data (doors, windows, locks, tyres, fuel, mileage, ignition,
+// location, service) so combustion and general vehicle status are covered too.
+// All keys verified against telematic.json.
 const REDUCED_TELEMATIC_KEYS = [
+  // Charging / high-voltage battery (EV)
   'vehicle.body.chargingPort.status',
   'vehicle.body.chargingPort.combinedStatus',
-  'vehicle.cabin.infotainment.navigation.currentLocation.latitude',
-  'vehicle.cabin.infotainment.navigation.currentLocation.longitude',
   'vehicle.cabin.hvac.preconditioning.status.comfortState',
   'vehicle.drivetrain.batteryManagement.header',
   'vehicle.drivetrain.electricEngine.charging.hvStatus',
   'vehicle.drivetrain.electricEngine.charging.status',
   'vehicle.drivetrain.electricEngine.charging.timeRemaining',
   'vehicle.drivetrain.electricEngine.kombiRemainingElectricRange',
-  'vehicle.drivetrain.lastRemainingRange',
   'vehicle.powertrain.electric.battery.stateOfCharge.displayed',
   'vehicle.powertrain.electric.battery.stateOfCharge.target',
   'vehicle.vehicle.preConditioning.activity',
+  // Range / mileage / fuel (EV + combustion)
+  'vehicle.drivetrain.lastRemainingRange',
+  'vehicle.cabin.infotainment.navigation.remainingRange',
   'vehicle.vehicle.travelledDistance',
+  'vehicle.drivetrain.fuelSystem.level',
+  'vehicle.drivetrain.fuelSystem.remainingFuel',
+  'vehicle.drivetrain.engine.isIgnitionOn',
+  // Location
+  'vehicle.cabin.infotainment.navigation.currentLocation.latitude',
+  'vehicle.cabin.infotainment.navigation.currentLocation.longitude',
+  'vehicle.cabin.infotainment.navigation.currentLocation.altitude',
+  'vehicle.cabin.infotainment.navigation.currentLocation.heading',
+  // Doors
+  'vehicle.cabin.door.status',
+  'vehicle.cabin.door.row1.driver.isOpen',
+  'vehicle.cabin.door.row1.passenger.isOpen',
+  'vehicle.cabin.door.row2.driver.isOpen',
+  'vehicle.cabin.door.row2.passenger.isOpen',
+  // Windows
+  'vehicle.cabin.window.row1.driver.status',
+  'vehicle.cabin.window.row1.passenger.status',
+  'vehicle.cabin.window.row2.driver.status',
+  'vehicle.cabin.window.row2.passenger.status',
+  // Trunk / hood / lights
+  'vehicle.body.trunk.isOpen',
+  'vehicle.body.trunk.isLocked',
+  'vehicle.body.hood.isOpen',
+  'vehicle.body.lights.isRunningOn',
+  // Tyre pressure + temperature (all four wheels)
+  'vehicle.chassis.axle.row1.wheel.left.tire.pressure',
+  'vehicle.chassis.axle.row1.wheel.right.tire.pressure',
+  'vehicle.chassis.axle.row2.wheel.left.tire.pressure',
+  'vehicle.chassis.axle.row2.wheel.right.tire.pressure',
+  'vehicle.chassis.axle.row1.wheel.left.tire.temperature',
+  'vehicle.chassis.axle.row1.wheel.right.tire.temperature',
+  'vehicle.chassis.axle.row2.wheel.left.tire.temperature',
+  'vehicle.chassis.axle.row2.wheel.right.tire.temperature',
+  // Service / security
+  'vehicle.status.serviceDistance.next',
+  'vehicle.status.serviceTime.inspectionDateLegal',
+  'vehicle.vehicle.antiTheftAlarmSystem.alarm.armStatus',
+  'vehicle.channel.teleservice.status',
+  'vehicle.vehicle.antiTheftAlarmSystem.alarm.isOn',
+  // General driving / status
+  'vehicle.vehicle.deepSleepModeActive',
+  'vehicle.drivetrain.totalRemainingRange',
+  // Detailed charging / HV battery (mirrors the bmw-cardata-ha HV_BATTERY set)
+  'vehicle.drivetrain.electricEngine.charging.acAmpere',
+  'vehicle.drivetrain.electricEngine.charging.acVoltage',
+  'vehicle.drivetrain.electricEngine.charging.level',
+  'vehicle.drivetrain.electricEngine.charging.method',
+  'vehicle.drivetrain.electricEngine.charging.phaseNumber',
+  'vehicle.drivetrain.electricEngine.charging.profile.mode',
+  'vehicle.drivetrain.electricEngine.charging.timeToFullyCharged',
+  'vehicle.drivetrain.electricEngine.charging.lastChargingReason',
+  'vehicle.drivetrain.electricEngine.charging.lastChargingResult',
+  'vehicle.drivetrain.electricEngine.charging.reasonChargingEnd',
+  'vehicle.drivetrain.electricEngine.remainingElectricRange',
+  'vehicle.drivetrain.batteryManagement.batterySizeMax',
+  'vehicle.drivetrain.batteryManagement.maxEnergy',
+  'vehicle.powertrain.electric.battery.charging.acLimit.selected',
+  'vehicle.powertrain.electric.battery.charging.power',
+  'vehicle.powertrain.electric.battery.stateOfHealth.displayed',
+  'vehicle.powertrain.electric.battery.preconditioning.automaticMode.statusFeedback',
+  'vehicle.powertrain.electric.battery.preconditioning.manualMode.statusFeedback',
+  'vehicle.powertrain.tractionBattery.charging.port.anyPosition.flap.isOpen',
+  'vehicle.powertrain.tractionBattery.charging.port.anyPosition.isPlugged',
+  'vehicle.body.chargingPort.lockedStatus',
+  'vehicle.body.chargingPort.plugEventId',
+  'vehicle.trip.segment.end.drivetrain.batteryManagement.hvSoc',
+  'vehicle.trip.segment.accumulated.drivetrain.electricEngine.recuperationTotal',
+  'vehicle.vehicle.avgAuxPower',
+  'vehicle.vehicleIdentification.basicVehicleData',
 ];
 
 class Bmw extends utils.Adapter {
@@ -1262,34 +1335,51 @@ class Bmw extends utils.Adapter {
 
       const telematicData = JSON.parse(fs.readFileSync(telematicPath, 'utf8'));
 
-      // Select descriptors: reduced mode uses a small curated set, otherwise all keys.
-      let technicalDescriptors;
+      // Full set = all catalogue keys from telematic.json; reduced set = small curated set
+      // that BMW reliably accepts. Filter out any undefined/null identifiers.
+      const fullDescriptors = telematicData.map(item => item.technical_identifier).filter(identifier => identifier);
+
+      // POST a new container with the given descriptors and return the API response so the
+      // caller can persist the containerId.
+      const postContainer = (descriptors, label) =>
+        this.makeCarDataApiRequest(
+          {
+            method: 'post',
+            url: `${this.carDataApiBase}/customers/containers`,
+            headers: headers,
+            data: {
+              name: `ioBroker BMW Telematic Data - ${new Date().toISOString()}`,
+              purpose: `${label} for BMW telematic data used by ioBroker adapter`,
+              technicalDescriptors: descriptors,
+            },
+          },
+          'create telematic container',
+        );
+
+      let response;
       if (reducedContainer) {
-        technicalDescriptors = REDUCED_TELEMATIC_KEYS;
-        this.log.info(`Creating REDUCED container with ${technicalDescriptors.length} technical identifiers`);
+        this.log.info(`Creating REDUCED container with ${REDUCED_TELEMATIC_KEYS.length} technical identifiers`);
+        response = await postContainer(REDUCED_TELEMATIC_KEYS, 'Reduced container');
       } else {
-        // Extract all technical identifiers and ensure no trailing commas in JSON
-        technicalDescriptors = telematicData.map(item => item.technical_identifier).filter(identifier => identifier); // Remove any undefined/null values
-        this.log.info(`Creating container with ${technicalDescriptors.length} technical identifiers from telematic.json`);
+        this.log.info(`Creating container with ${fullDescriptors.length} technical identifiers from telematic.json`);
+        try {
+          response = await postContainer(fullDescriptors, 'Container');
+        } catch (fullError) {
+          const status = fullError.response?.status;
+          const exveErrorId = fullError.response?.data?.exveErrorId;
+          // BMW refuses a fresh full-catalogue container with CU-403 (HTTP 403), while the
+          // curated reduced set is accepted. Fall back to it automatically so the adapter
+          // still ends up with a working container instead of no telematic data at all.
+          if (status === 403) {
+            this.log.warn(
+              `Full container creation refused by BMW (${exveErrorId || 'HTTP 403'}). Falling back to a reduced container with ${REDUCED_TELEMATIC_KEYS.length} keys. Enable the "reduced container" option to skip this attempt.`,
+            );
+            response = await postContainer(REDUCED_TELEMATIC_KEYS, 'Reduced container (auto-fallback)');
+          } else {
+            throw fullError;
+          }
+        }
       }
-
-      const containerData = {
-        name: `ioBroker BMW Telematic Data - ${new Date().toISOString()}`,
-        purpose: reducedContainer
-          ? `Reduced container for BMW telematic data used by ioBroker adapter`
-          : `Container for BMW telematic data endpoints used by ioBroker adapter`,
-        technicalDescriptors: technicalDescriptors,
-      };
-
-      const response = await this.makeCarDataApiRequest(
-        {
-          method: 'post',
-          url: `${this.carDataApiBase}/customers/containers`,
-          headers: headers,
-          data: containerData,
-        },
-        'create telematic container',
-      );
 
       this.containerId = response.data.containerId;
       this.log.info(`Container created successfully with ID: ${this.containerId}`);
