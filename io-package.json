@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.2-beta.2",
+    "version": "5.0.2-beta.3",
     "news": {
+      "5.0.2-beta.3": {
+        "en": "Never delete a full-catalogue container on startup: only our own outdated reduced containers (or non-ACTIVE ones) are replaced, so existing users keep their working full container\nAdd a version marker to the container purpose and bump it when the reduced key set changes",
+        "de": "Ein voller Katalog-Container wird beim Start nie gelöscht: nur eigene veraltete reduzierte Container (oder nicht-ACTIVE) werden ersetzt, sodass Bestandsnutzer ihren funktionierenden vollen Container behalten\nVersionsmarker im Container-Purpose ergänzt und wird beim Ändern des reduzierten Key-Sets hochgezählt"
+      },
       "5.0.2-beta.2": {
         "en": "Detect an outdated or foreign telematic container via a version marker in the container purpose (the list endpoint does not return the key set), and replace it on startup\nLog the active container's state, version and name for easier diagnostics",
         "de": "Ein veralteter oder fremder Telematik-Container wird über einen Versionsmarker im Container-Purpose erkannt (der List-Endpoint liefert das Key-Set nicht) und beim Start ersetzt\nStatus, Version und Name des aktiven Containers werden zur einfacheren Diagnose geloggt"

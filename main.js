@@ -16,10 +16,12 @@ const API_QUOTA_LIMIT = 50;
 
 // Version marker embedded in every container's purpose. The container list endpoint
 // returns name and purpose but NOT technicalDescriptors, so the descriptor set of an
-// existing container cannot be read back. Instead we tag the purpose with this version
-// (evcc uses the same pattern) and bump it whenever the key set below changes; on
-// startup a stored container whose purpose lacks the current version is deleted and
-// recreated. Bump this on every change to REDUCED_TELEMATIC_KEYS or the full set.
+// existing container cannot be read back. We tag the purpose with this version (evcc
+// uses the same name+purpose pattern) and bump it whenever the key set below changes.
+// On startup only our own REDUCED containers created by an older version (purpose says
+// "Reduced container" but lacks the current marker) are replaced to pick up the new key
+// set; full-catalogue containers are never deleted based on the marker. Bump this on
+// every change to REDUCED_TELEMATIC_KEYS.
 const TELEMATIC_CONTAINER_VERSION = 'v2';
 
 // Reduced set of telematic keys used when the "reducedContainer" option is enabled
@@ -1254,9 +1256,9 @@ class Bmw extends utils.Adapter {
         this.log.info(`Using existing container ID: ${this.containerId}`);
 
         // Inspect the stored container against the account's container list. This logs
-        // details (name, state, purpose/version) for diagnostics and detects an outdated
-        // or foreign container via the version marker in the purpose, replacing it with a
-        // fresh one. Non-fatal: on any error we just skip the check.
+        // details (name, state, purpose/version/type) for diagnostics and replaces only an
+        // outdated reduced container or a non-ACTIVE one; full containers are kept untouched.
+        // Non-fatal: on any error we just skip the check.
         try {
           const listResponse = await this.makeCarDataApiRequest(
             {
@@ -1277,19 +1279,27 @@ class Bmw extends utils.Adapter {
           const activeContainer = existingContainers.find(c => c.containerId === this.containerId);
           if (activeContainer) {
             // The list endpoint returns name and purpose but NOT technicalDescriptors, so
-            // the key set of an existing container cannot be read back. We tag the purpose
-            // with TELEMATIC_CONTAINER_VERSION on creation and detect an outdated or foreign
-            // container (e.g. an old small key set, or a non-ioBroker container) by the
-            // absence of the current version marker.
+            // the key set of an existing container cannot be read back (evcc confirms this).
+            // We therefore never delete a container based on its size. Instead we only touch
+            // containers we can positively identify from the purpose text we wrote ourselves:
+            //  - our own reduced containers (purpose contains "Reduced container") created by
+            //    an older version, i.e. missing the current TELEMATIC_CONTAINER_VERSION marker
+            //    -> replace to upgrade the reduced key set, or
+            //  - any container that is no longer ACTIVE.
+            // A full-catalogue container (purpose without "Reduced container") is NEVER deleted
+            // here, so existing users keep their working full container even without a marker.
             const purpose = activeContainer.purpose || '';
             const isCurrentVersion = purpose.includes(`[${TELEMATIC_CONTAINER_VERSION}]`);
+            const isReducedContainer = /reduced container/i.test(purpose);
             this.log.info(
-              `Active container ${this.containerId}: state=${activeContainer.state} version=${isCurrentVersion ? TELEMATIC_CONTAINER_VERSION : 'outdated/unknown'} name=${activeContainer.name}`,
+              `Active container ${this.containerId}: state=${activeContainer.state} version=${isCurrentVersion ? TELEMATIC_CONTAINER_VERSION : 'older'} type=${isReducedContainer ? 'reduced' : 'full'} name=${activeContainer.name}`,
             );
 
-            if (!isCurrentVersion || activeContainer.state !== 'ACTIVE') {
+            const replaceDead = activeContainer.state !== 'ACTIVE';
+            const replaceOldReduced = isReducedContainer && !isCurrentVersion;
+            if (replaceDead || replaceOldReduced) {
               this.log.warn(
-                `Active container is not the current version (${TELEMATIC_CONTAINER_VERSION}) or not ACTIVE (state=${activeContainer.state}) - it looks like an outdated or foreign container. Deleting it and creating a new one.`,
+                `Replacing container ${this.containerId}: ${replaceDead ? `state=${activeContainer.state} (not ACTIVE)` : `outdated reduced container (missing ${TELEMATIC_CONTAINER_VERSION} marker)`}. Deleting and creating a new one.`,
               );
               try {
                 await this.makeCarDataApiRequest(
