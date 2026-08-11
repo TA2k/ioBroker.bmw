@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.2-beta.0",
+    "version": "5.0.2-beta.1",
     "news": {
+      "5.0.2-beta.1": {
+        "en": "Log details of the active telematic container (name, state, descriptor count) for easier diagnostics\nAutomatically delete and recreate a reused container when it is a small foreign container (e.g. a ~15-key evcc container) with fewer descriptors than the reduced set",
+        "de": "Details des aktiven Telematik-Containers werden geloggt (Name, Status, Anzahl Descriptors) zur einfacheren Diagnose\nEin wiederverwendeter Container wird automatisch gelöscht und neu erstellt, wenn er ein kleiner fremder Container ist (z. B. ein evcc-Container mit ~15 Keys) mit weniger Descriptors als das reduzierte Set"
+      },
       "5.0.2-beta.0": {
         "en": "Auto-fallback to a reduced telematic container when BMW refuses the full catalogue container with CU-403, so a fresh setup still gets telematic data\nExpanded the reduced container to 75 elementary keys (doors, windows, locks, tyres, fuel, mileage, ignition, location, service) plus the full charging/HV set, covering combustion and EV vehicles",
         "de": "Automatischer Fallback auf einen reduzierten Telematik-Container, wenn BMW den vollen Katalog-Container mit CU-403 ablehnt, damit ein frisches Setup trotzdem Telematikdaten erhält\nReduzierten Container auf 75 elementare Keys erweitert (Türen, Fenster, Verriegelung, Reifen, Tank, Kilometerstand, Zündung, Position, Service) plus das komplette Lade-/HV-Set, deckt Verbrenner und E-Fahrzeuge ab"

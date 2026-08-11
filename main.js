@@ -1222,6 +1222,13 @@ class Bmw extends utils.Adapter {
     try {
       const reducedContainer = this.config.reducedContainer === true;
 
+      const headers = {
+        Authorization: `Bearer ${this.session.access_token}`,
+        'x-version': 'v1',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      };
+
       // In reduced mode, always start clean: delete all existing containers and
       // create a fresh reduced container. This avoids reusing a previously created
       // full container and frees up the 10-container limit.
@@ -1238,6 +1245,65 @@ class Bmw extends utils.Adapter {
         this.containerId = storedContainerId.val;
         this.log.info(`Using existing container ID: ${this.containerId}`);
 
+        // Inspect the stored container against the account's container list. This logs
+        // details (name, state, descriptor count) for diagnostics and detects a small
+        // foreign container (e.g. a ~15-key evcc container) that we should replace with
+        // our own full/reduced set. Non-fatal: on any error we just skip the check.
+        try {
+          const listResponse = await this.makeCarDataApiRequest(
+            {
+              method: 'get',
+              url: `${this.carDataApiBase}/customers/containers`,
+              headers: headers,
+            },
+            'list containers',
+          );
+          const existingContainers = listResponse.data?.containers || [];
+          const activeCount = existingContainers.filter(c => c.state === 'ACTIVE').length;
+          this.log.debug(`Account has ${existingContainers.length}/10 containers (${activeCount} ACTIVE)`);
+          for (const c of existingContainers) {
+            const count = Array.isArray(c.technicalDescriptors) ? c.technicalDescriptors.length : 'unknown';
+            const marker = c.containerId === this.containerId ? ' <- active' : '';
+            this.log.debug(`Container ${c.containerId} state=${c.state} descriptors=${count} name=${c.name}${marker}`);
+          }
+
+          const activeContainer = existingContainers.find(c => c.containerId === this.containerId);
+          if (activeContainer) {
+            const descriptorCount = Array.isArray(activeContainer.technicalDescriptors) ? activeContainer.technicalDescriptors.length : 0;
+            this.log.info(`Active container ${this.containerId}: state=${activeContainer.state} descriptors=${descriptorCount} name=${activeContainer.name}`);
+
+            // A container smaller than our reduced set is not one of ours (e.g. an evcc
+            // container with ~15 keys). Delete it and fall through to create a fresh one.
+            if (descriptorCount > 0 && descriptorCount < REDUCED_TELEMATIC_KEYS.length) {
+              this.log.warn(
+                `Active container has only ${descriptorCount} descriptors (below the reduced set of ${REDUCED_TELEMATIC_KEYS.length}) - it looks like a small foreign container. Deleting it and creating a new one.`,
+              );
+              try {
+                await this.makeCarDataApiRequest(
+                  {
+                    method: 'delete',
+                    url: `${this.carDataApiBase}/customers/containers/${this.containerId}`,
+                    headers: headers,
+                  },
+                  `delete small container ${this.containerId}`,
+                );
+              } catch (deleteError) {
+                this.log.warn(`Failed to delete small container ${this.containerId}: ${deleteError.message}`);
+              }
+              await this.delObjectAsync('containerInfo.containerId').catch(() => {});
+              this.containerId = null;
+            }
+          } else {
+            this.log.warn(`Stored container ID ${this.containerId} not found in the account container list - will recreate`);
+            await this.delObjectAsync('containerInfo.containerId').catch(() => {});
+            this.containerId = null;
+          }
+        } catch (inspectError) {
+          this.log.debug(`Could not inspect stored container: ${inspectError.message}`);
+        }
+      }
+
+      if (this.containerId) {
         // Test if the existing container is still valid by attempting real telematic data fetching
         try {
           // Container exists, now test with real telematic data fetching if we have vehicles
@@ -1285,13 +1351,6 @@ class Bmw extends utils.Adapter {
           this.log.info(`Will create a new container`);
         }
       }
-
-      const headers = {
-        Authorization: `Bearer ${this.session.access_token}`,
-        'x-version': 'v1',
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      };
 
       // List existing containers before creating a new one. BMW allows a maximum of
       // 10 containers per user (CU-124); at the limit, creation fails. Logging the
