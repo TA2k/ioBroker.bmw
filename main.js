@@ -14,6 +14,14 @@ const path = require('node:path');
 // BMW CarData API quota limit (calls per 24 hours)
 const API_QUOTA_LIMIT = 50;
 
+// Version marker embedded in every container's purpose. The container list endpoint
+// returns name and purpose but NOT technicalDescriptors, so the descriptor set of an
+// existing container cannot be read back. Instead we tag the purpose with this version
+// (evcc uses the same pattern) and bump it whenever the key set below changes; on
+// startup a stored container whose purpose lacks the current version is deleted and
+// recreated. Bump this on every change to REDUCED_TELEMATIC_KEYS or the full set.
+const TELEMATIC_CONTAINER_VERSION = 'v2';
+
 // Reduced set of telematic keys used when the "reducedContainer" option is enabled
 // or as an automatic fallback when BMW refuses the full catalogue container with
 // HTTP 403 (CU-403). Starts from the EV keys the evcc project uses successfully and
@@ -1246,9 +1254,9 @@ class Bmw extends utils.Adapter {
         this.log.info(`Using existing container ID: ${this.containerId}`);
 
         // Inspect the stored container against the account's container list. This logs
-        // details (name, state, descriptor count) for diagnostics and detects a small
-        // foreign container (e.g. a ~15-key evcc container) that we should replace with
-        // our own full/reduced set. Non-fatal: on any error we just skip the check.
+        // details (name, state, purpose/version) for diagnostics and detects an outdated
+        // or foreign container via the version marker in the purpose, replacing it with a
+        // fresh one. Non-fatal: on any error we just skip the check.
         try {
           const listResponse = await this.makeCarDataApiRequest(
             {
@@ -1262,21 +1270,26 @@ class Bmw extends utils.Adapter {
           const activeCount = existingContainers.filter(c => c.state === 'ACTIVE').length;
           this.log.debug(`Account has ${existingContainers.length}/10 containers (${activeCount} ACTIVE)`);
           for (const c of existingContainers) {
-            const count = Array.isArray(c.technicalDescriptors) ? c.technicalDescriptors.length : 'unknown';
             const marker = c.containerId === this.containerId ? ' <- active' : '';
-            this.log.debug(`Container ${c.containerId} state=${c.state} descriptors=${count} name=${c.name}${marker}`);
+            this.log.debug(`Container ${c.containerId} state=${c.state} name=${c.name} purpose=${c.purpose}${marker}`);
           }
 
           const activeContainer = existingContainers.find(c => c.containerId === this.containerId);
           if (activeContainer) {
-            const descriptorCount = Array.isArray(activeContainer.technicalDescriptors) ? activeContainer.technicalDescriptors.length : 0;
-            this.log.info(`Active container ${this.containerId}: state=${activeContainer.state} descriptors=${descriptorCount} name=${activeContainer.name}`);
+            // The list endpoint returns name and purpose but NOT technicalDescriptors, so
+            // the key set of an existing container cannot be read back. We tag the purpose
+            // with TELEMATIC_CONTAINER_VERSION on creation and detect an outdated or foreign
+            // container (e.g. an old small key set, or a non-ioBroker container) by the
+            // absence of the current version marker.
+            const purpose = activeContainer.purpose || '';
+            const isCurrentVersion = purpose.includes(`[${TELEMATIC_CONTAINER_VERSION}]`);
+            this.log.info(
+              `Active container ${this.containerId}: state=${activeContainer.state} version=${isCurrentVersion ? TELEMATIC_CONTAINER_VERSION : 'outdated/unknown'} name=${activeContainer.name}`,
+            );
 
-            // A container smaller than our reduced set is not one of ours (e.g. an evcc
-            // container with ~15 keys). Delete it and fall through to create a fresh one.
-            if (descriptorCount > 0 && descriptorCount < REDUCED_TELEMATIC_KEYS.length) {
+            if (!isCurrentVersion || activeContainer.state !== 'ACTIVE') {
               this.log.warn(
-                `Active container has only ${descriptorCount} descriptors (below the reduced set of ${REDUCED_TELEMATIC_KEYS.length}) - it looks like a small foreign container. Deleting it and creating a new one.`,
+                `Active container is not the current version (${TELEMATIC_CONTAINER_VERSION}) or not ACTIVE (state=${activeContainer.state}) - it looks like an outdated or foreign container. Deleting it and creating a new one.`,
               );
               try {
                 await this.makeCarDataApiRequest(
@@ -1285,10 +1298,10 @@ class Bmw extends utils.Adapter {
                     url: `${this.carDataApiBase}/customers/containers/${this.containerId}`,
                     headers: headers,
                   },
-                  `delete small container ${this.containerId}`,
+                  `delete outdated container ${this.containerId}`,
                 );
               } catch (deleteError) {
-                this.log.warn(`Failed to delete small container ${this.containerId}: ${deleteError.message}`);
+                this.log.warn(`Failed to delete outdated container ${this.containerId}: ${deleteError.message}`);
               }
               await this.delObjectAsync('containerInfo.containerId').catch(() => {});
               this.containerId = null;
@@ -1408,7 +1421,7 @@ class Bmw extends utils.Adapter {
             headers: headers,
             data: {
               name: `ioBroker BMW Telematic Data - ${new Date().toISOString()}`,
-              purpose: `${label} for BMW telematic data used by ioBroker adapter`,
+              purpose: `${label} [${TELEMATIC_CONTAINER_VERSION}] for BMW telematic data used by ioBroker adapter`,
               technicalDescriptors: descriptors,
             },
           },

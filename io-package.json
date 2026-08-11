@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.2-beta.1",
+    "version": "5.0.2-beta.2",
     "news": {
+      "5.0.2-beta.2": {
+        "en": "Detect an outdated or foreign telematic container via a version marker in the container purpose (the list endpoint does not return the key set), and replace it on startup\nLog the active container's state, version and name for easier diagnostics",
+        "de": "Ein veralteter oder fremder Telematik-Container wird über einen Versionsmarker im Container-Purpose erkannt (der List-Endpoint liefert das Key-Set nicht) und beim Start ersetzt\nStatus, Version und Name des aktiven Containers werden zur einfacheren Diagnose geloggt"
+      },
       "5.0.2-beta.1": {
         "en": "Log details of the active telematic container (name, state, descriptor count) for easier diagnostics\nAutomatically delete and recreate a reused container when it is a small foreign container (e.g. a ~15-key evcc container) with fewer descriptors than the reduced set",
         "de": "Details des aktiven Telematik-Containers werden geloggt (Name, Status, Anzahl Descriptors) zur einfacheren Diagnose\nEin wiederverwendeter Container wird automatisch gelöscht und neu erstellt, wenn er ein kleiner fremder Container ist (z. B. ein evcc-Container mit ~15 Keys) mit weniger Descriptors als das reduzierte Set"
