@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.2-beta.3",
+    "version": "5.0.2-beta.4",
     "news": {
+      "5.0.2-beta.4": {
+        "en": "Add an intermediate container fallback tier: full catalogue (294) -> all streaming-capable keys (245) -> curated reduced set (75), so the adapter keeps as much coverage as BMW accepts before falling back to the small set",
+        "de": "Zwischenstufe beim Container-Fallback ergänzt: voller Katalog (294) -> alle streamingfähigen Keys (245) -> kuratiertes reduziertes Set (75), damit der Adapter so viel Abdeckung behält wie BMW akzeptiert, bevor auf das kleine Set zurückgefallen wird"
+      },
       "5.0.2-beta.3": {
         "en": "Never delete a full-catalogue container on startup: only our own outdated reduced containers (or non-ACTIVE ones) are replaced, so existing users keep their working full container\nAdd a version marker to the container purpose and bump it when the reduced key set changes",
         "de": "Ein voller Katalog-Container wird beim Start nie gelöscht: nur eigene veraltete reduzierte Container (oder nicht-ACTIVE) werden ersetzt, sodass Bestandsnutzer ihren funktionierenden vollen Container behalten\nVersionsmarker im Container-Purpose ergänzt und wird beim Ändern des reduzierten Key-Sets hochgezählt"

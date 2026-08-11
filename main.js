@@ -1417,9 +1417,12 @@ class Bmw extends utils.Adapter {
 
       const telematicData = JSON.parse(fs.readFileSync(telematicPath, 'utf8'));
 
-      // Full set = all catalogue keys from telematic.json; reduced set = small curated set
-      // that BMW reliably accepts. Filter out any undefined/null identifiers.
+      // Full set = all catalogue keys from telematic.json; streaming set = all
+      // streaming-capable keys (non-streaming and endpoint-bound keys return nothing via
+      // the data-retrieval endpoint anyway); reduced set = small curated set BMW reliably
+      // accepts. Filter out any undefined/null identifiers.
       const fullDescriptors = telematicData.map(item => item.technical_identifier).filter(identifier => identifier);
+      const streamingDescriptors = telematicData.filter(item => item.streaming_capable && item.technical_identifier).map(item => item.technical_identifier);
 
       // POST a new container with the given descriptors and return the API response so the
       // caller can persist the containerId.
@@ -1443,22 +1446,32 @@ class Bmw extends utils.Adapter {
         this.log.info(`Creating REDUCED container with ${REDUCED_TELEMATIC_KEYS.length} technical identifiers`);
         response = await postContainer(REDUCED_TELEMATIC_KEYS, 'Reduced container');
       } else {
-        this.log.info(`Creating container with ${fullDescriptors.length} technical identifiers from telematic.json`);
-        try {
-          response = await postContainer(fullDescriptors, 'Container');
-        } catch (fullError) {
-          const status = fullError.response?.status;
-          const exveErrorId = fullError.response?.data?.exveErrorId;
-          // BMW refuses a fresh full-catalogue container with CU-403 (HTTP 403), while the
-          // curated reduced set is accepted. Fall back to it automatically so the adapter
-          // still ends up with a working container instead of no telematic data at all.
-          if (status === 403) {
-            this.log.warn(
-              `Full container creation refused by BMW (${exveErrorId || 'HTTP 403'}). Falling back to a reduced container with ${REDUCED_TELEMATIC_KEYS.length} keys. Enable the "reduced container" option to skip this attempt.`,
-            );
-            response = await postContainer(REDUCED_TELEMATIC_KEYS, 'Reduced container (auto-fallback)');
-          } else {
-            throw fullError;
+        // Staged fallback: BMW refuses the full catalogue container with CU-403 (HTTP 403)
+        // on some accounts. Try progressively smaller sets so the adapter keeps as much
+        // coverage as the account accepts: full -> all streaming-capable -> curated reduced.
+        const tiers = [
+          { descriptors: fullDescriptors, label: 'Container' },
+          { descriptors: streamingDescriptors, label: 'Streaming container (auto-fallback)' },
+          { descriptors: REDUCED_TELEMATIC_KEYS, label: 'Reduced container (auto-fallback)' },
+        ];
+        for (let i = 0; i < tiers.length; i++) {
+          const tier = tiers[i];
+          this.log.info(`Creating container (tier ${i + 1}/${tiers.length}) with ${tier.descriptors.length} technical identifiers - ${tier.label}`);
+          try {
+            response = await postContainer(tier.descriptors, tier.label);
+            break;
+          } catch (tierError) {
+            const status = tierError.response?.status;
+            const exveErrorId = tierError.response?.data?.exveErrorId;
+            // Only a 403 is retried with a smaller set; on the last tier or any other error
+            // we rethrow so the outer catch reports it with the usual CU-403/CU-124 hints.
+            if (status === 403 && i < tiers.length - 1) {
+              this.log.warn(
+                `Container creation with ${tier.descriptors.length} keys refused by BMW (${exveErrorId || 'HTTP 403'}). Trying a smaller set (${tiers[i + 1].descriptors.length} keys).`,
+              );
+              continue;
+            }
+            throw tierError;
           }
         }
       }
