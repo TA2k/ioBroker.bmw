@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.2-beta.4",
+    "version": "5.0.2-beta.5",
     "news": {
+      "5.0.2-beta.5": {
+        "en": "Add a fourth container fallback tier (full 294 -> full without endpoint-bound keys 290 -> streaming-capable +extras 252 -> reduced 75) to pinpoint the CU-403 trigger and keep more coverage\nAdd 7 useful non-streaming keys (door lock, HV energy, lifetime fuel consumption, 12V service demand, optional equipment) to the streaming fallback tier",
+        "de": "Vierte Container-Fallback-Stufe ergänzt (voll 294 -> voll ohne endpoint-gebundene Keys 290 -> streamingfähig +Extras 252 -> reduziert 75), um den CU-403-Auslöser einzugrenzen und mehr Abdeckung zu behalten\n7 nützliche nicht-streamende Keys ergänzt (Türverriegelung, HV-Energie, Verbrauch über Lebensdauer, 12V-Servicebedarf, Sonderausstattung) im Streaming-Fallback"
+      },
       "5.0.2-beta.4": {
         "en": "Add an intermediate container fallback tier: full catalogue (294) -> all streaming-capable keys (245) -> curated reduced set (75), so the adapter keeps as much coverage as BMW accepts before falling back to the small set",
         "de": "Zwischenstufe beim Container-Fallback ergänzt: voller Katalog (294) -> alle streamingfähigen Keys (245) -> kuratiertes reduziertes Set (75), damit der Adapter so viel Abdeckung behält wie BMW akzeptiert, bevor auf das kleine Set zurückgefallen wird"

@@ -118,6 +118,30 @@ const REDUCED_TELEMATIC_KEYS = [
   'vehicle.vehicleIdentification.basicVehicleData',
 ];
 
+// Keys bound to a dedicated endpoint (per the CarData docs they cannot be retrieved via
+// the telematicData endpoint anyway). These are the prime suspects for the CU-403 refusal
+// of the full catalogue container, so an intermediate fallback tier drops just these.
+const ENDPOINT_BOUND_KEYS = [
+  'vehicle.look.image',
+  'vehicle.powertrain.electric.battery.charging.history.sessionsList',
+  'vehicle.powertrain.electric.battery.charging.settingsList',
+  'vehicle.chassis.axle.wheel.tire.diagnosis',
+];
+
+// Extra non-streaming keys added to the streaming fallback tier. These carry useful
+// periodic values (door lock, HV energy, lifetime fuel consumption, 12V service demand,
+// optional equipment) and are assumed safe to include - if any of them triggers CU-403,
+// the tier is refused and the adapter falls back to the reduced set.
+const EXTRA_STREAMING_KEYS = [
+  'vehicle.cabin.door.lock.status',
+  'vehicle.drivetrain.electricEngine.hvsMaxEnergyAbsolute',
+  'vehicle.drivetrain.fuelSystem.consumptionOverLifeTime.overall.fuel',
+  'vehicle.drivetrain.fuelSystem.consumptionOverLifeTime.overall.referenceDistance',
+  'vehicle.electricalSystem.battery.serviceDemand.recharge',
+  'vehicle.electricalSystem.battery.serviceDemand.replace',
+  'vehicle.extras.optionalEquipment.code',
+];
+
 class Bmw extends utils.Adapter {
   /**
    * @param {Partial<utils.AdapterOptions>} [options] - Optional adapter configuration options.
@@ -1417,12 +1441,19 @@ class Bmw extends utils.Adapter {
 
       const telematicData = JSON.parse(fs.readFileSync(telematicPath, 'utf8'));
 
-      // Full set = all catalogue keys from telematic.json; streaming set = all
-      // streaming-capable keys (non-streaming and endpoint-bound keys return nothing via
-      // the data-retrieval endpoint anyway); reduced set = small curated set BMW reliably
-      // accepts. Filter out any undefined/null identifiers.
+      // Fallback tiers, largest first. full = every catalogue key; noEndpoint = full minus
+      // the endpoint-bound keys (prime CU-403 suspects); streaming = all streaming-capable
+      // keys plus a few useful non-streaming extras; reduced = small curated known-good set.
+      // Non-streaming/endpoint-bound keys return nothing via the data-retrieval endpoint, so
+      // dropping them costs no live data. Filter out any undefined/null identifiers.
       const fullDescriptors = telematicData.map(item => item.technical_identifier).filter(identifier => identifier);
-      const streamingDescriptors = telematicData.filter(item => item.streaming_capable && item.technical_identifier).map(item => item.technical_identifier);
+      const noEndpointDescriptors = fullDescriptors.filter(id => !ENDPOINT_BOUND_KEYS.includes(id));
+      const streamingDescriptors = [
+        ...new Set([
+          ...telematicData.filter(item => item.streaming_capable && item.technical_identifier).map(item => item.technical_identifier),
+          ...EXTRA_STREAMING_KEYS,
+        ]),
+      ];
 
       // POST a new container with the given descriptors and return the API response so the
       // caller can persist the containerId.
@@ -1448,9 +1479,11 @@ class Bmw extends utils.Adapter {
       } else {
         // Staged fallback: BMW refuses the full catalogue container with CU-403 (HTTP 403)
         // on some accounts. Try progressively smaller sets so the adapter keeps as much
-        // coverage as the account accepts: full -> all streaming-capable -> curated reduced.
+        // coverage as the account accepts: full -> full without endpoint-bound keys ->
+        // streaming-capable (+extras) -> curated reduced.
         const tiers = [
           { descriptors: fullDescriptors, label: 'Container' },
+          { descriptors: noEndpointDescriptors, label: 'Container without endpoint-bound keys (auto-fallback)' },
           { descriptors: streamingDescriptors, label: 'Streaming container (auto-fallback)' },
           { descriptors: REDUCED_TELEMATIC_KEYS, label: 'Reduced container (auto-fallback)' },
         ];
