@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.2-beta.5",
+    "version": "5.0.2",
     "news": {
+      "5.0.2": {
+        "en": "Added a staged telematic container fallback on CU-403: full (294) -> without endpoint-bound keys (290) -> streaming-capable +extras (252) -> reduced (75), keeping as much coverage as BMW accepts\nExpanded the reduced/fallback container to a curated 75-key set covering EV and combustion vehicles\nLog the active container details and auto-upgrade an outdated reduced container via a version marker, without ever deleting a working full container",
+        "de": "Gestufter Telematik-Container-Fallback bei CU-403 ergänzt: voll (294) -> ohne endpoint-gebundene Keys (290) -> streamingfähig +Extras (252) -> reduziert (75), behält so viel Abdeckung wie BMW akzeptiert\nReduzierten/Fallback-Container auf ein kuratiertes 75-Key-Set erweitert, deckt E- und Verbrenner-Fahrzeuge ab\nDetails des aktiven Containers werden geloggt und ein veralteter reduzierter Container wird über einen Versionsmarker aktualisiert, ohne je einen funktionierenden vollen Container zu löschen"
+      },
       "5.0.2-beta.5": {
         "en": "Add a fourth container fallback tier (full 294 -> full without endpoint-bound keys 290 -> streaming-capable +extras 252 -> reduced 75) to pinpoint the CU-403 trigger and keep more coverage\nAdd 7 useful non-streaming keys (door lock, HV energy, lifetime fuel consumption, 12V service demand, optional equipment) to the streaming fallback tier",
         "de": "Vierte Container-Fallback-Stufe ergänzt (voll 294 -> voll ohne endpoint-gebundene Keys 290 -> streamingfähig +Extras 252 -> reduziert 75), um den CU-403-Auslöser einzugrenzen und mehr Abdeckung zu behalten\n7 nützliche nicht-streamende Keys ergänzt (Türverriegelung, HV-Energie, Verbrauch über Lebensdauer, 12V-Servicebedarf, Sonderausstattung) im Streaming-Fallback"
