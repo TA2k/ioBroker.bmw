@@ -1,0 +1,16 @@
+# Normalize line endings to LF in the working tree for all text files,
+# regardless of a contributor's core.autocrlf setting.
+# This keeps prettier (endOfLine: "lf") happy on Windows too.
+* text=auto eol=lf
+
+# Binary files that must never be line-ending normalized
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.tgz binary
+*.gz binary
+*.zip binary
