@@ -1190,9 +1190,11 @@ class Bmw extends utils.Adapter {
       );
 
       const containers = response.data.containers || [];
-      const ioBrokerContainers = containers;
+      // DELETED containers are already gone (they only linger in the list until BMW purges
+      // them after 29 days); re-deleting them wastes API calls against the daily quota.
+      const ioBrokerContainers = containers.filter(c => c.state !== 'DELETED');
 
-      this.log.info(`Found ${containers.length} total containers, ${ioBrokerContainers.length} ioBroker containers to delete`);
+      this.log.info(`Found ${containers.length} total containers, ${ioBrokerContainers.length} to delete`);
 
       // Delete only ioBroker containers
       for (const container of ioBrokerContainers) {
@@ -1407,7 +1409,10 @@ class Bmw extends utils.Adapter {
           for (const c of existingContainers) {
             this.log.debug(`Existing container: ${c.containerId} state=${c.state} name=${c.name}`);
           }
-          if (existingContainers.length >= 10) {
+          // BMW's 10-container limit (CU-124) counts only ACTIVE containers; DELETED/INACTIVE
+          // ones linger in the list for 29 days but do not block creation, so only the ACTIVE
+          // count gates the cleanup.
+          if (activeCount >= 10) {
             this.log.warn(`Container limit (10) reached. Cleaning up existing containers before creating a new one.`);
             await this.cleanupAllContainers();
           }
