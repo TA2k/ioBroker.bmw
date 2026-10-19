@@ -17,12 +17,11 @@ const API_QUOTA_LIMIT = 50;
 // Version marker embedded in every container's purpose. The container list endpoint
 // returns name and purpose but NOT technicalDescriptors, so the descriptor set of an
 // existing container cannot be read back. We tag the purpose with this version (evcc
-// uses the same name+purpose pattern) and bump it whenever the key set below changes.
-// On startup only our own REDUCED containers created by an older version (purpose says
-// "Reduced container" but lacks the current marker) are replaced to pick up the new key
-// set; full-catalogue containers are never deleted based on the marker. Bump this on
-// every change to REDUCED_TELEMATIC_KEYS.
-const TELEMATIC_CONTAINER_VERSION = 'v2';
+// uses the same name+purpose pattern) and bump it whenever the descriptor set changes.
+// On startup any stored container whose purpose lacks the current marker is deleted and
+// recreated, so existing users migrate to the current key set. Bump this on every change
+// to the container descriptors.
+const TELEMATIC_CONTAINER_VERSION = 'v3';
 
 // Reduced set of telematic keys used when the "reducedContainer" option is enabled
 // or as an automatic fallback when BMW refuses the full catalogue container with
@@ -116,30 +115,6 @@ const REDUCED_TELEMATIC_KEYS = [
   'vehicle.trip.segment.accumulated.drivetrain.electricEngine.recuperationTotal',
   'vehicle.vehicle.avgAuxPower',
   'vehicle.vehicleIdentification.basicVehicleData',
-];
-
-// Keys bound to a dedicated endpoint (per the CarData docs they cannot be retrieved via
-// the telematicData endpoint anyway). These are the prime suspects for the CU-403 refusal
-// of the full catalogue container, so an intermediate fallback tier drops just these.
-const ENDPOINT_BOUND_KEYS = [
-  'vehicle.look.image',
-  'vehicle.powertrain.electric.battery.charging.history.sessionsList',
-  'vehicle.powertrain.electric.battery.charging.settingsList',
-  'vehicle.chassis.axle.wheel.tire.diagnosis',
-];
-
-// Extra non-streaming keys added to the streaming fallback tier. These carry useful
-// periodic values (door lock, HV energy, lifetime fuel consumption, 12V service demand,
-// optional equipment) and are assumed safe to include - if any of them triggers CU-403,
-// the tier is refused and the adapter falls back to the reduced set.
-const EXTRA_STREAMING_KEYS = [
-  'vehicle.cabin.door.lock.status',
-  'vehicle.drivetrain.electricEngine.hvsMaxEnergyAbsolute',
-  'vehicle.drivetrain.fuelSystem.consumptionOverLifeTime.overall.fuel',
-  'vehicle.drivetrain.fuelSystem.consumptionOverLifeTime.overall.referenceDistance',
-  'vehicle.electricalSystem.battery.serviceDemand.recharge',
-  'vehicle.electricalSystem.battery.serviceDemand.replace',
-  'vehicle.extras.optionalEquipment.code',
 ];
 
 class Bmw extends utils.Adapter {
@@ -1302,16 +1277,13 @@ class Bmw extends utils.Adapter {
 
           const activeContainer = existingContainers.find(c => c.containerId === this.containerId);
           if (activeContainer) {
-            // The list endpoint returns name and purpose but NOT technicalDescriptors, so
-            // the key set of an existing container cannot be read back (evcc confirms this).
-            // We therefore never delete a container based on its size. Instead we only touch
-            // containers we can positively identify from the purpose text we wrote ourselves:
-            //  - our own reduced containers (purpose contains "Reduced container") created by
-            //    an older version, i.e. missing the current TELEMATIC_CONTAINER_VERSION marker
-            //    -> replace to upgrade the reduced key set, or
-            //  - any container that is no longer ACTIVE.
-            // A full-catalogue container (purpose without "Reduced container") is NEVER deleted
-            // here, so existing users keep their working full container even without a marker.
+            // The list endpoint returns name and purpose but NOT technicalDescriptors, so the
+            // key set of an existing container cannot be read back (evcc confirms this). We
+            // identify outdated containers by the version marker we wrote into their purpose:
+            // any container missing the current marker predates the current descriptor set
+            // (e.g. the old full-catalogue container that BMW now rejects on retrieval with
+            // CU-400) and is deleted and recreated. Containers that are no longer ACTIVE are
+            // replaced too.
             const purpose = activeContainer.purpose || '';
             const isCurrentVersion = purpose.includes(`[${TELEMATIC_CONTAINER_VERSION}]`);
             const isReducedContainer = /reduced container/i.test(purpose);
@@ -1320,10 +1292,10 @@ class Bmw extends utils.Adapter {
             );
 
             const replaceDead = activeContainer.state !== 'ACTIVE';
-            const replaceOldReduced = isReducedContainer && !isCurrentVersion;
-            if (replaceDead || replaceOldReduced) {
+            const replaceOutdated = !isCurrentVersion;
+            if (replaceDead || replaceOutdated) {
               this.log.warn(
-                `Replacing container ${this.containerId}: ${replaceDead ? `state=${activeContainer.state} (not ACTIVE)` : `outdated reduced container (missing ${TELEMATIC_CONTAINER_VERSION} marker)`}. Deleting and creating a new one.`,
+                `Replacing container ${this.containerId}: ${replaceDead ? `state=${activeContainer.state} (not ACTIVE)` : `outdated (missing ${TELEMATIC_CONTAINER_VERSION} marker)`}. Deleting and creating a new one.`,
               );
               try {
                 await this.makeCarDataApiRequest(
@@ -1388,7 +1360,23 @@ class Bmw extends utils.Adapter {
             if (containerValid) {
               return true;
             }
-            this.log.warn(`Container exists but failed to retrieve telematic data for any vehicle, will recreate`);
+            // Retrieval failed for every VIN. The container was just confirmed ACTIVE and
+            // current in the account list above, so a failed fetch does not by itself mean
+            // the container is broken. Only CU-105 means the containerId is genuinely
+            // invalid; any other failure (notably the server-side CU-400 "Bad request" BMW
+            // returns on the retrieval endpoint) is treated as transient. In that case the
+            // ACTIVE container is preserved and periodic polling retries, instead of deleting
+            // and recreating it every restart against the daily request and 10-container limits.
+            const fetchError = this.telematicFetchError;
+            if (fetchError && fetchError.exveErrorId === 'CU-105') {
+              this.log.warn(`Container ${this.containerId} rejected with CU-105 (no longer valid), will recreate`);
+            } else {
+              const code = fetchError && fetchError.exveErrorId ? ` (${fetchError.exveErrorId})` : '';
+              this.log.warn(
+                `Container ${this.containerId} is ACTIVE but telematic retrieval is currently failing${code}. Keeping the existing container; periodic polling will retry.`,
+              );
+              return true;
+            }
           } else {
             this.log.info(`Existing container exists, reusing it (no vehicles available for telematic test)`);
             return true;
@@ -1441,19 +1429,11 @@ class Bmw extends utils.Adapter {
 
       const telematicData = JSON.parse(fs.readFileSync(telematicPath, 'utf8'));
 
-      // Fallback tiers, largest first. full = every catalogue key; noEndpoint = full minus
-      // the endpoint-bound keys (prime CU-403 suspects); streaming = all streaming-capable
-      // keys plus a few useful non-streaming extras; reduced = small curated known-good set.
-      // Non-streaming/endpoint-bound keys return nothing via the data-retrieval endpoint, so
-      // dropping them costs no live data. Filter out any undefined/null identifiers.
-      const fullDescriptors = telematicData.map(item => item.technical_identifier).filter(identifier => identifier);
-      const noEndpointDescriptors = fullDescriptors.filter(id => !ENDPOINT_BOUND_KEYS.includes(id));
-      const streamingDescriptors = [
-        ...new Set([
-          ...telematicData.filter(item => item.streaming_capable && item.technical_identifier).map(item => item.technical_identifier),
-          ...EXTRA_STREAMING_KEYS,
-        ]),
-      ];
+      // Container descriptor set. Non-streaming catalogue keys make BMW reject the container:
+      // creation can fail with CU-403, and even when it succeeds the data-retrieval endpoint
+      // rejects the whole container with CU-400. The streaming-capable keys create and retrieve
+      // cleanly and carry all the live values, so the container is built from those.
+      const streamingDescriptors = telematicData.filter(item => item.streaming_capable && item.technical_identifier).map(item => item.technical_identifier);
 
       // POST a new container with the given descriptors and return the API response so the
       // caller can persist the containerId.
@@ -1477,14 +1457,10 @@ class Bmw extends utils.Adapter {
         this.log.info(`Creating REDUCED container with ${REDUCED_TELEMATIC_KEYS.length} technical identifiers`);
         response = await postContainer(REDUCED_TELEMATIC_KEYS, 'Reduced container');
       } else {
-        // Staged fallback: BMW refuses the full catalogue container with CU-403 (HTTP 403)
-        // on some accounts. Try progressively smaller sets so the adapter keeps as much
-        // coverage as the account accepts: full -> full without endpoint-bound keys ->
-        // streaming-capable (+extras) -> curated reduced.
+        // Staged fallback: the streaming-capable set creates and retrieves cleanly. If an
+        // account even refuses that on creation (CU-403), fall back to the smaller curated set.
         const tiers = [
-          { descriptors: fullDescriptors, label: 'Container' },
-          { descriptors: noEndpointDescriptors, label: 'Container without endpoint-bound keys (auto-fallback)' },
-          { descriptors: streamingDescriptors, label: 'Streaming container (auto-fallback)' },
+          { descriptors: streamingDescriptors, label: 'Streaming container' },
           { descriptors: REDUCED_TELEMATIC_KEYS, label: 'Reduced container (auto-fallback)' },
         ];
         for (let i = 0; i < tiers.length; i++) {
@@ -1605,6 +1581,10 @@ class Bmw extends utils.Adapter {
    * @param {string} containerId - The container ID to retrieve data from
    */
   async getTelematicContainer(vin, containerId) {
+    // Reset before each attempt; the catch block records the structured error so
+    // callers (notably container validation) can tell a genuinely invalid container
+    // (CU-105) apart from a transient/server-side rejection (e.g. CU-400).
+    this.telematicFetchError = null;
     try {
       const headers = {
         Authorization: `Bearer ${this.session.access_token}`,
@@ -1651,6 +1631,10 @@ class Bmw extends utils.Adapter {
 
       return response.data;
     } catch (error) {
+      this.telematicFetchError = {
+        status: error.response?.status ?? null,
+        exveErrorId: error.response?.data?.exveErrorId ?? null,
+      };
       this.log.error(`Failed to retrieve telematic data for ${vin} with container ${containerId}: ${error.message}`);
       if (error.response) {
         this.log.error(`Response status: ${error.response.status}`);
