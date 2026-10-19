@@ -217,7 +217,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 5.0.3 (2026-10-19)
 
 - (TA2k) fixed CU-400 "Bad request" on telematic data retrieval: the container now uses only streaming-capable keys. Non-streaming catalogue keys make BMW reject the whole container on retrieval (CU-400), and sometimes already on creation (CU-403); a streaming-capable container creates and retrieves cleanly and carries all live values
 - (TA2k) existing users migrate automatically: the container version marker was bumped, so any previous full-catalogue container is deleted and recreated as the streaming container on the next start
@@ -260,17 +260,6 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 - (hombach) fix vulnerability
 - (hombach) update dependencies
 - (hombach) remove old admin files
-
-### 4.3.4 (2026-02-28)
-
-- enhance docu and logging
-- (hombach) fix vulnerability
-- (hombach) update dependencies
-
-### 4.3.3 (2026-01-02)
-
-- (hombach) year 2026 changes
-- (hombach) update dependencies
 
 ### Old Changes see [CHANGELOG OLD](CHANGELOG_OLD.md)
 
