@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.3",
+    "version": "5.0.4",
     "news": {
+      "5.0.4": {
+        "en": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "de": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "ru": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "pt": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "nl": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "fr": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "it": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "es": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "pl": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "uk": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start",
+        "zh-cn": "fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start"
+      },
       "5.0.3": {
         "en": "fixed CU-400 \"Bad request\" on telematic data retrieval: the container now uses only streaming-capable keys. Non-streaming catalogue keys make BMW reject the whole container on retrieval (CU-400), and sometimes already on creation (CU-403); a streaming-capable container creates and retrieves cleanly and carries all live values\nexisting users migrate automatically: the container version marker was bumped, so any previous full-catalogue container is deleted and recreated as the streaming container on the next start\nkeep an ACTIVE container on a transient retrieval failure instead of recreating it every restart; only a CU-105 (container no longer valid) triggers recreation\nfixed repochecker error\nfixed translations\nupdated dependencies",
         "de": "CU-400 „Bad Request“ beim Telematikabruf behoben: Der Container nutzt jetzt nur noch Streaming-Tasten. Ohne Streaming-Katalogschlüssel lehnt BMW den ganzen Container ab (CU-400) und manchmal schon bei der Erstellung (CU-403); ein streaming-fähiger Container erzeugt und ruft sauber ab und trägt alle Live-Werte\nBestehende Benutzer migrieren automatisch: Die Container-Version wurde geändert, sodass alle alten Katalogcontainer gelöscht und beim nächsten Start neu erstellt werden\nEinen Container bei vorübergehenden Abruffehlern AKTIV lassen, statt ihn bei jedem Neustart neu zu erstellen; nur ein CU-105 (Container nicht mehr gültig) löst Neuaufbau aus\nRepochecker behoben\nFeste Übersetzungen\nNeue Abhängigkeiten",

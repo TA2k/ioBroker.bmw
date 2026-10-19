@@ -217,6 +217,10 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+### 5.0.4 (2026-10-19)
+
+- (TA2k) fixed excessive container cleanup: only ACTIVE containers count toward the 10-container limit (CU-124), and already-deleted containers are no longer re-deleted, so accounts with lingering deleted containers stop wasting API calls on each start
+
 ### 5.0.3 (2026-10-19)
 
 - (TA2k) fixed CU-400 "Bad request" on telematic data retrieval: the container now uses only streaming-capable keys. Non-streaming catalogue keys make BMW reject the whole container on retrieval (CU-400), and sometimes already on creation (CU-403); a streaming-capable container creates and retrieves cleanly and carries all live values
