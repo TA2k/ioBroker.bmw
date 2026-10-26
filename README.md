@@ -217,6 +217,11 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+### 5.0.5 (2026-10-26)
+
+- (TA2k) container now includes non-streaming data keys again (e.g. charging level), so the adapter shows more values
+- (TA2k) existing installations update to the new container automatically
+
 ### 5.0.4 (2026-10-19)
 
 - (TA2k) fixed unnecessary container cleanup that used up the daily API request limit

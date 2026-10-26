@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "bmw",
-    "version": "5.0.4",
+    "version": "5.0.5",
     "news": {
+      "5.0.5": {
+        "en": "Container now includes non-streaming data keys again (e.g. charging level), so the adapter shows more values. Existing installations update automatically.",
+        "de": "Container enthält wieder Nicht-Streaming-Datenschlüssel (z. B. Ladestand), somit zeigt der Adapter mehr Werte. Bestehende Installationen aktualisieren sich automatisch.",
+        "ru": "Контейнер снова содержит нестриминговые ключи данных (например, уровень зарядки), поэтому адаптер показывает больше значений. Существующие установки обновляются автоматически.",
+        "pt": "O contentor volta a incluir chaves de dados sem streaming (p. ex. nível de carga), por isso o adaptador mostra mais valores. As instalações existentes atualizam automaticamente.",
+        "nl": "De container bevat weer niet-streaming datasleutels (bijv. laadniveau), zodat de adapter meer waarden toont. Bestaande installaties werken automatisch bij.",
+        "fr": "Le conteneur inclut à nouveau des clés de données non-streaming (p. ex. niveau de charge), l’adaptateur affiche donc plus de valeurs. Les installations existantes se mettent à jour automatiquement.",
+        "it": "Il contenitore include di nuovo chiavi dati non-streaming (es. livello di carica), quindi l’adattatore mostra più valori. Le installazioni esistenti si aggiornano automaticamente.",
+        "es": "El contenedor vuelve a incluir claves de datos sin streaming (p. ej. nivel de carga), por lo que el adaptador muestra más valores. Las instalaciones existentes se actualizan automáticamente.",
+        "pl": "Kontener zawiera znów klucze danych bez streamingu (np. poziom ładowania), dzięki czemu adapter pokazuje więcej wartości. Istniejące instalacje aktualizują się automatycznie.",
+        "uk": "Контейнер знову містить нестримінгові ключі даних (напр., рівень заряду), тому адаптер показує більше значень. Наявні встановлення оновлюються автоматично.",
+        "zh-cn": "容器现在再次包含非流式数据键（例如充电电量），因此适配器显示更多数值。现有安装会自动更新。"
+      },
       "5.0.4": {
         "en": "Fixed unnecessary container cleanup that used up the daily API request limit.",
         "de": "Unnötige Container-Bereinigung behoben, die das tägliche API-Limit aufgebraucht hat.",
