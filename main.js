@@ -21,7 +21,7 @@ const API_QUOTA_LIMIT = 50;
 // On startup any stored container whose purpose lacks the current marker is deleted and
 // recreated, so existing users migrate to the current key set. Bump this on every change
 // to the container descriptors.
-const TELEMATIC_CONTAINER_VERSION = 'v3';
+const TELEMATIC_CONTAINER_VERSION = 'v4';
 
 // Reduced set of telematic keys used when the "reducedContainer" option is enabled
 // or as an automatic fallback when BMW refuses the full catalogue container with
@@ -1434,10 +1434,23 @@ class Bmw extends utils.Adapter {
 
       const telematicData = JSON.parse(fs.readFileSync(telematicPath, 'utf8'));
 
-      // Container descriptor set. Non-streaming catalogue keys make BMW reject the container:
-      // creation can fail with CU-403, and even when it succeeds the data-retrieval endpoint
-      // rejects the whole container with CU-400. The streaming-capable keys create and retrieve
-      // cleanly and carry all the live values, so the container is built from those.
+      // Container descriptor set. Seven catalogue keys are documented as not retrievable
+      // via the telematicData endpoint (they return via dedicated endpoints or the BASIC_DATA
+      // endpoint); including them in the container is harmless (they return null) but adds
+      // nothing, so they are excluded. All other 287 catalogue keys create and retrieve
+      // cleanly and carry both streaming and non-streaming values (e.g. charging.level).
+      const NON_RETRIEVABLE_KEYS = [
+        'vehicle.look.image',
+        'vehicle.powertrain.electric.battery.charging.history.sessionsList',
+        'vehicle.powertrain.electric.battery.charging.settingsList',
+        'vehicle.chassis.axle.wheel.tire.diagnosis',
+        'vehicle.vehicleIdentification.basicVehicleData',
+        'vehicle.sim.status',
+        'vehicle.vehicleIdentification.connectedDriveContractList',
+      ];
+      const fullDescriptors = telematicData
+        .map(item => item.technical_identifier)
+        .filter(identifier => identifier && !NON_RETRIEVABLE_KEYS.includes(identifier));
       const streamingDescriptors = telematicData.filter(item => item.streaming_capable && item.technical_identifier).map(item => item.technical_identifier);
 
       // POST a new container with the given descriptors and return the API response so the
@@ -1462,10 +1475,12 @@ class Bmw extends utils.Adapter {
         this.log.info(`Creating REDUCED container with ${REDUCED_TELEMATIC_KEYS.length} technical identifiers`);
         response = await postContainer(REDUCED_TELEMATIC_KEYS, 'Reduced container');
       } else {
-        // Staged fallback: the streaming-capable set creates and retrieves cleanly. If an
-        // account even refuses that on creation (CU-403), fall back to the smaller curated set.
+        // Staged fallback: the full retrievable set (287) is the primary; on an account
+        // that refuses it with CU-403, fall back to the streaming-only set and then to the
+        // curated reduced set.
         const tiers = [
-          { descriptors: streamingDescriptors, label: 'Streaming container' },
+          { descriptors: fullDescriptors, label: 'Full container' },
+          { descriptors: streamingDescriptors, label: 'Streaming container (auto-fallback)' },
           { descriptors: REDUCED_TELEMATIC_KEYS, label: 'Reduced container (auto-fallback)' },
         ];
         for (let i = 0; i < tiers.length; i++) {
