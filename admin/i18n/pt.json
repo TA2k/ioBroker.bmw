@@ -17,5 +17,15 @@
   "txtBmwCardataConfiguration": "BMW CarData Configuração",
   "txtCardataStreamingSetup": "⚠️ IMPORTANTE: Configuração CarData Streaming - Após criar seu Client ID, você DEVE ativar o CarData Streaming e selecionar manualmente TODOS os 244 pontos de dados no portal BMW. Vá para CarData > Descritores de Dados > Selecione todas as categorias e pontos de dados individuais. Sem este passo, o streaming MQTT em tempo real não funcionará!",
   "txtInfoBmwCardataApi": "Este adaptador usa a nova API BMW CarData com autenticação OAuth2 e streaming MQTT em tempo real.",
-  "txtSetupInstructions": "Instruções de configuração: 1. Visite o portal BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Vá para a seção CarData 3. Gere um client ID 4. Inscreva-se nos serviços de API e streaming 5. Configure descritores de dados"
+  "txtSetupInstructions": "Instruções de configuração: 1. Visite o portal BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Vá para a seção CarData 3. Gere um client ID 4. Inscreva-se nos serviços de API e streaming 5. Configure descritores de dados",
+  "txtAbrpConfiguration": "A Better Routeplanner (ABRP)",
+  "txtAbrpInfo": "Envia opcionalmente para o ABRP o SoC, o estado de carregamento, o estado de carregamento CC, a autonomia elétrica estimada e a hora da medição BMW. É necessária uma chave ABRP Telemetry API gratuita e um token Generic específico do veículo. O limite global é de 2 pedidos por segundo por chave API.",
+  "lblAbrpEnabled": "Ativar telemetria ABRP",
+  "hlpAbrpEnabled": "Usa dados BMW MQTT/API existentes sem chamadas adicionais à API BMW.",
+  "lblAbrpApiKey": "Chave ABRP Telemetry API",
+  "hlpAbrpApiKey": "Crie uma chave gratuita em https://abetterrouteplanner.com/home/app/api-keys/telemetry",
+  "lblAbrpVehicles": "Ligações de veículos ABRP",
+  "lblAbrpVehicleEnabled": "Ativado",
+  "lblAbrpVin": "VIN BMW",
+  "lblAbrpToken": "Token Generic ABRP"
 }

@@ -126,6 +126,80 @@
       "lg": 6,
       "xl": 6
     },
+    "_abrp_header": {
+      "type": "header",
+      "text": "txtAbrpConfiguration",
+      "size": 4
+    },
+    "_abrp_info": {
+      "type": "staticText",
+      "text": "txtAbrpInfo",
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
+    },
+    "abrpEnabled": {
+      "type": "checkbox",
+      "label": "lblAbrpEnabled",
+      "help": "hlpAbrpEnabled",
+      "default": false,
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 6,
+      "xl": 6
+    },
+    "abrpApiKey": {
+      "type": "password",
+      "label": "lblAbrpApiKey",
+      "help": "hlpAbrpApiKey",
+      "hidden": "data.abrpEnabled !== true",
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 6,
+      "xl": 6
+    },
+    "abrpVehicles": {
+      "type": "table",
+      "label": "lblAbrpVehicles",
+      "hidden": "data.abrpEnabled !== true",
+      "uniqueColumns": ["vin"],
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12,
+      "items": [
+        {
+          "type": "checkbox",
+          "attr": "enabled",
+          "title": "lblAbrpVehicleEnabled",
+          "default": true,
+          "width": "15%"
+        },
+        {
+          "type": "text",
+          "attr": "vin",
+          "title": "lblAbrpVin",
+          "default": "",
+          "width": "35%"
+        },
+        {
+          "type": "password",
+          "attr": "token",
+          "title": "lblAbrpToken",
+          "default": "",
+          "width": "50%"
+        }
+      ]
+    },
     "_api_endpoints": {
       "type": "header",
       "text": "txtApiEndpoints",

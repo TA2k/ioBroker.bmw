@@ -140,24 +140,27 @@
     },
     "dependencies": [
       {
-        "js-controller": ">=6.0.11"
+        "js-controller": ">=7.2.3"
       }
     ],
     "globalDependencies": [
       {
-        "admin": ">=7.6.20"
+        "admin": ">=8.2.0"
       }
     ]
   },
-  "encryptedNative": [],
-  "protectedNative": [],
+  "encryptedNative": ["abrpApiKey", "abrpVehicles.token"],
+  "protectedNative": ["abrpApiKey", "abrpVehicles.token"],
   "native": {
     "clientId": "",
     "interval": 60,
     "brand": "bmw",
     "ignorelist": "",
     "reverseGeocode": false,
-    "reducedContainer": false
+    "reducedContainer": false,
+    "abrpEnabled": false,
+    "abrpApiKey": "",
+    "abrpVehicles": []
   },
   "objects": [],
   "instanceObjects": [
@@ -205,6 +208,19 @@
         "read": true,
         "write": false,
         "def": "[]"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.carDataQuotaBlockedUntil",
+      "type": "state",
+      "common": {
+        "role": "date",
+        "name": "BMW CarData quota cooldown until",
+        "type": "string",
+        "read": true,
+        "write": false,
+        "def": ""
       },
       "native": {}
     }
