@@ -17,5 +17,15 @@
   "txtBmwCardataConfiguration": "BMW CarData 配置",
   "txtCardataStreamingSetup": "⚠️ 重要：CarData流媒体设置 - 创建客户端ID后，您必须激活CarData流媒体并在BMW门户中手动选择所有244个数据点。转到CarData > 数据描述符 > 选择所有类别和单个数据点。没有此步骤，实时MQTT流媒体将无法工作！",
   "txtInfoBmwCardataApi": "此适配器使用新的BMW CarData API，具有OAuth2身份验证和实时MQTT流。",
-  "txtSetupInstructions": "设置说明：1. 访问BMW ConnectedDrive门户 (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. 转到CarData部分 3. 生成客户端ID 4. 订阅API和流媒体服务 5. 配置数据描述符"
+  "txtSetupInstructions": "设置说明：1. 访问BMW ConnectedDrive门户 (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. 转到CarData部分 3. 生成客户端ID 4. 订阅API和流媒体服务 5. 配置数据描述符",
+  "txtAbrpConfiguration": "A Better Routeplanner (ABRP)",
+  "txtAbrpInfo": "可选择将电量百分比、充电状态、直流充电状态、预计纯电续航里程和BMW测量时间发送到ABRP。需要免费的ABRP Telemetry API密钥和车辆专用的Generic令牌。每个API密钥全局限制为每秒2个请求。",
+  "lblAbrpEnabled": "启用ABRP实时遥测",
+  "hlpAbrpEnabled": "使用现有BMW MQTT/API数据，不会增加BMW API调用。",
+  "lblAbrpApiKey": "ABRP Telemetry API密钥",
+  "hlpAbrpApiKey": "在 https://abetterrouteplanner.com/home/app/api-keys/telemetry 创建免费密钥",
+  "lblAbrpVehicles": "ABRP车辆连接",
+  "lblAbrpVehicleEnabled": "启用",
+  "lblAbrpVin": "BMW VIN",
+  "lblAbrpToken": "ABRP Generic令牌"
 }

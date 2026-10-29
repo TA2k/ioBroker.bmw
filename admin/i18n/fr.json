@@ -17,5 +17,15 @@
   "txtBmwCardataConfiguration": "BMW CarData Configuration",
   "txtCardataStreamingSetup": "⚠️ IMPORTANT: Configuration CarData Streaming - Après avoir créé votre Client ID, vous DEVEZ activer CarData Streaming et sélectionner manuellement TOUS les 244 points de données dans le portail BMW. Allez dans CarData > Descripteurs de données > Sélectionnez toutes les catégories et points de données individuels. Sans cette étape, le streaming MQTT en temps réel ne fonctionnera pas!",
   "txtInfoBmwCardataApi": "Cet adaptateur utilise la nouvelle API BMW CarData avec authentification OAuth2 et streaming MQTT en temps réel.",
-  "txtSetupInstructions": "Instructions de configuration: 1. Visitez le portail BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Allez dans la section CarData 3. Générez un client ID 4. Abonnez-vous aux services API et streaming 5. Configurez les descripteurs de données"
+  "txtSetupInstructions": "Instructions de configuration: 1. Visitez le portail BMW ConnectedDrive (https://www.bmw.de/de-de/mybmw/vehicle-overview/) 2. Allez dans la section CarData 3. Générez un client ID 4. Abonnez-vous aux services API et streaming 5. Configurez les descripteurs de données",
+  "txtAbrpConfiguration": "A Better Routeplanner (ABRP)",
+  "txtAbrpInfo": "Envoie facultativement à ABRP le SoC, l'état de charge, l'état de charge CC, l'autonomie électrique estimée et l'horodatage BMW. Une clé API de télémétrie ABRP gratuite et un jeton Generic propre au véhicule sont requis. La limite globale est de 2 requêtes par seconde et par clé API.",
+  "lblAbrpEnabled": "Activer la télémétrie ABRP",
+  "hlpAbrpEnabled": "Utilise les données BMW MQTT/API existantes sans appel BMW supplémentaire.",
+  "lblAbrpApiKey": "Clé API de télémétrie ABRP",
+  "hlpAbrpApiKey": "Créez une clé gratuite sur https://abetterrouteplanner.com/home/app/api-keys/telemetry",
+  "lblAbrpVehicles": "Connexions de véhicules ABRP",
+  "lblAbrpVehicleEnabled": "Activé",
+  "lblAbrpVin": "VIN BMW",
+  "lblAbrpToken": "Jeton Generic ABRP"
 }

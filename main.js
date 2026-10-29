@@ -10,9 +10,13 @@ const Json2iob = require('json2iob');
 const axiosRetry = require('axios-retry').default;
 const fs = require('node:fs');
 const path = require('node:path');
+const { BMW_AUX_KEYS, BMW_SOC_KEYS, AbrpTelemetryService, normalizeVehicleTokens, normalizeVin, recoverDoubleEncryptedVehicleTokens } = require('./lib/abrp');
 
 // BMW CarData API quota limit (calls per 24 hours)
 const API_QUOTA_LIMIT = 50;
+// BMW does not expose the exact rolling reset time after CU-429. Avoid hammering
+// the REST API for one hour; MQTT and OAuth token refresh remain unaffected.
+const BMW_QUOTA_COOLDOWN_MS = 60 * 60 * 1000;
 
 // Version marker embedded in every container's purpose. The container list endpoint
 // returns name and purpose but NOT technicalDescriptors, so the descriptor set of an
@@ -21,7 +25,7 @@ const API_QUOTA_LIMIT = 50;
 // On startup any stored container whose purpose lacks the current marker is deleted and
 // recreated, so existing users migrate to the current key set. Bump this on every change
 // to the container descriptors.
-const TELEMATIC_CONTAINER_VERSION = 'v4';
+const TELEMATIC_CONTAINER_VERSION = 'v5';
 
 // Reduced set of telematic keys used when the "reducedContainer" option is enabled
 // or as an automatic fallback when BMW refuses the full catalogue container with
@@ -32,8 +36,11 @@ const TELEMATIC_CONTAINER_VERSION = 'v4';
 const REDUCED_TELEMATIC_KEYS = [
   // Charging / high-voltage battery (EV)
   'vehicle.body.chargingPort.status',
+  'vehicle.body.chargingPort.dcStatus',
   'vehicle.body.chargingPort.combinedStatus',
   'vehicle.cabin.hvac.preconditioning.status.comfortState',
+  'vehicle.cabin.infotainment.displayUnit.distance',
+  'vehicle.cabin.infotainment.hmi.distanceUnit',
   'vehicle.drivetrain.batteryManagement.header',
   'vehicle.drivetrain.electricEngine.charging.hvStatus',
   'vehicle.drivetrain.electricEngine.charging.status',
@@ -144,8 +151,13 @@ class Bmw extends utils.Adapter {
     // MQTT client
     this.mqtt = null;
 
+    // Optional ABRP live telemetry service
+    this.abrp = null;
+    this.abrpConnectedVins = new Set();
+
     // API quota tracking
     this.apiCalls = [];
+    this.carDataQuotaBlockedUntil = 0;
 
     // Container ID for telematic data
     this.containerId = null;
@@ -179,6 +191,8 @@ class Bmw extends utils.Adapter {
     this.setState('info.connection', false, true);
     this.setState('info.mqttConnected', false, true);
 
+    await this.initializeAbrp();
+
     // Validate configuration
     if (!this.config.clientId) {
       this.log.error(`BMW CarData Client ID not configured! Please set up in adapter settings.`);
@@ -210,6 +224,16 @@ class Bmw extends utils.Adapter {
       this.apiCalls = [];
     }
 
+    const quotaBlockedState = await this.getStateAsync('info.carDataQuotaBlockedUntil');
+    const quotaBlockedUntil = typeof quotaBlockedState?.val === 'string' ? Date.parse(quotaBlockedState.val) : NaN;
+    if (Number.isFinite(quotaBlockedUntil) && quotaBlockedUntil > Date.now()) {
+      this.carDataQuotaBlockedUntil = quotaBlockedUntil;
+      const remainingMinutes = Math.max(1, Math.ceil((quotaBlockedUntil - Date.now()) / 60000));
+      this.log.warn(`BMW CarData REST cooldown restored; requests remain paused for about ${remainingMinutes} minute(s). MQTT streaming continues.`);
+    } else if (quotaBlockedState?.val) {
+      await this.setStateAsync('info.carDataQuotaBlockedUntil', '', true);
+    }
+
     // Calculate and set quota states based on restored history
     this.updateQuotaStates();
 
@@ -237,6 +261,9 @@ class Bmw extends utils.Adapter {
 
       // Get vehicles first to populate vinArray
       await this.getVehiclesv2(true);
+
+      // Initialize ABRP immediately from persisted BMW values, even while the car sleeps.
+      await this.seedAbrpFromStoredStates();
 
       // Setup telematic container after we have vehicles
       await this.setupTelematicContainer();
@@ -274,15 +301,8 @@ class Bmw extends utils.Adapter {
               try {
                 const telematicData = await this.getTelematicContainer(vin, this.containerId);
                 if (telematicData && telematicData.telematicData) {
-                  // Store telematic data directly in stream folder
-                  await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
-                    descriptions: this.description,
-                    states: this.states,
-                    autoCast: true,
-
-                    useCompletePathForDescriptionsAndStates: true,
-                    forceIndex: true,
-                  });
+                  // Store telematic data and forward a fresh configured SoC to ABRP.
+                  await this.processTelematicData(vin, telematicData.telematicData);
 
                   // Update lastAPIUpdate timestamp
                   await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
@@ -309,6 +329,192 @@ class Bmw extends utils.Adapter {
       );
     } else {
       this.log.error('BMW CarData authentication failed');
+    }
+  }
+
+  /** Initialize the optional ABRP telemetry service without affecting BMW startup. */
+  async initializeAbrp() {
+    const enabled = this.config.abrpEnabled === true;
+    const apiKey = typeof this.config.abrpApiKey === 'string' ? this.config.abrpApiKey.trim() : '';
+    const recovery = recoverDoubleEncryptedVehicleTokens(this.config.abrpVehicles, value => this.decrypt(value));
+    const abrpVehicles = recovery.vehicles;
+    const vehicleTokens = normalizeVehicleTokens(abrpVehicles);
+
+    this.abrp = new AbrpTelemetryService({
+      enabled,
+      apiKey,
+      vehicles: abrpVehicles,
+      setTimeoutFn: (callback, delay) => this.setTimeout(callback, delay),
+      clearTimeoutFn: timer => this.clearTimeout(timer),
+      onStatus: (vin, event) => this.updateAbrpStatus(vin, event),
+      onRequestDebug: message => this.log.debug(message),
+    });
+
+    if (!enabled) {
+      this.log.debug('ABRP live telemetry is disabled');
+      return;
+    }
+    if (recovery.recovered > 0) {
+      this.log.warn(
+        `Recovered ${recovery.recovered} ABRP Generic token(s) from legacy double encryption. Re-enter and save each token once to migrate the stored configuration.`,
+      );
+    }
+    if (!apiKey) {
+      this.log.warn('ABRP live telemetry is enabled but no Telemetry API key is configured');
+    }
+    if (vehicleTokens.size === 0) {
+      this.log.warn('ABRP live telemetry is enabled but no enabled VIN/Generic token mapping is configured');
+    } else {
+      this.log.info(`ABRP live telemetry enabled for ${vehicleTokens.size} vehicle(s); shared limit is 2 requests per second per API key`);
+    }
+
+    // These diagnostics depend only on the locally configured VINs. Create them
+    // before BMW vehicle discovery so they remain available during CU-429 quota
+    // lockouts and after a user deletes the ABRP object channel manually.
+    for (const vin of this.abrp.getConfiguredVins()) {
+      await this.createAbrpStates(vin);
+    }
+  }
+
+  /**
+   * Store BMW telematic data and offer the same raw payload to ABRP.
+   *
+   * @param {string} vin - Vehicle VIN.
+   * @param {object} data - Raw BMW telematic data.
+   * @param {object} [parseOptions] - Additional json2iob options.
+   */
+  async processTelematicData(vin, data, parseOptions = {}) {
+    await this.json2iob.parse(`${vin}.stream`, data, {
+      descriptions: this.description,
+      states: this.states,
+      autoCast: true,
+      useCompletePathForDescriptionsAndStates: true,
+      forceIndex: true,
+      ...parseOptions,
+    });
+
+    try {
+      this.abrp?.handleTelemetry(vin, data);
+    } catch (error) {
+      this.log.warn(`ABRP telemetry processing failed for ${vin}: ${error.message}`);
+    }
+  }
+
+  /** Queue one last-known SoC per configured vehicle after an adapter restart. */
+  async seedAbrpFromStoredStates() {
+    if (!this.abrp) {
+      return;
+    }
+
+    for (const vin of this.abrp.getConfiguredVins()) {
+      const data = {};
+      for (const key of [...BMW_SOC_KEYS, ...BMW_AUX_KEYS]) {
+        const base = `${vin}.stream.${key}`;
+        const [valueState, timestampState] = await Promise.all([this.getStateAsync(`${base}.value`), this.getStateAsync(`${base}.timestamp`)]);
+        if (valueState?.val !== null && valueState?.val !== undefined && typeof timestampState?.val === 'string') {
+          data[key] = { value: valueState.val, timestamp: timestampState.val };
+        }
+      }
+
+      try {
+        const result = this.abrp.handleTelemetry(vin, data);
+        if (result.queued) {
+          this.log.info(`Queued last-known SoC for ABRP startup initialization (${vin})`);
+        }
+      } catch (error) {
+        this.log.warn(`ABRP startup initialization failed for ${vin}: ${error.message}`);
+      }
+    }
+  }
+
+  /**
+   * Create ABRP status and manual-send states for a configured VIN.
+   *
+   * @param {string} vin - Vehicle VIN.
+   */
+  async createAbrpStates(vin) {
+    if (!this.abrp?.hasVehicle(vin)) {
+      return;
+    }
+
+    await this.extendObject(vin, {
+      type: 'device',
+      common: { name: vin },
+      native: {},
+    });
+
+    await this.extendObject(`${vin}.abrp`, {
+      type: 'channel',
+      common: { name: 'A Better Routeplanner live telemetry' },
+      native: {},
+    });
+
+    const states = [
+      { id: 'lastSuccess', name: 'Last successful ABRP update', type: 'string', role: 'date', read: true, write: false, def: '' },
+      { id: 'lastAttempt', name: 'Last ABRP update attempt', type: 'string', role: 'date', read: true, write: false, def: '' },
+      { id: 'lastSoc', name: 'Last SoC sent to ABRP', type: 'number', role: 'value.battery', read: true, write: false, def: 0, unit: '%' },
+      { id: 'status', name: 'ABRP telemetry status', type: 'string', role: 'text', read: true, write: false, def: 'waiting' },
+      { id: 'lastError', name: 'Last ABRP telemetry error', type: 'string', role: 'text', read: true, write: false, def: '' },
+      { id: 'sendNow', name: 'Send cached SoC to ABRP now', type: 'boolean', role: 'button', read: false, write: true, def: false },
+    ];
+
+    for (const state of states) {
+      const common = /** @type {ioBroker.StateCommon} */ ({
+        name: state.name,
+        type: state.type,
+        role: state.role,
+        read: state.read,
+        write: state.write,
+        def: state.def,
+      });
+      if (state.unit) {
+        common.unit = state.unit;
+      }
+      await this.extendObject(`${vin}.abrp.${state.id}`, { type: 'state', common, native: {} });
+    }
+    await this.setStateAsync(`${vin}.abrp.status`, 'waiting', true);
+  }
+
+  /**
+   * Reflect sanitized ABRP delivery status in ioBroker states.
+   *
+   * @param {string} vin - Vehicle VIN.
+   * @param {{type?: string, telemetry?: {soc: number}, message?: string}} event - Delivery event.
+   */
+  async updateAbrpStatus(vin, event) {
+    if (!this.abrp?.hasVehicle(vin)) {
+      return;
+    }
+    const base = `${normalizeVin(vin)}.abrp`;
+    if (event.type === 'attempt') {
+      this.log.debug(`Sending ABRP telemetry for ${vin}${event.telemetry ? `: SoC ${event.telemetry.soc}%` : ''}`);
+      await this.setStateAsync(`${base}.lastAttempt`, new Date().toISOString(), true);
+      await this.setStateAsync(`${base}.status`, 'waiting', true);
+    } else if (event.type === 'success') {
+      await this.setStateAsync(`${base}.lastSuccess`, new Date().toISOString(), true);
+      if (event.telemetry) {
+        await this.setStateAsync(`${base}.lastSoc`, event.telemetry.soc, true);
+      }
+      await this.setStateAsync(`${base}.lastError`, '', true);
+      await this.setStateAsync(`${base}.status`, 'ok', true);
+      const successMessage = `ABRP accepted telemetry for ${vin}${event.telemetry ? `: SoC ${event.telemetry.soc}%` : ''}`;
+      if (this.abrpConnectedVins.has(normalizeVin(vin))) {
+        this.log.debug(successMessage);
+      } else {
+        this.abrpConnectedVins.add(normalizeVin(vin));
+        this.log.info(successMessage);
+      }
+    } else if (event.type === 'error') {
+      const message = event.message || 'ABRP telemetry error';
+      this.log.warn(`ABRP telemetry failed for ${vin}: ${message}`);
+      await this.setStateAsync(`${base}.lastError`, message, true);
+      await this.setStateAsync(`${base}.status`, 'error', true);
+    } else if (event.type === 'waiting') {
+      if (event.message) {
+        this.log.warn(`ABRP telemetry waiting for ${vin}: ${event.message}`);
+        await this.setStateAsync(`${base}.lastError`, event.message, true);
+      }
+      await this.setStateAsync(`${base}.status`, 'waiting', true);
     }
   }
 
@@ -696,6 +902,8 @@ class Bmw extends utils.Adapter {
       native: {},
     });
 
+    await this.createAbrpStates(vin);
+
     // Create lastAPIUpdate state for telematic API updates
     await this.extendObject(`${vin}.lastStreamViaAPIUpdate`, {
       type: 'state',
@@ -832,6 +1040,16 @@ class Bmw extends utils.Adapter {
    * @param {string} operationName - Name of the operation for logging
    */
   async makeCarDataApiRequest(requestConfig, operationName = 'API request') {
+    const now = Date.now();
+    if (this.carDataQuotaBlockedUntil > now) {
+      const remainingMinutes = Math.max(1, Math.ceil((this.carDataQuotaBlockedUntil - now) / 60000));
+      this.log.debug(`Skipping ${operationName}: BMW reported CU-429; retry allowed in about ${remainingMinutes} minute(s)`);
+      const blockedError = Object.assign(new Error('BMW CarData quota exhausted (CU-429)'), {
+        code: 'BMW_CU_429_COOLDOWN',
+      });
+      throw blockedError;
+    }
+
     try {
       // Check quota and warn if exhausted, but continue anyway
       const quotaAvailable = this.checkQuota();
@@ -850,6 +1068,12 @@ class Bmw extends utils.Adapter {
 
       return response;
     } catch (error) {
+      const responseData = error.response?.data;
+      if (responseData?.exveErrorId === 'CU-429') {
+        this.carDataQuotaBlockedUntil = Date.now() + BMW_QUOTA_COOLDOWN_MS;
+        await this.setStateAsync('info.carDataQuotaBlockedUntil', new Date(this.carDataQuotaBlockedUntil).toISOString(), true);
+        this.log.warn('BMW CarData reported CU-429. Further REST requests are paused for one hour; MQTT streaming continues.');
+      }
       this.log.error(`${operationName} failed: ${error.message}`);
       if (error.response) {
         this.log.error(`Response status: ${error.response.status}`);
@@ -956,7 +1180,7 @@ class Bmw extends utils.Adapter {
       refresh_token: this.session.refresh_token,
       client_id: this.config.clientId,
     };
-    this.log.debug(`Refresh request data: ${JSON.stringify(refreshData)}`);
+    this.log.debug(`Refresh request prepared (grant_type=refresh_token; credentials omitted)`);
 
     await this.requestClient({
       method: 'post',
@@ -1118,14 +1342,9 @@ class Bmw extends utils.Adapter {
             await this.createVehicleStates(vin);
           }
 
-          // Process data in stream/ folder with json2iob
-          await this.json2iob.parse(`${vin}.stream`, data.data, {
-            forceIndex: true,
-            descriptions: this.description,
-            states: this.states,
+          // Process data in stream/ and forward a fresh configured SoC to ABRP.
+          await this.processTelematicData(vin, data.data, {
             channelName: 'MQTT Stream Data',
-            autoCast: true,
-            useCompletePathForDescriptionsAndStates: true,
           });
 
           await this.setState(`${vin}.lastStreamUpdate`, new Date().toISOString(), true);
@@ -1334,24 +1553,21 @@ class Bmw extends utils.Adapter {
             // Try to validate container by fetching data for any available vehicle
             let containerValid = false;
             for (const vin of this.vinArray) {
+              // Once validated, only additional ABRP vehicles still need a startup value.
+              if (containerValid && !this.abrp?.hasVehicle(vin)) {
+                continue;
+              }
               try {
                 const telematicData = await this.getTelematicContainer(vin, this.containerId);
                 if (telematicData && telematicData.telematicData) {
-                  // Store validation data directly in stream folder to avoid duplicate API call
-                  await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
-                    descriptions: this.description,
-                    states: this.states,
-                    autoCast: true,
-                    forceIndex: true,
-                    useCompletePathForDescriptionsAndStates: true,
-                  });
+                  // Store validation data and forward a fresh configured SoC to ABRP.
+                  await this.processTelematicData(vin, telematicData.telematicData);
 
                   // Update lastAPIUpdate timestamp
                   await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
 
                   this.log.info(`Existing container is valid and working - retrieved ${Object.keys(telematicData.telematicData).length} telematic data points`);
                   containerValid = true;
-                  break; // Container is valid, no need to test other vehicles
                 }
               } catch (vinError) {
                 this.log.debug(`Container validation failed for ${vin}: ${vinError.message}`);
@@ -1505,6 +1721,10 @@ class Bmw extends utils.Adapter {
         }
       }
 
+      if (!response) {
+        throw new Error('BMW did not return a container creation response');
+      }
+
       this.containerId = response.data.containerId;
       this.log.info(`Container created successfully with ID: ${this.containerId}`);
       this.log.debug(`Container details: ${JSON.stringify(response.data)}`);
@@ -1538,15 +1758,8 @@ class Bmw extends utils.Adapter {
         try {
           const telematicData = await this.getTelematicContainer(vin, this.containerId);
           if (telematicData && telematicData.telematicData) {
-            // Store telematic data directly in stream folder
-            await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
-              descriptions: this.description,
-              states: this.states,
-              autoCast: true,
-
-              useCompletePathForDescriptionsAndStates: true,
-              forceIndex: true,
-            });
+            // Store telematic data and forward a fresh configured SoC to ABRP.
+            await this.processTelematicData(vin, telematicData.telematicData);
 
             // Update lastAPIUpdate timestamp
             await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
@@ -1869,6 +2082,11 @@ class Bmw extends utils.Adapter {
         this.clearTimeout(this.reverseGeocodeTimers[vin]);
       }
 
+      if (this.abrp) {
+        this.abrp.stop();
+        this.abrp = null;
+      }
+
       // Close MQTT connection
       if (this.mqtt) {
         this.mqtt.end();
@@ -1894,6 +2112,17 @@ class Bmw extends utils.Adapter {
    */
   async onStateChange(id, state) {
     if (state && !state.ack) {
+      if (id.endsWith('.abrp.sendNow')) {
+        const idParts = id.split('.');
+        const vin = idParts[idParts.length - 3];
+        const result = this.abrp?.sendNow(vin) ?? { queued: false, reason: 'not-configured' };
+        if (!result.queued) {
+          this.log.warn(`ABRP sendNow for ${vin} was not queued: ${result.reason}`);
+        }
+        await this.setStateAsync(id, false, true);
+        return;
+      }
+
       // Handle remote button presses generically
       if (id.includes('.remote.')) {
         const idParts = id.split('.');
@@ -1948,14 +2177,8 @@ class Bmw extends utils.Adapter {
 
         const telematicData = await this.getTelematicContainer(vin, this.containerId);
         if (telematicData && telematicData.telematicData) {
-          // Store telematic data directly in stream folder
-          await this.json2iob.parse(`${vin}.stream`, telematicData.telematicData, {
-            descriptions: this.description,
-            forceIndex: true,
-            states: this.states,
-            autoCast: true,
-            useCompletePathForDescriptionsAndStates: true,
-          });
+          // Store telematic data and forward a fresh configured SoC to ABRP.
+          await this.processTelematicData(vin, telematicData.telematicData);
 
           // Update lastAPIUpdate timestamp
           await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
