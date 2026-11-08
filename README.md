@@ -269,9 +269,6 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 ### 5.0.4 (2026-10-19)
 
 - (TA2k) fixed unnecessary container cleanup that used up the daily API request limit
-
-### 5.0.3 (2026-10-19)
-
 - (TA2k) fixed telematic data fetching (CU-400): the container now uses only the data keys BMW accepts
 - (TA2k) existing installations update to the new container automatically
 - (hombach) fixed repochecker error
