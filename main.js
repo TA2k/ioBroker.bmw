@@ -1258,18 +1258,40 @@ class Bmw extends utils.Adapter {
 
     this.log.debug(`Connecting to BMW MQTT: ${brokerUrl}`);
     this.log.debug(`MQTT Username (gcid): ${mqttUsername}`);
-    this.mqtt = mqtt.connect(brokerUrl, options);
+    const client = (this.mqtt = mqtt.connect(brokerUrl, options));
+    // Invalidate pending SUBACK callbacks whenever this connection is no longer usable.
+    let subscriptionGeneration = 0;
+    const resetSubscriptionStatus = () => {
+      subscriptionGeneration++;
+      if (this.mqtt === client) {
+        this.setState('info.mqttConnected', false, true);
+      }
+    };
+    resetSubscriptionStatus();
 
     this.mqtt.on('connect', () => {
+      resetSubscriptionStatus();
+      const generation = subscriptionGeneration;
       this.log.info(`BMW MQTT stream connected`);
-      this.setState(`info.mqttConnected`, true, true);
 
       // Subscribe to all vehicle topics for this account. The topic prefix is the gcid,
       // matching the username; '{gcid}/+' delivers every VIN mapped to the account.
       const topic = `${mqttUsername}/+`;
-      this.mqtt?.subscribe(topic, err => {
+      // MQTT.js may otherwise return an empty grant list for a cached subscription
+      // on reconnect. Request a fresh SUBACK without changing automatic reconnect options.
+      /** @satisfies {import('mqtt').ISubscriptionMap} */
+      const subscriptions = { [topic]: { qos: 0 } };
+      // This MQTT.js flag is also used by its built-in resubscribe implementation.
+      client.subscribe(Object.assign(subscriptions, { resubscribe: true }), (err, granted) => {
+        if (this.mqtt !== client || generation !== subscriptionGeneration || !client.connected || client.disconnecting) {
+          return;
+        }
+        const confirmed = granted?.length === 1 && granted[0].topic === topic && [0, 1, 2].includes(granted[0].qos);
+        this.setState('info.mqttConnected', !err && confirmed, true);
         if (err) {
           this.log.error(`MQTT subscription failed: ${err.message}`);
+        } else if (!confirmed) {
+          this.log.warn('MQTT subscription was not confirmed; streaming status remains disconnected');
         } else {
           this.log.debug(`Subscribed to MQTT topic: ${topic}`);
         }
@@ -1281,7 +1303,7 @@ class Bmw extends utils.Adapter {
     });
 
     this.mqtt.on('error', async error => {
-      this.setState('info.mqttConnected', false, true);
+      resetSubscriptionStatus();
 
       // Check if it's a connection timeout (server not reachable)
       if (error.message && error.message.includes('connack timeout')) {
@@ -1310,10 +1332,14 @@ class Bmw extends utils.Adapter {
 
     this.mqtt.on('close', () => {
       this.log.info('MQTT connection closed');
-      this.setState('info.mqttConnected', false, true);
+      resetSubscriptionStatus();
     });
 
+    this.mqtt.on('offline', resetSubscriptionStatus);
+    this.mqtt.on('end', resetSubscriptionStatus);
+
     this.mqtt.on('reconnect', () => {
+      resetSubscriptionStatus();
       this.log.info('MQTT reconnecting...');
     });
 
