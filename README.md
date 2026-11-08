@@ -252,13 +252,14 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ### **WORK IN PROGRESS**
 
-- add optional ABRP live telemetry using per-vehicle Generic tokens
-- send charging state, DC charging state, and estimated electric range alongside SoC
-- enforce the ABRP limit of two requests per second and API key across all vehicles and retries
-- encrypt and protect ABRP credentials and expose sanitized delivery status states
-- create ABRP diagnostics independently of BMW REST quota and log ABRP response errors without credentials
-- stop further BMW CarData REST calls temporarily after the server reports quota error `CU-429` and preserve that cooldown across adapter restarts
-- prevent BMW OAuth refresh tokens from appearing in debug logs
+- (TA2k) add optional ABRP live telemetry using per-vehicle Generic tokens
+- (TA2k) send charging state, DC charging state, and estimated electric range alongside SoC
+- (TA2k) enforce the ABRP limit of two requests per second and API key across all vehicles and retries
+- (TA2k) encrypt and protect ABRP credentials and expose sanitized delivery status states
+- (TA2k) create ABRP diagnostics independently of BMW REST quota and log ABRP response errors without credentials
+- (TA2k) stop further BMW CarData REST calls temporarily after the server reports quota error `CU-429` and preserve that cooldown across adapter restarts
+- (TA2k) prevent BMW OAuth refresh tokens from appearing in debug logs
+- (hombach) updated iobroker/testing
 
 ### 5.0.5 (2026-10-26)
 
