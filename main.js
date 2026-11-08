@@ -1279,7 +1279,7 @@ class Bmw extends utils.Adapter {
       const topic = `${mqttUsername}/+`;
       // MQTT.js may otherwise return an empty grant list for a cached subscription
       // on reconnect. Request a fresh SUBACK without changing automatic reconnect options.
-      /** @type {import('mqtt').ISubscriptionMap} */
+      /** @satisfies {import('mqtt').ISubscriptionMap} */
       const subscriptions = { [topic]: { qos: 0 } };
       // This MQTT.js flag is also used by its built-in resubscribe implementation.
       client.subscribe(Object.assign(subscriptions, { resubscribe: true }), (err, granted) => {
