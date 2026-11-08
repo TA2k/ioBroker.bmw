@@ -17,5 +17,15 @@
   "lblReducedContainer": "Use reduced telematic container",
   "hlpReducedContainer": "Create a container with only a small set of key data points instead of all data points. When enabled, ALL existing containers are deleted first and a new reduced container is created. Try this if container creation fails with HTTP 403 (CU-403).",
   "txtApiEndpoints": "Remote Control Information",
-  "txtApiNote": "Telematic data is fetched automatically based on the interval above. Other API endpoints (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) can be triggered manually via bmw.0.VIN.remote. in each vehicle. BasicData is fetched once after login."
+  "txtApiNote": "Telematic data is fetched automatically based on the interval above. Other API endpoints (basicData, chargingHistory, image, locationBasedChargingSettings, smartMaintenanceTyreDiagnosis) can be triggered manually via bmw.0.VIN.remote. in each vehicle. BasicData is fetched once after login.",
+  "txtAbrpConfiguration": "A Better Routeplanner (ABRP)",
+  "txtAbrpInfo": "Optionally send SoC, charging state, DC charging state, estimated electric range, and the BMW measurement time to ABRP. You need a free ABRP Telemetry API key and a vehicle-specific Generic live-data token. Requests are limited globally to 2 per second per API key.",
+  "lblAbrpEnabled": "Enable ABRP live telemetry",
+  "hlpAbrpEnabled": "Uses existing BMW MQTT/API data and does not create additional BMW API calls.",
+  "lblAbrpApiKey": "ABRP Telemetry API key",
+  "hlpAbrpApiKey": "Create a free key at https://abetterrouteplanner.com/home/app/api-keys/telemetry",
+  "lblAbrpVehicles": "ABRP vehicle connections",
+  "lblAbrpVehicleEnabled": "Enabled",
+  "lblAbrpVin": "BMW VIN",
+  "lblAbrpToken": "ABRP Generic token"
 }
