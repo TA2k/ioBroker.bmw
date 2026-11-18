@@ -140,6 +140,21 @@ This adapter integrates BMW vehicles into ioBroker using the new BMW CarData API
 ### 2.0.0
 
 - (TA2k) initial release
+## 5.0.0 (2026-05-17)
+
+- (copilot) BREAKING: Adapter requires node.js >= 22 now
+- (hombach) fixed axios vulnerability
+- (hombach) removed node 20 tests
+- (hombach) added CHANGELOG_OLD.md
+- (hombach) updated dependencies
+
+## 4.3.5 (2026-04-11)
+
+- (hombach) fix repo checker warnings
+- (hombach) fix vulnerability
+- (hombach) update dependencies
+- (hombach) remove old admin files
+
 ## 4.3.4 (2026-02-28)
 
 - enhance docu and logging

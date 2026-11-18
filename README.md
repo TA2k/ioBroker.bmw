@@ -249,8 +249,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 5.0.6 (2026-11-18)
 
 - (hombach) report MQTT as connected only after a successful subscription acknowledgement
 - (TA2k) add optional ABRP live telemetry using per-vehicle Generic tokens
@@ -296,21 +295,6 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 - (hombach) replaced native setInterval/setTimeout with adapter-managed equivalents in main.js
 - (hombach) moved all jsonConfig.json inline translations to i18n files
 - (hombach) updated dependencies
-
-### 5.0.0 (2026-05-17)
-
-- (copilot) BREAKING: Adapter requires node.js >= 22 now
-- (hombach) fixed axios vulnerability
-- (hombach) removed node 20 tests
-- (hombach) added CHANGELOG_OLD.md
-- (hombach) updated dependencies
-
-### 4.3.5 (2026-04-11)
-
-- (hombach) fix repo checker warnings
-- (hombach) fix vulnerability
-- (hombach) update dependencies
-- (hombach) remove old admin files
 
 ### Old Changes see [CHANGELOG OLD](CHANGELOG_OLD.md)
 
