@@ -252,7 +252,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 
 ### **WORK IN PROGRESS**
 
-- (HombachC) report MQTT as connected only after a successful subscription acknowledgement
+- (hombach) report MQTT as connected only after a successful subscription acknowledgement
 - (TA2k) add optional ABRP live telemetry using per-vehicle Generic tokens
 - (TA2k) send charging state, DC charging state, and estimated electric range alongside SoC
 - (TA2k) enforce the ABRP limit of two requests per second and API key across all vehicles and retries
@@ -261,6 +261,7 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
 - (TA2k) stop further BMW CarData REST calls temporarily after the server reports quota error `CU-429` and preserve that cooldown across adapter restarts
 - (TA2k) prevent BMW OAuth refresh tokens from appearing in debug logs
 - (hombach) updated iobroker/testing
+- (hombach) updated dependencies
 
 ### 5.0.5 (2026-10-26)
 
