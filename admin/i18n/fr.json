@@ -4,6 +4,7 @@
   "hlpInterval": "Intervalle de récupération automatique des données télématiques. Définir à 0 pour désactiver les mises à jour automatiques. Minimum 10 minutes à cause des limites de quota (50 appels par 24h). D'autres endpoints API peuvent être déclenchés manuellement via bmw.0.VIN.remote.",
   "hlpReducedContainer": "Créer un conteneur avec seulement un petit ensemble de points de données clés au lieu de tous les points de données. Lorsqu'activé, TOUS les conteneurs existants sont d'abord supprimés et un nouveau conteneur réduit est créé. Essayez ceci si la création du conteneur échoue avec HTTP 403 (CU-403).",
   "hlpReverseGeocode": "Convertir les coordonnées GPS (latitude/longitude) en adresse avec OpenStreetMap Nominatim. Mise à jour après que la position n'a pas changé pendant 30 secondes.",
+  "lblRemoteCommandsWorkaround": "Commandes du véhicule (p. ex. climatisation) : solution avec iOS par e-mail ou Telegram (README)",
   "lblBrand": "Marque",
   "lblClientId": "BMW CarData Client ID",
   "lblIgnorelist": "Liste VIN à ignorer",

@@ -4,6 +4,7 @@
   "hlpInterval": "Automatisch ophaalinterval voor telematicagegevens. Stel in op 0 om automatische updates uit te schakelen. Minimum 10 minuten vanwege quota limieten (50 oproepen per 24u). Andere API endpoints kunnen handmatig worden geactiveerd via bmw.0.VIN.remote.",
   "hlpReducedContainer": "Maak een container met slechts een kleine set belangrijke datapunten in plaats van alle datapunten. Wanneer ingeschakeld, worden eerst ALLE bestaande containers verwijderd en wordt een nieuwe gereduceerde container aangemaakt. Probeer dit als het aanmaken van de container mislukt met HTTP 403 (CU-403).",
   "hlpReverseGeocode": "GPS-coördinaten (breedtegraad/lengtegraad) omzetten naar adres met OpenStreetMap Nominatim. Update nadat positie 30 seconden niet is veranderd.",
+  "lblRemoteCommandsWorkaround": "Voertuigcommando’s (bijv. klimaatregeling): iOS-oplossing via e-mail of Telegram (README)",
   "lblBrand": "Merk",
   "lblClientId": "BMW CarData Client ID",
   "lblIgnorelist": "VIN negeerlijst",

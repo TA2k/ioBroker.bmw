@@ -219,6 +219,18 @@
       "md": 12,
       "lg": 12,
       "xl": 12
+    },
+    "_remote_commands_workaround": {
+      "type": "staticLink",
+      "label": "lblRemoteCommandsWorkaround",
+      "href": "https://github.com/TA2k/ioBroker.bmw/blob/master/README.md#ios-shortcuts-workaround",
+      "target": "_blank",
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
     }
   }
 }
