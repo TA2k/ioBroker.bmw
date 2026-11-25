@@ -17,6 +17,8 @@ const API_QUOTA_LIMIT = 50;
 // BMW does not expose the exact rolling reset time after CU-429. Avoid hammering
 // the REST API for one hour; MQTT and OAuth token refresh remain unaffected.
 const BMW_QUOTA_COOLDOWN_MS = 60 * 60 * 1000;
+// Delay before performing a single early vehicle discovery retry when startup discovery fails.
+const DISCOVERY_RETRY_DELAY_MS = 60 * 1000;
 
 // Version marker embedded in every container's purpose. The container list endpoint
 // returns name and purpose but NOT technicalDescriptors, so the descriptor set of an
@@ -144,6 +146,9 @@ class Bmw extends utils.Adapter {
     // Core properties
     this.updateInterval;
     this.refreshTokenInterval;
+    this.discoveryRetryTimeout = null;
+    this.discoverySucceeded = false;
+    this.discoveryInProgress = false;
     this.vinArray = [];
     this.session = {};
     this.json2iob = new Json2iob(this);
@@ -188,6 +193,13 @@ class Bmw extends utils.Adapter {
    * Is called when databases are connected and adapter received configuration.
    */
   async onReady() {
+    this.discoverySucceeded = false;
+    this.discoveryInProgress = false;
+    if (this.discoveryRetryTimeout) {
+      this.clearTimeout(this.discoveryRetryTimeout);
+      this.discoveryRetryTimeout = null;
+    }
+
     this.setState('info.connection', false, true);
     this.setState('info.mqttConnected', false, true);
 
@@ -278,48 +290,31 @@ class Bmw extends utils.Adapter {
         56 * 60 * 1000,
       );
 
-      // Start periodic telematic data updates (respecting quota limits)
-      if (this.vinArray.length > 0 && this.config.interval > 0) {
-        this.log.info(`Setting up periodic telematic data updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`);
+      // Start periodic telematic data updates (respecting quota limits).
+      // Always schedule when interval > 0 so failed startup discovery can recover automatically.
+      if (this.config.interval > 0) {
+        if (this.vinArray.length > 0) {
+          this.log.info(`Setting up periodic telematic data updates every ${this.config.interval} minutes for ${this.vinArray.length} vehicle(s)`);
+        } else if (!this.discoverySucceeded) {
+          this.log.warn(
+            `No vehicles discovered yet; scheduling periodic telematic data updates every ${this.config.interval} minutes and retrying vehicle discovery`,
+          );
+        } else {
+          this.log.warn(`No BMW vehicles found; periodic telematic data updates every ${this.config.interval} minutes will wait for vehicles`);
+        }
+
         this.updateInterval = this.setInterval(
           async () => {
-            // Update quota states (expired calls removed automatically)
-            this.updateQuotaStates();
-
-            // Periodic telematic data refresh - MQTT provides real-time updates
-            if (!this.containerId) {
-              this.log.warn(`No container ID available for periodic telematic data fetch, setting up container...`);
-              const setupSuccess = await this.setupTelematicContainer();
-              if (!setupSuccess) {
-                this.log.error(`Failed to setup telematic container for periodic updates`);
-                return;
-              }
-            }
-
-            for (const vin of this.vinArray) {
-              this.log.debug(`Periodic telematic data refresh for ${vin}`);
-              try {
-                const telematicData = await this.getTelematicContainer(vin, this.containerId);
-                if (telematicData && telematicData.telematicData) {
-                  // Store telematic data and forward a fresh configured SoC to ABRP.
-                  await this.processTelematicData(vin, telematicData.telematicData);
-
-                  // Update lastAPIUpdate timestamp
-                  await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
-
-                  this.log.debug(`✓ Periodic telematic data update for ${vin}: ${Object.keys(telematicData.telematicData).length} data points`);
-                } else {
-                  this.log.warn(`No telematic data retrieved for ${vin} during periodic update`);
-                }
-              } catch (error) {
-                this.log.error(`Periodic telematic data fetch failed for ${vin}: ${error.message}`);
-              }
-            }
+            await this.runPeriodicTelematicUpdate();
           },
           this.config.interval * 60 * 1000,
         );
       } else if (this.config.interval === 0) {
         this.log.info('Periodic telematic data updates disabled (interval = 0)');
+      }
+
+      if (!this.discoverySucceeded) {
+        this.scheduleDiscoveryRetry();
       }
 
       this.log.info(`BMW CarData adapter startup complete`);
@@ -329,6 +324,113 @@ class Bmw extends utils.Adapter {
       );
     } else {
       this.log.error('BMW CarData authentication failed');
+    }
+  }
+
+  /**
+   * Schedule a single early retry for vehicle discovery after startup discovery failed.
+   */
+  scheduleDiscoveryRetry() {
+    if (this.discoveryRetryTimeout || this.discoverySucceeded) {
+      return;
+    }
+
+    this.log.info(`Scheduling one-time BMW CarData vehicle discovery retry in ${DISCOVERY_RETRY_DELAY_MS / 1000} seconds`);
+    this.discoveryRetryTimeout = this.setTimeout(async () => {
+      this.discoveryRetryTimeout = null;
+      if (this.discoverySucceeded) {
+        return;
+      }
+
+      const discovered = await this.retryVehicleDiscovery();
+      if (discovered && this.vinArray.length > 0 && this.config.interval > 0) {
+        await this.runPeriodicTelematicUpdate();
+      }
+    }, DISCOVERY_RETRY_DELAY_MS);
+  }
+
+  /**
+   * Retry BMW CarData vehicle discovery without repeating first-start cleanup.
+   *
+   * @returns {Promise<boolean>} True if vehicle discovery succeeded.
+   */
+  async retryVehicleDiscovery() {
+    if (this.discoverySucceeded || this.discoveryInProgress) {
+      return this.discoverySucceeded;
+    }
+
+    if (this.carDataQuotaBlockedUntil > Date.now()) {
+      const remainingMinutes = Math.max(1, Math.ceil((this.carDataQuotaBlockedUntil - Date.now()) / 60000));
+      this.log.warn(`Skipping BMW CarData vehicle discovery retry during CU-429 cooldown (${remainingMinutes} minute(s) remaining)`);
+      return false;
+    }
+
+    this.discoveryInProgress = true;
+    try {
+      this.log.info('Retrying BMW CarData vehicle discovery...');
+      await this.getVehiclesv2(false);
+      return this.discoverySucceeded;
+    } finally {
+      this.discoveryInProgress = false;
+    }
+  }
+
+  /**
+   * Execute one periodic telematic update cycle, retrying discovery first if needed.
+   */
+  async runPeriodicTelematicUpdate() {
+    // Update quota states (expired calls removed automatically)
+    this.updateQuotaStates();
+
+    if (!this.discoverySucceeded) {
+      if (this.vinArray.length === 0) {
+        this.log.warn('No vehicles discovered yet; retrying BMW CarData vehicle discovery before periodic update');
+      }
+      await this.retryVehicleDiscovery();
+    }
+
+    if (this.vinArray.length === 0) {
+      if (this.discoverySucceeded) {
+        this.log.warn('No BMW vehicles available; skipping periodic telematic data update');
+      } else {
+        this.log.warn('Vehicle discovery has not succeeded yet; skipping periodic telematic data update');
+      }
+      return;
+    }
+
+    if (this.discoverySucceeded && this.discoveryRetryTimeout) {
+      this.clearTimeout(this.discoveryRetryTimeout);
+      this.discoveryRetryTimeout = null;
+    }
+
+    // Periodic telematic data refresh - MQTT provides real-time updates
+    if (!this.containerId) {
+      this.log.warn(`No container ID available for periodic telematic data fetch, setting up container...`);
+      const setupSuccess = await this.setupTelematicContainer();
+      if (!setupSuccess) {
+        this.log.error(`Failed to setup telematic container for periodic updates`);
+        return;
+      }
+    }
+
+    for (const vin of this.vinArray) {
+      this.log.debug(`Periodic telematic data refresh for ${vin}`);
+      try {
+        const telematicData = await this.getTelematicContainer(vin, this.containerId);
+        if (telematicData && telematicData.telematicData) {
+          // Store telematic data and forward a fresh configured SoC to ABRP.
+          await this.processTelematicData(vin, telematicData.telematicData);
+
+          // Update lastAPIUpdate timestamp
+          await this.setState(`${vin}.lastStreamViaAPIUpdate`, new Date().toISOString(), true);
+
+          this.log.debug(`✓ Periodic telematic data update for ${vin}: ${Object.keys(telematicData.telematicData).length} data points`);
+        } else {
+          this.log.warn(`No telematic data retrieved for ${vin} during periodic update`);
+        }
+      } catch (error) {
+        this.log.error(`Periodic telematic data fetch failed for ${vin}: ${error.message}`);
+      }
     }
   }
 
@@ -794,6 +896,13 @@ class Bmw extends utils.Adapter {
         this.log.debug(JSON.stringify(res.data));
         const mappings = res.data;
 
+        if (!Array.isArray(mappings)) {
+          this.log.warn('Unexpected BMW CarData vehicle mappings response');
+          return;
+        }
+
+        this.discoverySucceeded = true;
+
         if (firstStart) {
           this.log.info(`Found ${mappings.length} BMW vehicles`);
         }
@@ -814,6 +923,11 @@ class Bmw extends utils.Adapter {
                 this.log.info(`Ignoring ${vin} (in ignore list)`);
                 continue;
               }
+            }
+
+            if (this.vinArray.includes(vin)) {
+              this.log.debug(`Vehicle ${vin} already registered, skipping duplicate discovery`);
+              continue;
             }
 
             this.vinArray.push(vin);
@@ -1051,14 +1165,18 @@ class Bmw extends utils.Adapter {
     }
 
     try {
-      // Check quota and warn if exhausted, but continue anyway
-      const quotaAvailable = this.checkQuota();
+      // Check quota and warn if exhausted, but continue anyway.
+      // Only record the call once an HTTP response (success or error response) arrives
+      // so offline/DNS errors (e.g. EAI_AGAIN, ECONNREFUSED) do not burn quota.
+      const { remaining } = this.updateQuotaStates();
+      const quotaAvailable = remaining > 0;
       if (!quotaAvailable) {
         this.log.warn(`API quota exhausted for ${operationName} - continuing anyway`);
       }
 
       // Make the API request
       const response = await this.requestClient(requestConfig);
+      this.checkQuota();
 
       if (quotaAvailable) {
         this.log.debug(`✓ ${operationName} completed successfully`);
@@ -1068,6 +1186,9 @@ class Bmw extends utils.Adapter {
 
       return response;
     } catch (error) {
+      if (error.response) {
+        this.checkQuota();
+      }
       const responseData = error.response?.data;
       if (responseData?.exveErrorId === 'CU-429') {
         this.carDataQuotaBlockedUntil = Date.now() + BMW_QUOTA_COOLDOWN_MS;
@@ -2102,6 +2223,10 @@ class Bmw extends utils.Adapter {
       // Clear all intervals and timeouts
       this.clearInterval(this.updateInterval);
       this.clearInterval(this.refreshTokenInterval);
+      if (this.discoveryRetryTimeout) {
+        this.clearTimeout(this.discoveryRetryTimeout);
+        this.discoveryRetryTimeout = null;
+      }
 
       // Clear reverse geocode timers
       for (const vin of Object.keys(this.reverseGeocodeTimers)) {

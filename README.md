@@ -285,6 +285,10 @@ This adapter is available at: [https://github.com/TA2k/ioBroker.bmw](https://git
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+- (hombach) retry vehicle discovery and always schedule periodic telematic updates when the vehicle lookup fails at startup (e.g. DNS not ready after a host reboot); network errors without a server response no longer count against the daily API quota
+
 ### 5.0.6 (2026-11-18)
 
 - (hombach) report MQTT as connected only after a successful subscription acknowledgement
